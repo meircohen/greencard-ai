@@ -6,16 +6,19 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import { Mail, Lock } from "lucide-react";
+import { Mail, Lock, Shield } from "lucide-react";
 
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [role, setRole] = useState<"immigrant" | "attorney">("immigrant");
+  const [role, setRole] = useState<"client" | "attorney">("client");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [mfaRequired, setMfaRequired] = useState(false);
+  const [mfaCode, setMfaCode] = useState("");
+  const [mfaUserId, setMfaUserId] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,11 +40,47 @@ function LoginForm() {
         return;
       }
 
+      // Check if MFA is required
+      if (data.mfaRequired) {
+        setMfaRequired(true);
+        setMfaUserId(data.userId);
+        setIsLoading(false);
+        return;
+      }
+
       // Redirect to dashboard or original page
       const from = searchParams.get("from") || "/dashboard";
       router.push(from);
     } catch (err) {
       setError("An error occurred. Please try again.");
+      setIsLoading(false);
+    }
+  };
+
+  const handleMfaVerify = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setIsLoading(true);
+
+    try {
+      const res = await fetch("/api/auth/mfa/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: mfaCode, type: "totp" }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Invalid code.");
+        setIsLoading(false);
+        return;
+      }
+
+      const from = searchParams.get("from") || "/dashboard";
+      router.push(from);
+    } catch (err) {
+      setError("Verification failed. Please try again.");
       setIsLoading(false);
     }
   };
@@ -57,18 +96,67 @@ function LoginForm() {
           <p className="text-secondary mt-2">Sign in to your account</p>
         </div>
 
-        <Card className="p-8 space-y-6">
+        {/* MFA Verification Step */}
+        {mfaRequired && (
+          <Card className="p-8 space-y-6">
+            <div className="text-center space-y-2">
+              <Shield className="mx-auto h-10 w-10 text-accent" />
+              <h2 className="text-lg font-semibold text-primary">Two-factor authentication</h2>
+              <p className="text-secondary text-sm">Enter the code from your authenticator app.</p>
+            </div>
+
+            <form onSubmit={handleMfaVerify} className="space-y-4">
+              {error && (
+                <div className="p-3 bg-red-900/20 border border-red-500/30 rounded-lg text-red-200 text-sm">
+                  {error}
+                </div>
+              )}
+
+              <Input
+                type="text"
+                placeholder="000000"
+                value={mfaCode}
+                onChange={(e) => setMfaCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                className="text-center text-2xl tracking-widest"
+                maxLength={6}
+                autoComplete="one-time-code"
+                required
+              />
+
+              <Button
+                type="submit"
+                variant="primary"
+                size="lg"
+                isLoading={isLoading}
+                className="w-full"
+                disabled={mfaCode.length !== 6}
+              >
+                {isLoading ? "Verifying..." : "Verify"}
+              </Button>
+            </form>
+
+            <button
+              onClick={() => { setMfaRequired(false); setMfaCode(""); setError(""); }}
+              className="text-sm text-secondary hover:text-primary text-center w-full"
+            >
+              Back to login
+            </button>
+          </Card>
+        )}
+
+        {/* Login Form */}
+        {!mfaRequired && <Card className="p-8 space-y-6">
           {/* Role Toggle */}
           <div className="flex gap-2 bg-surface/50 p-1 rounded-lg">
             <button
-              onClick={() => setRole("immigrant")}
+              onClick={() => setRole("client")}
               className={`flex-1 py-2 px-4 rounded-md transition-all ${
-                role === "immigrant"
+                role === "client"
                   ? "bg-green-primary text-white shadow-glow-green"
                   : "text-secondary hover:text-primary"
               }`}
             >
-              Immigrant
+              Client
             </button>
             <button
               onClick={() => setRole("attorney")}
@@ -105,7 +193,7 @@ function LoginForm() {
                   Password
                 </label>
                 <Link
-                  href="/forgot-password"
+                  href="/reset-password"
                   className="text-sm text-green-primary hover:text-green-light transition-colors"
                 >
                   Forgot password?
@@ -177,7 +265,7 @@ function LoginForm() {
               Sign up
             </Link>
           </p>
-        </Card>
+        </Card>}
       </div>
     </div>
   );

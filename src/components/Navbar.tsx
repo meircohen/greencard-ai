@@ -5,8 +5,9 @@ import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { Button } from "./ui/Button";
 import { LanguageSwitcher } from "./LanguageSwitcher";
+import { useAuthStore } from "@/lib/store";
 
-const navLinks = [
+const baseNavLinks = [
   { label: "Home", href: "/" },
   { label: "Chat", href: "/chat" },
   { label: "Assessment", href: "/assessment" },
@@ -18,6 +19,14 @@ const navLinks = [
 export const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [hasScroll, setHasScroll] = useState(false);
+  const { user } = useAuthStore();
+
+  const navLinks = [
+    ...baseNavLinks,
+    ...(user?.role === "attorney" || user?.role === "admin"
+      ? [{ label: "Attorney Dashboard", href: "/attorney/dashboard" }]
+      : []),
+  ];
 
   useEffect(() => {
     const handleScroll = () => {

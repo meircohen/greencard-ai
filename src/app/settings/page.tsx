@@ -304,30 +304,16 @@ export default function SettingsPage() {
                   <h3 className="text-lg font-semibold text-gray-100 mb-4">Two-Factor Authentication</h3>
                   <div className="flex items-center justify-between p-4 bg-deep border border-surface/30 rounded-lg mb-4">
                     <div>
-                      <p className="text-gray-100 font-medium">Enable 2FA</p>
-                      <p className="text-sm text-gray-400 mt-1">Add an extra layer of security to your account</p>
+                      <p className="text-gray-100 font-medium">Two-Factor Authentication</p>
+                      <p className="text-sm text-gray-400 mt-1">Protect your account with an authenticator app</p>
                     </div>
-                    <label className="relative inline-flex items-center cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={securityForm.twoFactorEnabled}
-                        onChange={(e) => setSecurityForm({ ...securityForm, twoFactorEnabled: e.target.checked })}
-                        className="sr-only peer"
-                      />
-                      <div className="w-11 h-6 bg-surface/50 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-green-500/50 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500" />
-                    </label>
+                    <a
+                      href="/settings/mfa"
+                      className="px-4 py-2 bg-green-primary text-white rounded-lg hover:bg-green-600 transition-colors text-sm font-medium"
+                    >
+                      Set up 2FA
+                    </a>
                   </div>
-                  {securityForm.twoFactorEnabled && (
-                    <div className="p-4 bg-blue-500/10 border border-blue-500/30 rounded-lg">
-                      <p className="text-sm text-blue-400 mb-3">Scan this QR code with your authenticator app:</p>
-                      <div className="w-32 h-32 bg-white rounded-lg p-2 mb-3">
-                        <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 rounded flex items-center justify-center text-xs text-gray-600">
-                          [QR Code]
-                        </div>
-                      </div>
-                      <p className="text-xs text-gray-400">Enter the 6-digit code from your app to confirm setup</p>
-                    </div>
-                  )}
                 </div>
               </div>
 

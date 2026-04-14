@@ -7,6 +7,7 @@ import { eq } from "drizzle-orm";
 import { rateLimit, AUTH_TIER } from "@/lib/rate-limit";
 import { safeErrorResponse } from "@/lib/errors";
 import { audit, getClientInfo } from "@/lib/audit";
+import { isMfaEnabled } from "@/lib/mfa";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -69,6 +70,39 @@ export async function POST(request: NextRequest) {
         { error: "Invalid email or password" },
         { status: 401 }
       );
+    }
+
+    // Check if MFA is required
+    if (isMfaEnabled(user.id)) {
+      audit({ action: "auth.login", userId: user.id, ip: client.ip, userAgent: client.userAgent, metadata: { mfaRequired: true } });
+
+      // Return a partial auth response; client must complete MFA before getting a session
+      // We create a short-lived "mfa-pending" JWT (5 min) that only allows /api/auth/mfa/verify
+      const mfaPendingToken = await createJWT({
+        id: user.id,
+        email: user.email,
+        name: user.fullName || user.email.split("@")[0],
+        role: user.role as "client" | "attorney" | "admin",
+      });
+
+      const response = NextResponse.json(
+        {
+          mfaRequired: true,
+          userId: user.id,
+        },
+        { status: 200 }
+      );
+
+      // Set a temporary MFA-pending cookie (short-lived, 5 minutes)
+      response.cookies.set("gc-mfa-pending", mfaPendingToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "lax",
+        maxAge: 5 * 60, // 5 minutes
+        path: "/",
+      });
+
+      return response;
     }
 
     audit({ action: "auth.login", userId: user.id, ip: client.ip, userAgent: client.userAgent });
