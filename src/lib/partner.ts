@@ -1,0 +1,15 @@
+export const PARTNER_FIRM = {
+  name: "Partner Immigration Law",
+  attorney: "Attorney Name, Esq.",
+  barNumber: "XXXXXX",
+  barState: "FL",
+  firm: "Partner Immigration Law, PLLC",
+  phone: "(954) 555-0100",
+  email: "info@partnerimmigration.com",
+  address: "Fort Lauderdale, FL",
+  website: "https://partnerimmigration.com",
+  specialties: ["Family-Based", "Employment-Based", "Naturalization", "Asylum", "DACA"],
+  languages: ["English", "Spanish"],
+  bio: "Experienced immigration attorney serving South Florida with over a decade of experience helping clients navigate the complex immigration process.",
+  consultationFee: 0,
+};
