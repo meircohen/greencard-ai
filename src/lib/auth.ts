@@ -19,9 +19,15 @@ export interface Session {
 export const COOKIE_NAME = "greencard-session";
 export const SESSION_EXPIRY_DAYS = 7;
 
-// Get the JWT secret
+// Get the JWT secret - MUST be set via environment variable
 const getSecret = (): Uint8Array => {
-  const secret = process.env.NEXTAUTH_SECRET || "dev-secret-key-change-in-production";
+  const secret = process.env.NEXTAUTH_SECRET;
+  if (!secret) {
+    throw new Error(
+      "NEXTAUTH_SECRET environment variable is required. " +
+      "Generate one with: openssl rand -base64 32"
+    );
+  }
   return new TextEncoder().encode(secret);
 };
 

@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSession, COOKIE_NAME } from "@/lib/auth";
+import { getSession } from "@/lib/auth";
 
-// Public routes that don't require authentication
-const publicRoutes = [
+// Public page routes (no auth required)
+const publicPageRoutes = [
   "/",
   "/login",
   "/signup",
@@ -16,71 +16,86 @@ const publicRoutes = [
   "/contact",
   "/privacy",
   "/terms",
-  "/api",
+  "/blog",
 ];
 
-// Protected routes that require authentication
-const protectedRoutes = ["/dashboard", "/documents", "/cases"];
+// Public API routes (no auth required)
+const publicApiRoutes = [
+  "/api/auth/login",
+  "/api/auth/signup",
+  "/api/auth/logout",
+  "/api/data/visa-bulletin",
+  "/api/data/processing-times",
+  "/api/data/fees",
+  "/api/data/cost-calculator",
+  "/api/contact",
+  "/api/billing/webhook", // Stripe webhooks verify their own signature
+];
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Check if route is an API route
+  // Check if API route
   if (pathname.startsWith("/api")) {
-    return NextResponse.next();
-  }
+    // Allow public API routes
+    const isPublicApi = publicApiRoutes.some(
+      (route) => pathname === route || pathname.startsWith(route + "/")
+    );
 
-  // Check if route is public
-  const isPublicRoute = publicRoutes.some((route) => {
-    if (route === "/api") return pathname.startsWith("/api");
-    return pathname === route || pathname.startsWith(route + "/");
-  });
-
-  if (isPublicRoute) {
-    return NextResponse.next();
-  }
-
-  // Check if route is protected
-  const isProtectedRoute = protectedRoutes.some(
-    (route) => pathname === route || pathname.startsWith(route + "/")
-  );
-
-  if (isProtectedRoute) {
-    // Verify session
-    const session = await getSession(request);
-
-    if (!session) {
-      // Redirect to login
-      const url = request.nextUrl.clone();
-      url.pathname = "/login";
-      url.searchParams.set("from", pathname);
-      return NextResponse.redirect(url);
+    if (isPublicApi) {
+      return NextResponse.next();
     }
 
-    // Add user info to headers for server components
+    // All other API routes require authentication
+    const session = await getSession(request);
+    if (!session) {
+      return NextResponse.json(
+        { error: "Authentication required" },
+        { status: 401 }
+      );
+    }
+
+    // Pass user info via headers (ID only, not email/PII)
     const requestHeaders = new Headers(request.headers);
     requestHeaders.set("x-user-id", session.user.id);
-    requestHeaders.set("x-user-email", session.user.email);
     requestHeaders.set("x-user-role", session.user.role);
 
     return NextResponse.next({
-      request: {
-        headers: requestHeaders,
-      },
+      request: { headers: requestHeaders },
     });
   }
 
-  return NextResponse.next();
+  // Check if page route is public
+  const isPublicPage = publicPageRoutes.some((route) => {
+    return pathname === route || pathname.startsWith(route + "/");
+  });
+
+  if (isPublicPage) {
+    return NextResponse.next();
+  }
+
+  // All other page routes require authentication
+  const session = await getSession(request);
+
+  if (!session) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/login";
+    url.searchParams.set("from", pathname);
+    return NextResponse.redirect(url);
+  }
+
+  // Pass non-PII user info for server components
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-user-id", session.user.id);
+  requestHeaders.set("x-user-role", session.user.role);
+
+  return NextResponse.next({
+    request: { headers: requestHeaders },
+  });
 }
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     */
-    "/((?!_next/static|_next/image|favicon.ico).*)",
+    "/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml).*)",
   ],
 };

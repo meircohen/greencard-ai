@@ -1,27 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createJWT, COOKIE_NAME, SESSION_EXPIRY_DAYS, verifyPassword } from "@/lib/auth";
 import { z } from "zod";
-
-// Mock user store (replace with DB in production)
-const mockUsers = new Map<
-  string,
-  {
-    id: string;
-    email: string;
-    name: string;
-    hashedPassword: string;
-    role: "immigrant" | "attorney";
-  }
->();
-
-// Initialize with demo user
-mockUsers.set("demo@example.com", {
-  id: "user-1",
-  email: "demo@example.com",
-  name: "John Doe",
-  hashedPassword: "$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcg7b3XeKeUxWdeS86E36P4/TVG", // 'demo123' hashed
-  role: "immigrant",
-});
+import { getDb } from "@/lib/db";
+import { users } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -32,50 +14,48 @@ const loginSchema = z.object({
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { email, password, role } = loginSchema.parse(body);
+    const { email, password } = loginSchema.parse(body);
 
-    // For demo: accept 'demo123' password for any user, or check mock store
-    let user = mockUsers.get(email.toLowerCase());
+    const db = getDb();
+    const emailLower = email.toLowerCase();
+
+    // Look up user in database
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(eq(users.email, emailLower))
+      .limit(1);
 
     if (!user) {
-      // Create user on first login with demo password
-      if (password === "demo123") {
-        const newUser = {
-          id: `user-${Date.now()}`,
-          email: email.toLowerCase(),
-          name: email.split("@")[0],
-          hashedPassword: "$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcg7b3XeKeUxWdeS86E36P4/TVG",
-          role: role as "immigrant" | "attorney",
-        };
-        mockUsers.set(email.toLowerCase(), newUser);
-        user = newUser;
-      } else {
-        return NextResponse.json(
-          { error: "Invalid email or password" },
-          { status: 401 }
-        );
-      }
-    } else {
-      // Verify password for existing user
-      const isValidPassword = await verifyPassword(
-        password,
-        user.hashedPassword
+      return NextResponse.json(
+        { error: "Invalid email or password" },
+        { status: 401 }
       );
+    }
 
-      if (!isValidPassword && password !== "demo123") {
-        return NextResponse.json(
-          { error: "Invalid email or password" },
-          { status: 401 }
-        );
-      }
+    // Verify password against hashed password in DB
+    if (!user.passwordHash) {
+      return NextResponse.json(
+        { error: "Invalid email or password" },
+        { status: 401 }
+      );
+    }
+
+    const isValidPassword = await verifyPassword(password, user.passwordHash);
+
+    if (!isValidPassword) {
+      return NextResponse.json(
+        { error: "Invalid email or password" },
+        { status: 401 }
+      );
     }
 
     // Create JWT token
     const token = await createJWT({
       id: user.id,
       email: user.email,
-      name: user.name,
-      role: user.role,
+      name: user.fullName || user.email.split("@")[0],
+      role: user.role as "immigrant" | "attorney" | "admin",
     });
 
     // Create response
@@ -84,17 +64,17 @@ export async function POST(request: NextRequest) {
         user: {
           id: user.id,
           email: user.email,
-          name: user.name,
+          name: user.fullName,
           role: user.role,
         },
       },
       { status: 200 }
     );
 
-    // Set httpOnly cookie
+    // Set httpOnly cookie with secure defaults
     response.cookies.set(COOKIE_NAME, token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: true,
       sameSite: "lax",
       maxAge: SESSION_EXPIRY_DAYS * 24 * 60 * 60,
       path: "/",
