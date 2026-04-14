@@ -3,6 +3,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { z } from "zod";
 import { FORM_FILL_SYSTEM_PROMPT } from "@/lib/ai/prompts";
 import { safeErrorResponse } from "@/lib/errors";
+import { getModel } from "@/lib/ai/models";
 
 const formFillSchema = z.object({
   action: z.enum(["auto-fill", "validate", "suggest"]),
@@ -156,7 +157,7 @@ Fill out all fields following these rules:
 Return the filled form as a JSON object with field names as keys.`;
 
   const response = await client.messages.create({
-    model: "claude-sonnet-4-20250514",
+    model: getModel("standard"),
     max_tokens: 2048,
     system: FORM_FILL_SYSTEM_PROMPT,
     messages: [{ role: "user", content: prompt }],
@@ -220,7 +221,7 @@ Return a JSON object with:
 }`;
 
   const response = await client.messages.create({
-    model: "claude-sonnet-4-20250514",
+    model: getModel("standard"),
     max_tokens: 2048,
     system: FORM_FILL_SYSTEM_PROMPT,
     messages: [{ role: "user", content: prompt }],
@@ -278,7 +279,7 @@ Return a JSON array of objects with:
 }`;
 
   const response = await client.messages.create({
-    model: "claude-sonnet-4-20250514",
+    model: getModel("standard"),
     max_tokens: 2048,
     system: FORM_FILL_SYSTEM_PROMPT,
     messages: [{ role: "user", content: prompt }],

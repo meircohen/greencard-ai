@@ -68,7 +68,7 @@ describe("Validation Schemas", () => {
         email: "john@example.com",
         password: "securePassword123",
         confirmPassword: "securePassword123",
-        role: "applicant",
+        role: "client",
       };
 
       const result = validate(signupSchema, validData);
@@ -81,7 +81,7 @@ describe("Validation Schemas", () => {
         email: "john@example.com",
         password: "securePassword123",
         confirmPassword: "differentPassword123",
-        role: "applicant",
+        role: "client",
       };
 
       const result = validate(signupSchema, invalidData);
@@ -123,7 +123,7 @@ describe("Validation Schemas", () => {
         email: "john@example.com",
         password: "securePassword123",
         confirmPassword: "securePassword123",
-        role: "applicant",
+        role: "client",
       };
 
       const result = validate(signupSchema, invalidData);
@@ -136,7 +136,7 @@ describe("Validation Schemas", () => {
         email: "john@example.com",
         password: "short",
         confirmPassword: "short",
-        role: "applicant",
+        role: "client",
       };
 
       const result = validate(signupSchema, invalidData);
@@ -363,7 +363,7 @@ describe("Validation Schemas", () => {
         email: "jane@example.com",
         password: "password123",
         confirmPassword: "password123",
-        role: "applicant",
+        role: "client",
       });
 
       expect(result.success).toBe(true);
@@ -375,7 +375,7 @@ describe("Validation Schemas", () => {
         email: "jane@example.com",
         password: "password123",
         confirmPassword: "password123",
-        role: "agent",
+        role: "attorney",
         barNumber: "123456",
         barState: "NY",
       });

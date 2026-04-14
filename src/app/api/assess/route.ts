@@ -4,6 +4,7 @@ import { ASSESSMENT_SYSTEM_PROMPT } from "@/lib/ai/prompts";
 import * as uscisData from "@/lib/uscis-data";
 import { z } from "zod";
 import { safeErrorResponse } from "@/lib/errors";
+import { getModel } from "@/lib/ai/models";
 
 const assessSchema = z.object({
   intakeData: z.record(z.string(), z.unknown()).refine((v) => Object.keys(v).length > 0, {
@@ -147,7 +148,7 @@ export async function POST(request: NextRequest): Promise<Response> {
     const systemPrompt = buildAssessmentPrompt(body.intakeData);
 
     const response = await client.messages.create({
-      model: "claude-sonnet-4-20250514",
+      model: getModel("advanced"),
       max_tokens: 4096,
       system: systemPrompt,
       messages: [

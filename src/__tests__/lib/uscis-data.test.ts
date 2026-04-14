@@ -20,7 +20,7 @@ describe("USCIS Data Module", () => {
   describe("getFormFee()", () => {
     it("should return correct fee for I-130", () => {
       const fee = getFormFee("I-130");
-      expect(fee).toBe(435);
+      expect(fee).toBe(535);
     });
 
     it("should return correct fee for I-140", () => {
@@ -30,12 +30,12 @@ describe("USCIS Data Module", () => {
 
     it("should return correct fee for I-485", () => {
       const fee = getFormFee("I-485");
-      expect(fee).toBe(640);
+      expect(fee).toBe(1440);
     });
 
     it("should return correct fee for various forms", () => {
       // I-130 family petition
-      expect(getFormFee("I-130")).toBe(435);
+      expect(getFormFee("I-130")).toBe(535);
       // I-140 employment petition
       expect(getFormFee("I-140")).toBe(715);
     });
@@ -182,7 +182,7 @@ describe("USCIS Data Module", () => {
   describe("calculateTotalCost()", () => {
     it("should calculate cost for single form without attorney", () => {
       const cost = calculateTotalCost(["I-130"], false);
-      expect(cost).toBe(435 + 200 + 85); // form fee + base filing + biometric
+      expect(cost).toBe(535 + 200 + 85); // form fee + base filing + biometric
     });
 
     it("should include attorney fee in total", () => {

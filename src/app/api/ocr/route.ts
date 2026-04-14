@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { rateLimit, UPLOAD_TIER } from "@/lib/rate-limit";
 import { safeErrorResponse } from "@/lib/errors";
 import { audit, getClientInfo } from "@/lib/audit";
+import { getModel } from "@/lib/ai/models";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
@@ -93,7 +94,7 @@ export async function POST(request: NextRequest) {
     if (isPdf) {
       // Use document type for PDFs
       response = await client.messages.create({
-        model: "claude-sonnet-4-20250514",
+        model: getModel("standard"),
         max_tokens: 4096,
         system: `You are an expert document OCR system for immigration documents.
 Extract: all text, document type, key fields (names, dates, numbers, addresses), validity status.
@@ -123,7 +124,7 @@ Respond with valid JSON only: {"documentType": "", "extractedText": "", "fields"
       const mediaType = detectedType as "image/jpeg" | "image/png" | "image/gif" | "image/webp";
 
       response = await client.messages.create({
-        model: "claude-sonnet-4-20250514",
+        model: getModel("standard"),
         max_tokens: 2048,
         system: `You are an expert document OCR system for immigration documents.
 Extract: all text, document type, key fields (names, dates, numbers, addresses), validity status.

@@ -3,6 +3,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { z } from "zod";
 import { DOCUMENT_REVIEW_PROMPT } from "@/lib/ai/prompts";
 import { safeErrorResponse } from "@/lib/errors";
+import { getModel } from "@/lib/ai/models";
 
 const docReviewSchema = z.object({
   documentType: z.string().min(1).max(100),
@@ -68,7 +69,7 @@ Return a JSON object with:
 }`;
 
   const response = await client.messages.create({
-    model: "claude-sonnet-4-20250514",
+    model: getModel("advanced"),
     max_tokens: 2048,
     system: DOCUMENT_REVIEW_PROMPT,
     messages: [{ role: "user", content: prompt }],

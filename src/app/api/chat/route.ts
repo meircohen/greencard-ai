@@ -4,6 +4,7 @@ import { z } from "zod";
 import { INTAKE_SYSTEM_PROMPT } from "@/lib/ai/prompts";
 import * as uscisData from "@/lib/uscis-data";
 import { safeErrorResponse } from "@/lib/errors";
+import { getModelForMode } from "@/lib/ai/models";
 
 const messageSchema = z.object({
   role: z.enum(["user", "assistant"]),
@@ -169,7 +170,7 @@ export async function POST(request: NextRequest): Promise<Response> {
       async start(controller) {
         try {
           const response = await client.messages.create({
-            model: "claude-sonnet-4-20250514",
+            model: getModelForMode(body.mode),
             max_tokens: 2048,
             system: systemPrompt,
             messages: messages,
@@ -178,28 +179,38 @@ export async function POST(request: NextRequest): Promise<Response> {
 
           let fullResponse = "";
 
-          for await (const event of response) {
-            if (
-              event.type === "content_block_delta" &&
-              event.delta?.type === "text_delta"
-            ) {
-              const text = event.delta.text || "";
-              fullResponse += text;
+          // Heartbeat interval to keep connection alive
+          const heartbeat = setInterval(() => {
+            try {
               controller.enqueue(
-                encoder.encode(`data: ${JSON.stringify({ type: "text", text })}\n\n`)
+                encoder.encode(`: heartbeat\n\n`)
               );
-            } else if (event.type === "message_stop") {
-              // Final stats
-              controller.enqueue(
-                encoder.encode(
-                  `data: ${JSON.stringify({
-                    type: "done",
-                  })}\n\n`
-                )
-              );
-            } else if (event.type === "message_start" && event.message?.usage) {
-              // Could track initial usage if needed
+            } catch {
+              clearInterval(heartbeat);
             }
+          }, 15000);
+
+          try {
+            for await (const event of response) {
+              if (
+                event.type === "content_block_delta" &&
+                event.delta?.type === "text_delta"
+              ) {
+                const text = event.delta.text || "";
+                fullResponse += text;
+                controller.enqueue(
+                  encoder.encode(`data: ${JSON.stringify({ type: "text", text })}\n\n`)
+                );
+              } else if (event.type === "message_stop") {
+                controller.enqueue(
+                  encoder.encode(
+                    `data: ${JSON.stringify({ type: "done" })}\n\n`
+                  )
+                );
+              }
+            }
+          } finally {
+            clearInterval(heartbeat);
           }
 
           controller.close();
