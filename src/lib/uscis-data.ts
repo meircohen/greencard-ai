@@ -27,20 +27,24 @@ export const processingTimes = {
   "I-864": { weeks: 0, range: "Same day filing" },
 };
 
+// USCIS filing fees as of April 2025 fee rule
+// Source: https://www.uscis.gov/forms/filing-fees
+// NOTE: These are approximate. Fees vary by filing method (online vs paper)
+// and applicant category. Always verify at uscis.gov before advising users.
 export const formFees = {
-  "I-130": 435,
-  "I-140": 715,
-  "I-485": 640,
-  "I-765": 130,
-  "I-131": 575,
-  "I-539": 555,
-  "I-129F": 535,
-  "I-129": 715,
-  "N-400": 640,
-  "I-90": 455,
-  "I-131A": 85,
-  "I-864": 0,
-  "I-693": 0,
+  "I-130": 535,    // Online: $535, Paper: $625
+  "I-140": 715,    // $715
+  "I-485": 1440,   // Online: $1,440, Paper: $1,540 (includes biometrics)
+  "I-765": 470,    // Online: $470, Paper: $520 (category-dependent, some $0)
+  "I-131": 630,    // Online: $630, Paper: $630
+  "I-539": 420,    // Online: $420, Paper: $520
+  "I-129F": 535,   // $535
+  "I-129": 780,    // Online: $780, Paper: $880
+  "N-400": 710,    // Online: $710, Paper: $760
+  "I-90": 465,     // Online: $465, Paper: $565
+  "I-131A": 135,   // $135
+  "I-864": 0,      // No filing fee
+  "I-693": 0,      // No USCIS fee (civil surgeon charges separately)
 };
 
 export const casePackageCosts = {

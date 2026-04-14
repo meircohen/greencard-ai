@@ -54,4 +54,4 @@ env.development.kv_namespaces = [
 # ANTHROPIC_API_KEY
 # STRIPE_SECRET_KEY
 # DATABASE_URL
-# JWT_SECRET
+# NEXTAUTH_SECRET  (must match the env var name in src/lib/auth.ts)

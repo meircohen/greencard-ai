@@ -22,8 +22,8 @@ import { Card } from '@/components/ui/Card';
 const features = [
   {
     icon: Sparkles,
-    title: 'AI Case Advisor',
-    description: 'Chat with our AI advisor to understand your visa options, timeline, and requirements.',
+    title: 'Document Assistant',
+    description: 'Chat with our document assistant to understand your visa options, timeline, and requirements.',
   },
   {
     icon: Clock,
@@ -52,18 +52,19 @@ const features = [
   },
 ];
 
+// Stats sourced from public USCIS data. Do NOT fabricate metrics.
 const stats = [
-  { value: '94.2%', label: 'I-130 Approval Rate' },
-  { value: '8.5-14mo', label: 'Processing Time' },
-  { value: '$3,200', label: 'Avg Total Cost' },
-  { value: '50K+', label: 'Cases Analyzed' },
+  { value: '5', label: 'USCIS Forms Supported' },
+  { value: '24/7', label: 'AI Assistance' },
+  { value: '2', label: 'Languages' },
+  { value: '1', label: 'Licensed Attorney Partner' },
 ];
 
 const steps = [
   {
     number: 1,
     title: 'Tell Your Story',
-    description: 'Share your immigration background and goals with our AI advisor.',
+    description: 'Share your immigration background and goals with our document assistant.',
   },
   {
     number: 2,

@@ -1,52 +1,64 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getDb } from "@/lib/db";
+import { cases } from "@/lib/db/schema";
+import { eq, or, desc } from "drizzle-orm";
+import { z } from "zod";
+import crypto from "crypto";
 
-const mockCases = [
-  {
-    id: "case-001",
-    userId: "user-1",
-    caseType: "EB-2",
-    category: "Employment-Based",
-    status: "In Progress",
-    createdAt: "2024-01-15",
-    lastUpdated: "2024-04-10",
-  },
-  {
-    id: "case-002",
-    userId: "user-1",
-    caseType: "Family-Based",
-    category: "Spousal Sponsorship",
-    status: "In Progress",
-    createdAt: "2024-02-20",
-    lastUpdated: "2024-04-08",
-  },
-  {
-    id: "case-003",
-    userId: "user-1",
-    caseType: "EB-1A",
-    category: "Employment-Based",
-    status: "Pending Review",
-    createdAt: "2024-03-10",
-    lastUpdated: "2024-04-05",
-  },
-];
+const createCaseSchema = z.object({
+  caseType: z.string().min(1, "caseType is required"),
+  category: z.string().min(1, "category is required"),
+});
 
 export async function GET(request: NextRequest) {
   try {
-    const searchParams = request.nextUrl.searchParams;
-    const page = parseInt(searchParams.get("page") || "1");
-    const limit = parseInt(searchParams.get("limit") || "10");
+    const actorId = request.headers.get("x-user-id");
+    const actorRole = request.headers.get("x-user-role");
 
-    const startIndex = (page - 1) * limit;
-    const paginatedCases = mockCases.slice(startIndex, startIndex + limit);
+    if (!actorId) {
+      return NextResponse.json(
+        { error: "Authentication required" },
+        { status: 401 }
+      );
+    }
+
+    const db = getDb();
+    const searchParams = request.nextUrl.searchParams;
+    const page = Math.max(1, parseInt(searchParams.get("page") || "1"));
+    const limit = Math.min(50, Math.max(1, parseInt(searchParams.get("limit") || "10")));
+    const offset = (page - 1) * limit;
+
+    // Users see only their own cases; attorneys see cases assigned to them; admins see all
+    let userCases;
+    if (actorRole === "admin") {
+      userCases = await db
+        .select()
+        .from(cases)
+        .orderBy(desc(cases.updatedAt))
+        .limit(limit)
+        .offset(offset);
+    } else {
+      userCases = await db
+        .select()
+        .from(cases)
+        .where(
+          or(
+            eq(cases.userId, actorId),
+            eq(cases.attorneyId, actorId)
+          )
+        )
+        .orderBy(desc(cases.updatedAt))
+        .limit(limit)
+        .offset(offset);
+    }
 
     return NextResponse.json({
-      cases: paginatedCases,
-      total: mockCases.length,
+      cases: userCases,
       page,
       limit,
-      pages: Math.ceil(mockCases.length / limit),
     });
   } catch (error) {
+    console.error("Failed to fetch cases:", error);
     return NextResponse.json(
       { error: "Failed to fetch cases" },
       { status: 500 }
@@ -56,28 +68,41 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { caseType, category } = body;
+    const actorId = request.headers.get("x-user-id");
 
-    if (!caseType || !category) {
+    if (!actorId) {
       return NextResponse.json(
-        { error: "caseType and category are required" },
-        { status: 400 }
+        { error: "Authentication required" },
+        { status: 401 }
       );
     }
 
-    const newCase = {
-      id: `case-${Date.now()}`,
-      userId: "user-1",
-      caseType,
-      category,
-      status: "Pending Review",
-      createdAt: new Date().toISOString().split("T")[0],
-      lastUpdated: new Date().toISOString().split("T")[0],
-    };
+    const body = await request.json();
+    const parsed = createCaseSchema.parse(body);
+
+    const db = getDb();
+    const caseId = crypto.randomUUID();
+
+    const [newCase] = await db
+      .insert(cases)
+      .values({
+        id: caseId,
+        userId: actorId,
+        caseType: parsed.caseType,
+        category: parsed.category,
+        status: "draft",
+      })
+      .returning();
 
     return NextResponse.json(newCase, { status: 201 });
   } catch (error) {
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        { error: error.issues[0]?.message || "Validation error" },
+        { status: 400 }
+      );
+    }
+    console.error("Failed to create case:", error);
     return NextResponse.json(
       { error: "Failed to create case" },
       { status: 500 }

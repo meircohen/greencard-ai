@@ -1,89 +1,33 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Notification } from "@/lib/store";
 
-// Mock notification data
-const mockNotifications: Notification[] = [
-  {
-    id: "1",
-    type: "deadline",
-    title: "RFE Response Due Soon",
-    description: "Your RFE response for EB-2 case is due in 5 days",
-    timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
-    read: false,
-    actionUrl: "/cases/123",
-  },
-  {
-    id: "2",
-    type: "case_update",
-    title: "Case Status Updated",
-    description: "Your I-140 petition has been approved",
-    timestamp: new Date(Date.now() - 6 * 60 * 60 * 1000),
-    read: false,
-    actionUrl: "/cases/456",
-  },
-  {
-    id: "3",
-    type: "document",
-    title: "New Document Required",
-    description: "Medical examination results needed for your application",
-    timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000),
-    read: true,
-    actionUrl: "/cases/789",
-  },
-  {
-    id: "4",
-    type: "billing",
-    title: "Payment Received",
-    description: "Your subscription payment has been processed successfully",
-    timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
-    read: true,
-  },
-  {
-    id: "5",
-    type: "system",
-    title: "Visa Bulletin Updated",
-    description: "June 2025 visa bulletin is now available",
-    timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
-    read: true,
-  },
-];
+// TODO: Create a notifications table in schema.ts and migrate.
+// Until then, this route returns empty results tied to the authenticated user.
+// The previous mock data was a security/trust risk: it showed fake notifications
+// to all users regardless of identity.
 
-interface CreateNotificationRequest {
-  userId: string;
-  type: "case_update" | "deadline" | "document" | "billing" | "system";
-  title: string;
-  description: string;
-  actionUrl?: string;
-}
-
-// GET - List notifications
 export async function GET(request: NextRequest) {
   try {
-    const searchParams = request.nextUrl.searchParams;
-    const page = parseInt(searchParams.get("page") || "1", 10);
-    const limit = parseInt(searchParams.get("limit") || "10", 10);
-
-    // Validate pagination params
-    if (page < 1 || limit < 1) {
+    const actorId = request.headers.get("x-user-id");
+    if (!actorId) {
       return NextResponse.json(
-        { error: "Invalid pagination parameters" },
-        { status: 400 }
+        { error: "Authentication required" },
+        { status: 401 }
       );
     }
 
-    const startIndex = (page - 1) * limit;
-    const endIndex = startIndex + limit;
+    const searchParams = request.nextUrl.searchParams;
+    const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10));
+    const limit = Math.min(50, Math.max(1, parseInt(searchParams.get("limit") || "10", 10)));
 
-    const paginatedNotifications = mockNotifications.slice(startIndex, endIndex);
-
+    // TODO: Query notifications table filtered by userId
     return NextResponse.json({
       success: true,
-      data: paginatedNotifications,
+      data: [],
       pagination: {
         page,
         limit,
-        total: mockNotifications.length,
-        totalPages: Math.ceil(mockNotifications.length / limit),
+        total: 0,
+        totalPages: 0,
       },
     });
   } catch (error) {
@@ -95,60 +39,30 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST - Create notification
 export async function POST(request: NextRequest) {
   try {
-    const body = (await request.json()) as CreateNotificationRequest;
+    const actorId = request.headers.get("x-user-id");
+    const actorRole = request.headers.get("x-user-role");
 
-    // Validate required fields
-    if (!body.userId || !body.type || !body.title || !body.description) {
+    if (!actorId) {
       return NextResponse.json(
-        {
-          error: "Missing required fields: userId, type, title, description",
-        },
-        { status: 400 }
+        { error: "Authentication required" },
+        { status: 401 }
       );
     }
 
-    // Validate notification type
-    const validTypes = [
-      "case_update",
-      "deadline",
-      "document",
-      "billing",
-      "system",
-    ];
-    if (!validTypes.includes(body.type)) {
+    // Only admins and system processes can create notifications for other users
+    if (actorRole !== "admin") {
       return NextResponse.json(
-        {
-          error: `Invalid notification type. Must be one of: ${validTypes.join(", ")}`,
-        },
-        { status: 400 }
+        { error: "Insufficient permissions" },
+        { status: 403 }
       );
     }
 
-    // Create new notification
-    const newNotification: Notification = {
-      id: Math.random().toString(36).substr(2, 9),
-      type: body.type,
-      title: body.title,
-      description: body.description,
-      timestamp: new Date(),
-      read: false,
-      actionUrl: body.actionUrl,
-    };
-
-    // In a real application, this would be saved to a database
-    // For now, we just add it to our mock array
-    mockNotifications.unshift(newNotification);
-
+    // TODO: Insert into notifications table
     return NextResponse.json(
-      {
-        success: true,
-        data: newNotification,
-        message: "Notification created successfully",
-      },
-      { status: 201 }
+      { error: "Notifications system not yet implemented" },
+      { status: 501 }
     );
   } catch (error) {
     console.error("Error creating notification:", error);

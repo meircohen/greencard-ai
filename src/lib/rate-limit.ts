@@ -144,3 +144,27 @@ export const API_TIER = {
   limit: 120,
   window: 60, // 120 requests per minute
 };
+
+/** Auth endpoints: 5 attempts per 15 minutes (brute force protection) */
+export const AUTH_TIER = {
+  limit: 5,
+  window: 900, // 15 minutes
+};
+
+/** Password reset: 3 requests per hour */
+export const PASSWORD_RESET_TIER = {
+  limit: 3,
+  window: 3600, // 1 hour
+};
+
+/** File upload: 10 per 5 minutes */
+export const UPLOAD_TIER = {
+  limit: 10,
+  window: 300, // 5 minutes
+};
+
+/** Chat/AI: 30 requests per minute */
+export const CHAT_TIER = {
+  limit: 30,
+  window: 60,
+};

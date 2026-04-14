@@ -17,7 +17,7 @@ export const signupSchema = z
     email: z.string().email("Invalid email address"),
     password: z.string().min(8, "Password must be at least 8 characters"),
     confirmPassword: z.string(),
-    role: z.enum(["applicant", "attorney", "agent"]),
+    role: z.enum(["client", "attorney"]),  // Must match DB enum: client|attorney|admin
     barNumber: z.string().optional(),
     barState: z.string().optional(),
     firmName: z.string().optional(),
@@ -28,13 +28,13 @@ export const signupSchema = z
   })
   .refine(
     (data) => {
-      if (data.role === "attorney" || data.role === "agent") {
+      if (data.role === "attorney") {
         return data.barNumber && data.barState;
       }
       return true;
     },
     {
-      message: "Bar number and state are required for attorneys/agents",
+      message: "Bar number and state are required for attorneys",
       path: ["barNumber"],
     }
   );

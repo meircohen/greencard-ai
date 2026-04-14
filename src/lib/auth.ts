@@ -1,13 +1,14 @@
 import { jwtVerify, SignJWT } from "jose";
 import * as bcrypt from "bcryptjs";
 import { NextRequest } from "next/server";
+import { generateJti, isTokenRevoked, isUserTokenRevoked } from "./session";
 
 // Types
 export interface AuthUser {
   id: string;
   email: string;
   name: string;
-  role: "immigrant" | "attorney" | "admin";
+  role: "client" | "attorney" | "admin";  // Must match DB enum: userRoleEnum
 }
 
 export interface Session {
@@ -45,7 +46,7 @@ export async function verifyPassword(
   return bcrypt.compare(password, hashedPassword);
 }
 
-// Create JWT token
+// Create JWT token with jti for revocation support
 export async function createJWT(user: AuthUser): Promise<string> {
   const secret = getSecret();
   const expiresAt = new Date(Date.now() + SESSION_EXPIRY_DAYS * 24 * 60 * 60 * 1000);
@@ -57,18 +58,45 @@ export async function createJWT(user: AuthUser): Promise<string> {
     role: user.role,
   })
     .setProtectedHeader({ alg: "HS256" })
+    .setJti(generateJti())
+    .setIssuedAt()
+    .setIssuer("greencard-ai")
+    .setAudience("greencard-ai")
     .setExpirationTime(expiresAt)
     .sign(secret);
 
   return token;
 }
 
-// Verify JWT token
+// Verify JWT token with revocation checks
 export async function verifyJWT(token: string): Promise<AuthUser | null> {
   try {
     const secret = getSecret();
-    const verified = await jwtVerify(token, secret);
-    return verified.payload as unknown as AuthUser;
+    const verified = await jwtVerify(token, secret, {
+      issuer: "greencard-ai",
+      audience: "greencard-ai",
+    });
+
+    const payload = verified.payload;
+
+    // Check if this specific token has been revoked by jti
+    if (payload.jti && isTokenRevoked(payload.jti)) {
+      return null;
+    }
+
+    // Check if all tokens for this user were revoked (e.g. password change)
+    const userId = payload.id as string;
+    const issuedAt = (payload.iat ?? 0) * 1000; // jose uses seconds, we use ms
+    if (userId && isUserTokenRevoked(userId, issuedAt)) {
+      return null;
+    }
+
+    return {
+      id: userId,
+      email: payload.email as string,
+      name: payload.name as string,
+      role: payload.role as "client" | "attorney" | "admin",
+    };
   } catch {
     return null;
   }

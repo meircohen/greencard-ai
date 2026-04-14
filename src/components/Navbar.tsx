@@ -8,10 +8,10 @@ import { LanguageSwitcher } from "./LanguageSwitcher";
 
 const navLinks = [
   { label: "Home", href: "/" },
-  { label: "AI Advisor", href: "/advisor" },
+  { label: "Chat", href: "/chat" },
   { label: "Assessment", href: "/assessment" },
   { label: "Visa Bulletin", href: "/visa-bulletin" },
-  { label: "Costs", href: "/costs" },
+  { label: "Cost Calculator", href: "/cost-calculator" },
   { label: "Dashboard", href: "/dashboard" },
 ];
 

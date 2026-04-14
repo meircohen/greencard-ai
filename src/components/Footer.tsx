@@ -2,18 +2,15 @@ import React from "react";
 import Link from "next/link";
 
 const platformLinks = [
-  { label: "AI Advisor", href: "/advisor" },
+  { label: "Document Assistant", href: "/chat" },
   { label: "Assessment Tool", href: "/assessment" },
   { label: "Visa Bulletin", href: "/visa-bulletin" },
-  { label: "Cost Calculator", href: "/costs" },
+  { label: "Cost Calculator", href: "/cost-calculator" },
   { label: "Our Attorney", href: "/attorneys" },
 ];
 
 const resourceLinks = [
-  { label: "Documentation", href: "/docs" },
-  { label: "FAQ", href: "/faq" },
   { label: "Blog", href: "/blog" },
-  { label: "Community", href: "/community" },
 ];
 
 const companyLinks = [

@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import DOMPurify from "isomorphic-dompurify";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Card } from "@/components/ui/Card";
@@ -336,7 +337,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
               <Card className="bg-surface/50 border-white/[0.06] p-8">
                 <div
                   className="prose prose-invert max-w-none text-slate-300"
-                  dangerouslySetInnerHTML={{ __html: post.content }}
+                  dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content) }}
                 />
               </Card>
 

@@ -1,5 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
+import {
+  generateCsrfToken,
+  validateCsrf,
+  setCsrfCookie,
+  requiresCsrfValidation,
+  isCsrfExempt,
+} from "@/lib/csrf";
 
 // Public page routes (no auth required)
 const publicPageRoutes = [
@@ -30,6 +37,7 @@ const publicApiRoutes = [
   "/api/data/cost-calculator",
   "/api/contact",
   "/api/billing/webhook", // Stripe webhooks verify their own signature
+  "/api/chat",            // Chat OPTIONS endpoint for health check
 ];
 
 export async function middleware(request: NextRequest) {
@@ -42,8 +50,19 @@ export async function middleware(request: NextRequest) {
       (route) => pathname === route || pathname.startsWith(route + "/")
     );
 
-    if (isPublicApi) {
+    // For public API routes that are GET/OPTIONS, pass through
+    if (isPublicApi && (request.method === "GET" || request.method === "OPTIONS" || request.method === "HEAD")) {
       return NextResponse.next();
+    }
+
+    // For public API POST routes (login, signup, contact, webhook), skip auth but still set CSRF
+    if (isPublicApi) {
+      const response = NextResponse.next();
+      // Set CSRF cookie if not present
+      if (!request.cookies.get("gc-csrf")?.value) {
+        setCsrfCookie(response, generateCsrfToken());
+      }
+      return response;
     }
 
     // All other API routes require authentication
@@ -55,14 +74,31 @@ export async function middleware(request: NextRequest) {
       );
     }
 
+    // CSRF validation for state-changing requests on authenticated routes
+    if (requiresCsrfValidation(request) && !isCsrfExempt(pathname)) {
+      if (!validateCsrf(request)) {
+        return NextResponse.json(
+          { error: "Invalid or missing CSRF token" },
+          { status: 403 }
+        );
+      }
+    }
+
     // Pass user info via headers (ID only, not email/PII)
     const requestHeaders = new Headers(request.headers);
     requestHeaders.set("x-user-id", session.user.id);
     requestHeaders.set("x-user-role", session.user.role);
 
-    return NextResponse.next({
+    const response = NextResponse.next({
       request: { headers: requestHeaders },
     });
+
+    // Ensure CSRF cookie is always set for authenticated users
+    if (!request.cookies.get("gc-csrf")?.value) {
+      setCsrfCookie(response, generateCsrfToken());
+    }
+
+    return response;
   }
 
   // Check if page route is public
@@ -71,7 +107,12 @@ export async function middleware(request: NextRequest) {
   });
 
   if (isPublicPage) {
-    return NextResponse.next();
+    const response = NextResponse.next();
+    // Set CSRF cookie on page loads so JS can read it
+    if (!request.cookies.get("gc-csrf")?.value) {
+      setCsrfCookie(response, generateCsrfToken());
+    }
+    return response;
   }
 
   // All other page routes require authentication
@@ -89,9 +130,15 @@ export async function middleware(request: NextRequest) {
   requestHeaders.set("x-user-id", session.user.id);
   requestHeaders.set("x-user-role", session.user.role);
 
-  return NextResponse.next({
+  const response = NextResponse.next({
     request: { headers: requestHeaders },
   });
+
+  if (!request.cookies.get("gc-csrf")?.value) {
+    setCsrfCookie(response, generateCsrfToken());
+  }
+
+  return response;
 }
 
 export const config = {

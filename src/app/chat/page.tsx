@@ -56,7 +56,7 @@ export default function ChatPage() {
     const checkAPI = async () => {
       try {
         const response = await fetch('/api/chat', {
-          method: 'HEAD',
+          method: 'OPTIONS',
         });
         setApiAvailable(response.ok);
         if (!response.ok) {
@@ -77,7 +77,7 @@ export default function ChatPage() {
     const welcomeMessage: Message = {
       id: '0',
       type: 'ai',
-      content: `Hello! I'm your GreenCard AI Assistant. I'm currently in demo mode, but I can still help you understand your visa options! Let me ask you some questions about your immigration situation.`,
+      content: `Hello! I'm your GreenCard Document Assistant. I'm currently in demo mode, but I can help you understand your options. Note: I am not a lawyer and cannot provide legal advice. Let me ask you some questions about your immigration situation.`,
       timestamp: new Date(),
     };
     setMessages([welcomeMessage]);
@@ -155,14 +155,36 @@ export default function ChatPage() {
 
           let aiContent = '';
           const aiMessageId = Date.now().toString();
+          let buffer = '';
 
           const decoder = new TextDecoder();
           while (true) {
             const { done, value } = await reader.read();
             if (done) break;
 
-            const chunk = decoder.decode(value);
-            aiContent += chunk;
+            buffer += decoder.decode(value, { stream: true });
+
+            // Parse SSE frames: split on double newline
+            const frames = buffer.split('\n\n');
+            // Keep the last incomplete frame in the buffer
+            buffer = frames.pop() || '';
+
+            for (const frame of frames) {
+              if (!frame.startsWith('data: ')) continue;
+              const jsonStr = frame.slice(6); // Remove "data: " prefix
+              try {
+                const parsed = JSON.parse(jsonStr);
+                if (parsed.type === 'text' && parsed.text) {
+                  aiContent += parsed.text;
+                } else if (parsed.type === 'error') {
+                  aiContent += `\n\nError: ${parsed.error}`;
+                } else if (parsed.type === 'done') {
+                  // Stream complete
+                }
+              } catch {
+                // Skip malformed frames
+              }
+            }
 
             setMessages((prev) => {
               const lastMessage = prev[prev.length - 1];
@@ -221,7 +243,7 @@ export default function ChatPage() {
               <span className="text-white font-bold text-lg">G</span>
             </div>
             <div>
-              <h1 className="text-lg font-semibold text-primary">GreenCard AI Advisor</h1>
+              <h1 className="text-lg font-semibold text-primary">GreenCard Document Assistant</h1>
               <div className="flex items-center gap-2 text-sm">
                 <div className="w-2 h-2 rounded-full bg-green-brand animate-pulse-glow" />
                 <span className="text-secondary">Online</span>

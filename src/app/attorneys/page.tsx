@@ -9,32 +9,10 @@ import { Badge } from "@/components/ui/Badge";
 import { CheckCircle2, Star, Phone, Mail, MapPin } from "lucide-react";
 import { PARTNER_FIRM } from "@/lib/partner";
 
-const testimonials = [
-  {
-    name: "Maria Lopez",
-    role: "Client",
-    content:
-      "The combination of AI preparation and attorney review gave me confidence throughout my case. Everything was seamless and professional.",
-    avatar: "ML",
-    avatarColor: "bg-pink-500",
-  },
-  {
-    name: "James Chen",
-    role: "Client",
-    content:
-      "Best investment I made for my immigration journey. The AI did the heavy lifting and the attorney handled the critical parts perfectly.",
-    avatar: "JC",
-    avatarColor: "bg-blue-500",
-  },
-  {
-    name: "Sofia Rodriguez",
-    role: "Client",
-    content:
-      "Fast, efficient, and genuinely helpful. My attorney understood exactly what I needed and guided me through every step.",
-    avatar: "SR",
-    avatarColor: "bg-purple-500",
-  },
-];
+// Testimonials removed: do not display client testimonials until real,
+// verified reviews are collected post-launch. Fake testimonials violate
+// FTC guidelines and undermine trust in a legal product.
+const testimonials: { name: string; role: string; content: string; avatar: string; avatarColor: string }[] = [];
 
 const trustBadges = [
   "Licensed in Florida",

@@ -1,50 +1,39 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getDb } from "@/lib/db";
+import { cases } from "@/lib/db/schema";
+import { eq, and, or } from "drizzle-orm";
+import { z } from "zod";
 
-const mockCaseDetails: Record<string, any> = {
-  "case-001": {
-    id: "case-001",
-    userId: "user-1",
-    caseType: "EB-2",
-    category: "Employment-Based",
-    status: "In Progress",
-    createdAt: "2024-01-15",
-    lastUpdated: "2024-04-10",
-    events: [
-      {
-        id: "evt-1",
-        date: "2024-04-10",
-        type: "Document Upload",
-        description: "I-140 petition uploaded",
-      },
-    ],
-    documents: [
-      {
-        id: "doc-1",
-        name: "I-140 Petition",
-        uploadedAt: "2024-04-10",
-        status: "Submitted",
-      },
-    ],
-  },
-  "case-002": {
-    id: "case-002",
-    userId: "user-1",
-    caseType: "Family-Based",
-    category: "Spousal Sponsorship",
-    status: "In Progress",
-    events: [],
-    documents: [],
-  },
-  "case-003": {
-    id: "case-003",
-    userId: "user-1",
-    caseType: "EB-1A",
-    category: "Employment-Based",
-    status: "Pending Review",
-    events: [],
-    documents: [],
-  },
-};
+/**
+ * Helper: fetch a case with ownership check.
+ * Returns the case if the actor owns it, is the assigned attorney, or is an admin.
+ * Returns null otherwise (caller should return 404 to avoid leaking case existence).
+ */
+async function getCaseForActor(caseId: string, actorId: string, actorRole: string | null) {
+  const db = getDb();
+
+  if (actorRole === "admin") {
+    return db.query.cases.findFirst({
+      where: eq(cases.id, caseId),
+    });
+  }
+
+  return db.query.cases.findFirst({
+    where: and(
+      eq(cases.id, caseId),
+      or(
+        eq(cases.userId, actorId),
+        eq(cases.attorneyId, actorId)
+      )
+    ),
+  });
+}
+
+const updateCaseSchema = z.object({
+  caseType: z.string().optional(),
+  category: z.string().optional(),
+  status: z.enum(["draft", "submitted", "processing", "approved", "denied", "abandoned", "completed"]).optional(),
+}).strict();
 
 export async function GET(
   request: NextRequest,
@@ -52,12 +41,23 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const caseData = mockCaseDetails[id];
+    const actorId = request.headers.get("x-user-id");
+    const actorRole = request.headers.get("x-user-role");
+
+    if (!actorId) {
+      return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+    }
+
+    const caseData = await getCaseForActor(id, actorId, actorRole);
     if (!caseData) {
       return NextResponse.json({ error: "Case not found" }, { status: 404 });
     }
-    return NextResponse.json(caseData);
+
+    return NextResponse.json(caseData, {
+      headers: { "Cache-Control": "private, no-store" },
+    });
   } catch (error) {
+    console.error("Failed to fetch case:", error);
     return NextResponse.json(
       { error: "Failed to fetch case" },
       { status: 500 }
@@ -71,20 +71,41 @@ export async function PATCH(
 ) {
   try {
     const { id } = await params;
-    const caseData = mockCaseDetails[id];
-    if (!caseData) {
+    const actorId = request.headers.get("x-user-id");
+    const actorRole = request.headers.get("x-user-role");
+
+    if (!actorId) {
+      return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+    }
+
+    // Verify ownership before allowing update
+    const existing = await getCaseForActor(id, actorId, actorRole);
+    if (!existing) {
       return NextResponse.json({ error: "Case not found" }, { status: 404 });
     }
 
     const body = await request.json();
-    const updated = {
-      ...caseData,
-      ...body,
-      lastUpdated: new Date().toISOString().split("T")[0],
-    };
+    const parsed = updateCaseSchema.parse(body);
+
+    const db = getDb();
+    const [updated] = await db
+      .update(cases)
+      .set({
+        ...parsed,
+        updatedAt: new Date(),
+      })
+      .where(eq(cases.id, id))
+      .returning();
 
     return NextResponse.json(updated);
   } catch (error) {
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        { error: error.issues[0]?.message || "Validation error" },
+        { status: 400 }
+      );
+    }
+    console.error("Failed to update case:", error);
     return NextResponse.json(
       { error: "Failed to update case" },
       { status: 500 }
@@ -98,18 +119,33 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
-    const caseData = mockCaseDetails[id];
-    if (!caseData) {
+    const actorId = request.headers.get("x-user-id");
+    const actorRole = request.headers.get("x-user-role");
+
+    if (!actorId) {
+      return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+    }
+
+    // Only case owner or admin can delete
+    const existing = await getCaseForActor(id, actorId, actorRole);
+    if (!existing) {
       return NextResponse.json({ error: "Case not found" }, { status: 404 });
     }
+
+    const db = getDb();
+    await db
+      .update(cases)
+      .set({ status: "abandoned", updatedAt: new Date() })
+      .where(eq(cases.id, id));
 
     return NextResponse.json({
       success: true,
       message: "Case archived successfully",
     });
   } catch (error) {
+    console.error("Failed to archive case:", error);
     return NextResponse.json(
-      { error: "Failed to delete case" },
+      { error: "Failed to archive case" },
       { status: 500 }
     );
   }

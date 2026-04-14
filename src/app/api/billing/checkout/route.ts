@@ -14,6 +14,16 @@ const getPriceIds = (): Record<string, string> => ({
 
 export async function POST(request: NextRequest) {
   try {
+    // SAFETY: Checkout is disabled until webhook handlers properly update
+    // subscription/entitlement state in the database. Without this, users
+    // can be charged with no entitlement granted. See billing/webhook/route.ts.
+    if (!process.env.STRIPE_BILLING_ENABLED) {
+      return NextResponse.json(
+        { error: "Billing is not yet available. Please check back soon." },
+        { status: 503 }
+      );
+    }
+
     // Verify Stripe key is configured first
     if (!process.env.STRIPE_SECRET_KEY) {
       return NextResponse.json(

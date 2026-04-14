@@ -1,12 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
+import { z } from "zod";
 import { INTERVIEW_PREP_PROMPT } from "@/lib/ai/prompts";
+import { safeErrorResponse } from "@/lib/errors";
 
-interface InterviewPrepRequest {
-  caseType: string;
-  caseData?: Record<string, unknown>;
-  interviewType?: string;
-}
+const interviewPrepSchema = z.object({
+  caseType: z.string().min(1).max(100),
+  caseData: z.record(z.string(), z.unknown()).optional(),
+  interviewType: z.string().max(100).optional(),
+});
 
 interface InterviewQuestion {
   question: string;
@@ -94,14 +96,15 @@ Return a JSON object with:
 
 export async function POST(request: NextRequest): Promise<Response> {
   try {
-    const body: InterviewPrepRequest = await request.json();
-
-    if (!body.caseType) {
+    const raw = await request.json();
+    const parsed = interviewPrepSchema.safeParse(raw);
+    if (!parsed.success) {
       return NextResponse.json(
-        { error: "caseType is required" },
+        { error: parsed.error.issues[0]?.message || "Invalid request" },
         { status: 400 }
       );
     }
+    const body = parsed.data;
 
     const {
       questions,
@@ -133,15 +136,7 @@ export async function POST(request: NextRequest): Promise<Response> {
 
     return NextResponse.json(response);
   } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : "An unexpected error occurred";
-
-    return NextResponse.json(
-      {
-        error: "Interview prep generation failed",
-        details: errorMessage,
-      },
-      { status: 500 }
+    return safeErrorResponse(error, "Interview prep generation failed. Please try again."
     );
   }
 }

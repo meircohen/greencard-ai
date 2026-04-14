@@ -1,12 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
+import { z } from "zod";
 import { DOCUMENT_REVIEW_PROMPT } from "@/lib/ai/prompts";
+import { safeErrorResponse } from "@/lib/errors";
 
-interface DocumentReviewRequest {
-  documentType: string;
-  extractedText: string;
-  caseData?: Record<string, unknown>;
-}
+const docReviewSchema = z.object({
+  documentType: z.string().min(1).max(100),
+  extractedText: z.string().min(1).max(100000),
+  caseData: z.record(z.string(), z.unknown()).optional(),
+});
 
 interface ReviewIssue {
   category: string;
@@ -89,14 +91,15 @@ Return a JSON object with:
 
 export async function POST(request: NextRequest): Promise<Response> {
   try {
-    const body: DocumentReviewRequest = await request.json();
-
-    if (!body.documentType || !body.extractedText) {
+    const raw = await request.json();
+    const parsed = docReviewSchema.safeParse(raw);
+    if (!parsed.success) {
       return NextResponse.json(
-        { error: "documentType and extractedText are required" },
+        { error: parsed.error.issues[0]?.message || "Invalid request" },
         { status: 400 }
       );
     }
+    const body = parsed.data;
 
     const review = await reviewDocument(
       body.documentType,
@@ -118,15 +121,6 @@ export async function POST(request: NextRequest): Promise<Response> {
       },
     });
   } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : "An unexpected error occurred";
-
-    return NextResponse.json(
-      {
-        error: "Document review failed",
-        details: errorMessage,
-      },
-      { status: 500 }
-    );
+    return safeErrorResponse(error, "Document review failed. Please try again.");
   }
 }

@@ -6,7 +6,7 @@ export interface User {
   id: string;
   email: string;
   name: string;
-  role: "user" | "attorney" | "admin";
+  role: "client" | "attorney" | "admin";  // Must match DB enum
   avatar?: string;
   phone?: string;
   timezone?: string;

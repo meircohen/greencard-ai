@@ -5,6 +5,8 @@ import { getDb } from "@/lib/db";
 import { users } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import crypto from "crypto";
+import { createVerificationToken } from "@/app/api/auth/verify-email/route";
+import { sendEmail, emailVerificationEmail } from "@/lib/email";
 
 const signupSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -15,7 +17,7 @@ const signupSchema = z.object({
     .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
     .regex(/[a-z]/, "Password must contain at least one lowercase letter")
     .regex(/[0-9]/, "Password must contain at least one number"),
-  role: z.enum(["immigrant", "attorney"]),
+  role: z.enum(["client", "attorney"]),
   barNumber: z.string().optional(),
   barState: z.string().optional(),
   firmName: z.string().optional(),
@@ -66,7 +68,7 @@ export async function POST(request: NextRequest) {
         email: emailLower,
         fullName: parsedData.name,
         passwordHash: hashedPassword,
-        role: parsedData.role === "attorney" ? "attorney" : "client",
+        role: parsedData.role,  // Already validated as "client" | "attorney" by Zod
       })
       .returning({
         id: users.id,
@@ -75,17 +77,25 @@ export async function POST(request: NextRequest) {
         role: users.role,
       });
 
-    // Create JWT token
+    // Send verification email
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    const rawToken = createVerificationToken(newUser.id, newUser.email);
+    const verifyUrl = `${baseUrl}/api/auth/verify-email?token=${rawToken}`;
+    const emailPayload = emailVerificationEmail(verifyUrl);
+    emailPayload.to = newUser.email;
+    await sendEmail(emailPayload);
+
+    // Create JWT token (user can use the app, but some features may require verification)
     const token = await createJWT({
       id: newUser.id,
       email: newUser.email,
       name: newUser.fullName || parsedData.name,
-      role: newUser.role as "immigrant" | "attorney" | "admin",
+      role: newUser.role as "client" | "attorney" | "admin",
     });
 
     // Create response
     const response = NextResponse.json(
-      { user: newUser },
+      { user: newUser, message: "Account created. Please check your email to verify your address." },
       { status: 201 }
     );
 

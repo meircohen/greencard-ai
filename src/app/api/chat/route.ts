@@ -1,18 +1,44 @@
 import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
+import { z } from "zod";
 import { INTAKE_SYSTEM_PROMPT } from "@/lib/ai/prompts";
 import * as uscisData from "@/lib/uscis-data";
+import { safeErrorResponse } from "@/lib/errors";
 
-interface Message {
-  role: "user" | "assistant";
-  content: string;
+const messageSchema = z.object({
+  role: z.enum(["user", "assistant"]),
+  content: z.string().min(1).max(4000, "Message too long"),
+});
+
+const chatRequestSchema = z.object({
+  messages: z.array(messageSchema).min(1).max(50, "Too many messages"),
+  userData: z.record(z.string(), z.unknown()).optional(),
+  conversationId: z.string().max(100, "ID too long").optional(),
+  mode: z.enum(["intake", "assessment", "form-fill", "interview-prep"]).optional(),
+});
+
+// Patterns that indicate prompt injection attempts
+const INJECTION_PATTERNS = [
+  /ignore\s+(all\s+)?previous\s+instructions/i,
+  /you\s+are\s+now\s+/i,
+  /system\s*:\s*/i,
+  /\bact\s+as\b/i,
+  /\badmin\s+override\b/i,
+  /\bdev\s+mode\b/i,
+  /\bjailbreak\b/i,
+  /\bDAN\b/,
+  /do\s+anything\s+now/i,
+];
+
+function sanitizeMessage(content: string): string {
+  // Truncate overly long messages (Zod enforces 4000 but defense in depth)
+  const truncated = content.slice(0, 4000);
+  // Strip null bytes and control characters (keep newlines/tabs)
+  return truncated.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, "");
 }
 
-interface ChatRequestBody {
-  messages: Message[];
-  userData?: Record<string, unknown>;
-  conversationId?: string;
-  mode?: "intake" | "assessment" | "form-fill" | "interview-prep";
+function containsInjection(content: string): boolean {
+  return INJECTION_PATTERNS.some((pattern) => pattern.test(content));
 }
 
 // Rate limit placeholder - implement with Redis in production
@@ -87,21 +113,36 @@ export async function POST(request: NextRequest): Promise<Response> {
       );
     }
 
-    // Parse request body
-    const body: ChatRequestBody = await request.json();
-
-    if (!body.messages || !Array.isArray(body.messages)) {
+    // Parse and validate request body
+    const raw = await request.json();
+    const parsed = chatRequestSchema.safeParse(raw);
+    if (!parsed.success) {
       return NextResponse.json(
-        { error: "messages array is required" },
+        { error: parsed.error.issues[0]?.message || "Invalid request" },
         { status: 400 }
       );
     }
+    const body = parsed.data;
 
     // Get client identifier (simplified)
     const clientId =
       body.conversationId ||
       request.headers.get("x-forwarded-for") ||
       "unknown";
+
+    // Sanitize all user messages and flag injection attempts
+    const sanitizedMessages = body.messages.map((msg) => ({
+      ...msg,
+      content: sanitizeMessage(msg.content),
+    }));
+
+    // Log injection attempts (don't block, the system prompt handles it)
+    const lastUserMsg = sanitizedMessages.filter((m) => m.role === "user").pop();
+    if (lastUserMsg && containsInjection(lastUserMsg.content)) {
+      console.warn(
+        `[prompt-injection] Potential injection detected from ${clientId}: ${lastUserMsg.content.slice(0, 100)}`
+      );
+    }
 
     // Rate limiting check
     if (!checkRateLimit(clientId)) {
@@ -116,8 +157,8 @@ export async function POST(request: NextRequest): Promise<Response> {
     // Build contextual system prompt
     const systemPrompt = buildContextualSystemPrompt(body.mode, body.userData);
 
-    // Prepare messages for Claude
-    const messages = body.messages.map((msg) => ({
+    // Prepare messages for Claude (using sanitized input)
+    const messages = sanitizedMessages.map((msg) => ({
       role: msg.role,
       content: msg.content,
     }));
@@ -186,16 +227,7 @@ export async function POST(request: NextRequest): Promise<Response> {
       },
     });
   } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : "An unexpected error occurred";
-
-    return NextResponse.json(
-      {
-        error: "Internal server error",
-        details: errorMessage,
-      },
-      { status: 500 }
-    );
+    return safeErrorResponse(error, "Chat service encountered an error. Please try again.");
   }
 }
 

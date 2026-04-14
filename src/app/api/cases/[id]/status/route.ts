@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { cases as casesTable } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
+import { eq, and, or } from 'drizzle-orm';
 import { checkCaseStatus } from '@/lib/scrapers/case-status';
 
 interface CacheEntry {
@@ -43,18 +43,37 @@ export async function GET(
         },
         {
           headers: {
-            'Cache-Control': 'public, max-age=3600',
+            'Cache-Control': 'private, no-store',
           },
         }
       );
     }
 
-    // Fetch case from database
+    // Verify authenticated user owns this case
+    const actorId = request.headers.get('x-user-id');
+    const actorRole = request.headers.get('x-user-role');
+    if (!actorId) {
+      return NextResponse.json(
+        { error: 'Authentication required' },
+        { status: 401 }
+      );
+    }
+
+    // Fetch case with ownership check (user must be case owner or assigned attorney)
     const caseRecord = await db.query.cases.findFirst({
-      where: eq(casesTable.id, caseId),
+      where: actorRole === 'admin'
+        ? eq(casesTable.id, caseId)
+        : and(
+            eq(casesTable.id, caseId),
+            or(
+              eq(casesTable.userId, actorId),
+              eq(casesTable.attorneyId, actorId)
+            )
+          ),
     });
 
     if (!caseRecord) {
+      // Return 404 (not 403) to avoid leaking case existence
       return NextResponse.json(
         { error: 'Case not found' },
         { status: 404 }
@@ -102,7 +121,7 @@ export async function GET(
       },
       {
         headers: {
-          'Cache-Control': 'public, max-age=3600',
+          'Cache-Control': 'private, no-store',
         },
       }
     );

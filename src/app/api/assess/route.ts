@@ -2,11 +2,15 @@ import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { ASSESSMENT_SYSTEM_PROMPT } from "@/lib/ai/prompts";
 import * as uscisData from "@/lib/uscis-data";
+import { z } from "zod";
+import { safeErrorResponse } from "@/lib/errors";
 
-interface AssessmentRequest {
-  intakeData: Record<string, unknown>;
-  conversationHistory?: string;
-}
+const assessSchema = z.object({
+  intakeData: z.record(z.string(), z.unknown()).refine((v) => Object.keys(v).length > 0, {
+    message: "intakeData must not be empty",
+  }),
+  conversationHistory: z.string().max(50000).optional(),
+});
 
 interface AssessmentResult {
   eligiblePaths: Array<{
@@ -128,14 +132,15 @@ export async function POST(request: NextRequest): Promise<Response> {
       );
     }
 
-    const body: AssessmentRequest = await request.json();
-
-    if (!body.intakeData || typeof body.intakeData !== "object") {
+    const raw = await request.json();
+    const parsed = assessSchema.safeParse(raw);
+    if (!parsed.success) {
       return NextResponse.json(
-        { error: "intakeData object is required" },
+        { error: parsed.error.issues[0]?.message || "Invalid request" },
         { status: 400 }
       );
     }
+    const body = parsed.data;
 
     const client = new Anthropic({ apiKey });
 
@@ -190,15 +195,6 @@ export async function POST(request: NextRequest): Promise<Response> {
       },
     });
   } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : "An unexpected error occurred";
-
-    return NextResponse.json(
-      {
-        error: "Assessment failed",
-        details: errorMessage,
-      },
-      { status: 500 }
-    );
+    return safeErrorResponse(error, "Assessment failed. Please try again.");
   }
 }

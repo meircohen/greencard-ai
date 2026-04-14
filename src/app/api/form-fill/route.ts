@@ -1,14 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
+import { z } from "zod";
 import { FORM_FILL_SYSTEM_PROMPT } from "@/lib/ai/prompts";
+import { safeErrorResponse } from "@/lib/errors";
 
-interface FormFillRequest {
-  action: "auto-fill" | "validate" | "suggest";
-  formNumber: string;
-  formData?: Record<string, unknown>;
-  documents?: Array<{ type: string; extractedText: string }>;
-  caseData?: Record<string, unknown>;
-}
+const formFillSchema = z.object({
+  action: z.enum(["auto-fill", "validate", "suggest"]),
+  formNumber: z.string().min(1).max(20),
+  formData: z.record(z.string(), z.unknown()).optional(),
+  documents: z.array(z.object({
+    type: z.string().max(100),
+    extractedText: z.string().max(100000),
+  })).max(20).optional(),
+  caseData: z.record(z.string(), z.unknown()).optional(),
+});
 
 interface ValidationIssue {
   field: string;
@@ -296,14 +301,15 @@ Return a JSON array of objects with:
 
 export async function POST(request: NextRequest): Promise<Response> {
   try {
-    const body: FormFillRequest = await request.json();
-
-    if (!body.action || !body.formNumber) {
+    const raw = await request.json();
+    const parsed = formFillSchema.safeParse(raw);
+    if (!parsed.success) {
       return NextResponse.json(
-        { error: "action and formNumber are required" },
+        { error: parsed.error.issues[0]?.message || "Invalid request" },
         { status: 400 }
       );
     }
+    const body = parsed.data;
 
     const result: FormFillResponse = {
       usage: { inputTokens: 0, outputTokens: 0 },
@@ -342,15 +348,6 @@ export async function POST(request: NextRequest): Promise<Response> {
 
     return NextResponse.json(result);
   } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : "An unexpected error occurred";
-
-    return NextResponse.json(
-      {
-        error: "Form fill operation failed",
-        details: errorMessage,
-      },
-      { status: 500 }
-    );
+    return safeErrorResponse(error, "Form fill operation failed. Please try again.");
   }
 }
