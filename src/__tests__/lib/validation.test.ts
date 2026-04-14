@@ -15,7 +15,7 @@ describe("Validation Schemas", () => {
         password: "securePassword123",
       };
 
-      const result = validate(loginSchema, validData);
+      const result = validate<{ email: string; password: string }>(loginSchema, validData);
       expect(result.success).toBe(true);
       if (result.success) {
         expect(result.data.email).toBe("user@example.com");

@@ -256,7 +256,7 @@ describe("USCIS Form Registry", () => {
 
   describe("validateForm", () => {
     it("should validate entire form data", () => {
-      const form = getFormDefinition("I-130");
+      const form = getFormDefinition("I-130")!;
       const testData = {
         i130_petitioner_name_first: "John",
         i130_petitioner_name_last: "Doe",

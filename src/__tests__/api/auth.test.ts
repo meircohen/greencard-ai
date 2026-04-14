@@ -49,8 +49,8 @@ describe("Authentication API", () => {
     });
 
     it("should reject mismatched passwords", async () => {
-      const password = "SecurePass123!";
-      const confirmPassword = "SecurePass124!";
+      const password: string = "SecurePass123!";
+      const confirmPassword: string = "SecurePass124!";
       expect(password === confirmPassword).toBe(false);
     });
 

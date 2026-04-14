@@ -46,8 +46,8 @@ describe("Data API", () => {
 
       for (const category of validCategories) {
         expect(mockData.employment).toHaveProperty(category);
-        expect(mockData.employment[category]).toHaveProperty("priority");
-        expect(mockData.employment[category]).toHaveProperty("final");
+        expect((mockData.employment as Record<string, unknown>)[category]).toHaveProperty("priority");
+        expect((mockData.employment as Record<string, unknown>)[category]).toHaveProperty("final");
       }
     });
 
@@ -65,8 +65,8 @@ describe("Data API", () => {
 
       for (const category of validCategories) {
         expect(mockData.family).toHaveProperty(category);
-        expect(mockData.family[category]).toHaveProperty("priority");
-        expect(mockData.family[category]).toHaveProperty("final");
+        expect((mockData.family as Record<string, unknown>)[category]).toHaveProperty("priority");
+        expect((mockData.family as Record<string, unknown>)[category]).toHaveProperty("final");
       }
     });
   });
