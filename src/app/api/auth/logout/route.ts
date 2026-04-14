@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
       const secret = new TextEncoder().encode(process.env.NEXTAUTH_SECRET);
       const { payload } = await jwtVerify(token, secret);
       if (payload.jti && payload.exp) {
-        revokeToken(payload.jti, new Date(payload.exp * 1000));
+        await revokeToken(payload.jti, new Date(payload.exp * 1000));
       }
     } catch {
       // Token already invalid, just clear the cookie

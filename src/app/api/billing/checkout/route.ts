@@ -7,9 +7,9 @@ const checkoutSchema = z.object({
   planId: z.enum(["navigator", "guided"]),
 });
 
-const getPriceIds = (): Record<string, string> => ({
-  navigator: process.env.STRIPE_NAVIGATOR_PRICE_ID || "price_1234567890",
-  guided: process.env.STRIPE_GUIDED_PRICE_ID || "price_0987654321",
+const getPriceIds = (): Record<string, string | undefined> => ({
+  navigator: process.env.STRIPE_NAVIGATOR_PRICE_ID,
+  guided: process.env.STRIPE_GUIDED_PRICE_ID,
 });
 
 export async function POST(request: NextRequest) {

@@ -21,7 +21,7 @@ export async function POST(request: NextRequest): Promise<Response> {
       );
     }
 
-    if (isMfaEnabled(userId)) {
+    if (await isMfaEnabled(userId)) {
       return NextResponse.json(
         { error: "MFA is already enabled. Disable it first to reconfigure." },
         { status: 400 }

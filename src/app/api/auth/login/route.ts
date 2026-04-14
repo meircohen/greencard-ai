@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if MFA is required
-    if (isMfaEnabled(user.id)) {
+    if (await isMfaEnabled(user.id)) {
       audit({ action: "auth.login", userId: user.id, ip: client.ip, userAgent: client.userAgent, metadata: { mfaRequired: true } });
 
       // Return a partial auth response; client must complete MFA before getting a session

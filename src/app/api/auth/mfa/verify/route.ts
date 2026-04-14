@@ -40,9 +40,9 @@ export async function POST(request: NextRequest): Promise<Response> {
     let isValid: boolean;
 
     if (parsed.data.type === "backup") {
-      isValid = verifyBackupCode(userId, parsed.data.code);
+      isValid = await verifyBackupCode(userId, parsed.data.code);
     } else {
-      isValid = verifyMfaCode(userId, parsed.data.code);
+      isValid = await verifyMfaCode(userId, parsed.data.code);
     }
 
     if (!isValid) {
@@ -52,10 +52,12 @@ export async function POST(request: NextRequest): Promise<Response> {
       );
     }
 
+    const mfaStatus = await isMfaEnabled(userId);
+
     return NextResponse.json({
       verified: true,
-      mfaEnabled: isMfaEnabled(userId),
-      message: isMfaEnabled(userId)
+      mfaEnabled: mfaStatus,
+      message: mfaStatus
         ? "MFA verification successful."
         : "MFA has been enabled on your account.",
     });

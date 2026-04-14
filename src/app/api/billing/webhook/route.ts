@@ -1,9 +1,40 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
+import { getDb } from "@/lib/db";
+import { subscriptions, payments, users } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
+import { audit } from "@/lib/audit";
+import { logger } from "@/lib/logger";
+
+/**
+ * Idempotency: track processed Stripe event IDs to prevent duplicate handling.
+ * In production this should be a DB table; using a bounded in-memory set for now
+ * with TTL-based cleanup. The Stripe event ID is globally unique.
+ */
+const processedEvents = new Map<string, number>();
+const MAX_PROCESSED = 10000;
+const EVENT_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
+
+function isAlreadyProcessed(eventId: string): boolean {
+  const ts = processedEvents.get(eventId);
+  if (ts && Date.now() - ts < EVENT_TTL_MS) return true;
+
+  // Cleanup old entries if map is getting large
+  if (processedEvents.size > MAX_PROCESSED) {
+    const cutoff = Date.now() - EVENT_TTL_MS;
+    for (const [key, val] of processedEvents) {
+      if (val < cutoff) processedEvents.delete(key);
+    }
+  }
+  return false;
+}
+
+function markProcessed(eventId: string): void {
+  processedEvents.set(eventId, Date.now());
+}
 
 export async function POST(request: NextRequest) {
   try {
-    // Verify environment variables
     if (!process.env.STRIPE_SECRET_KEY || !process.env.STRIPE_WEBHOOK_SECRET) {
       return NextResponse.json(
         { error: "Stripe is not configured" },
@@ -24,67 +55,166 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Verify webhook signature
     let event: Stripe.Event;
     try {
       event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
     } catch (err) {
-      console.error("Webhook signature verification failed:", err);
+      logger.error({ err }, "Webhook signature verification failed");
       return NextResponse.json(
         { error: "Webhook signature verification failed" },
         { status: 400 }
       );
     }
 
-    // Handle different event types
-    switch (event.type) {
-      case "checkout.session.completed":
-        // Handle successful checkout
-        const checkoutSession = event.data.object as Stripe.Checkout.Session;
-        console.log("Checkout completed:", {
-          userId: checkoutSession.client_reference_id,
-          customerId: checkoutSession.customer,
-          metadata: checkoutSession.metadata,
-        });
-        // TODO: Update user subscription in database
-        break;
-
-      case "customer.subscription.updated":
-        // Handle subscription update
-        const subscription = event.data.object as Stripe.Subscription;
-        console.log("Subscription updated:", {
-          subscriptionId: subscription.id,
-          status: subscription.status,
-        });
-        // TODO: Update subscription status in database
-        break;
-
-      case "customer.subscription.deleted":
-        // Handle subscription cancellation
-        const deletedSubscription = event.data.object as Stripe.Subscription;
-        console.log("Subscription deleted:", {
-          subscriptionId: deletedSubscription.id,
-        });
-        // TODO: Update subscription status in database
-        break;
-
-      case "invoice.payment_failed":
-        // Handle failed payment
-        const failedInvoice = event.data.object as Stripe.Invoice;
-        console.log("Payment failed:", {
-          invoiceId: failedInvoice.id,
-          customerId: failedInvoice.customer,
-        });
-        // TODO: Notify user of failed payment
-        break;
-
-      default:
-        console.log("Unhandled event type:", event.type);
+    // Idempotency check: skip if we already processed this event
+    if (isAlreadyProcessed(event.id)) {
+      logger.info({ eventId: event.id }, "Skipping duplicate webhook event");
+      return NextResponse.json({ received: true }, { status: 200 });
     }
 
+    const db = getDb();
+
+    switch (event.type) {
+      case "checkout.session.completed": {
+        const session = event.data.object as Stripe.Checkout.Session;
+        const userId = session.client_reference_id;
+        const planId = session.metadata?.planId;
+
+        if (userId && session.subscription) {
+          // Create or update subscription record
+          const subscriptionId = typeof session.subscription === "string"
+            ? session.subscription
+            : session.subscription.id;
+
+          await db
+            .insert(subscriptions)
+            .values({
+              userId,
+              stripeSubscriptionId: subscriptionId,
+              plan: (planId === "guided" ? "professional" : "starter") as "free" | "starter" | "professional" | "enterprise",
+              status: "active",
+              currentPeriodStart: new Date(),
+              currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+            })
+            .onConflictDoUpdate({
+              target: subscriptions.stripeSubscriptionId,
+              set: {
+                plan: (planId === "guided" ? "professional" : "starter") as "free" | "starter" | "professional" | "enterprise",
+                status: "active",
+                updatedAt: new Date(),
+              },
+            });
+
+          // Record payment
+          if (session.amount_total) {
+            await db.insert(payments).values({
+              userId,
+              stripePaymentId: session.payment_intent as string,
+              amount: (session.amount_total / 100).toFixed(2),
+              currency: session.currency || "USD",
+              status: "completed",
+              description: `Subscription: ${planId}`,
+            });
+          }
+
+          audit({
+            action: "billing.subscription_created",
+            userId,
+            metadata: { planId, subscriptionId },
+          });
+        }
+        break;
+      }
+
+      case "customer.subscription.updated": {
+        const sub = event.data.object as Stripe.Subscription & Record<string, unknown>;
+
+        await db
+          .update(subscriptions)
+          .set({
+            status: sub.status === "active" ? "active" : sub.status,
+            currentPeriodStart: sub.current_period_start ? new Date((sub.current_period_start as number) * 1000) : undefined,
+            currentPeriodEnd: sub.current_period_end ? new Date((sub.current_period_end as number) * 1000) : undefined,
+            updatedAt: new Date(),
+          })
+          .where(eq(subscriptions.stripeSubscriptionId, sub.id));
+
+        audit({
+          action: "billing.subscription_updated",
+          metadata: { subscriptionId: sub.id, status: sub.status },
+        });
+        break;
+      }
+
+      case "customer.subscription.deleted": {
+        const deletedSub = event.data.object as Stripe.Subscription;
+
+        await db
+          .update(subscriptions)
+          .set({
+            status: "canceled",
+            updatedAt: new Date(),
+          })
+          .where(eq(subscriptions.stripeSubscriptionId, deletedSub.id));
+
+        audit({
+          action: "billing.subscription_canceled",
+          metadata: { subscriptionId: deletedSub.id },
+        });
+        break;
+      }
+
+      case "invoice.payment_failed": {
+        const invoice = event.data.object as Stripe.Invoice & Record<string, unknown>;
+        const customerId = typeof invoice.customer === "string"
+          ? invoice.customer
+          : (invoice.customer as { id?: string })?.id;
+
+        const invoiceSub = invoice.subscription as string | { id: string } | null;
+        if (invoiceSub) {
+          const subId = typeof invoiceSub === "string"
+            ? invoiceSub
+            : invoiceSub.id;
+
+          await db
+            .update(subscriptions)
+            .set({
+              status: "past_due",
+              updatedAt: new Date(),
+            })
+            .where(eq(subscriptions.stripeSubscriptionId, subId));
+        }
+
+        // Record failed payment
+        if (invoice.amount_due) {
+          const userId = invoice.metadata?.userId;
+          if (userId) {
+            await db.insert(payments).values({
+              userId,
+              stripePaymentId: invoice.id,
+              amount: (invoice.amount_due / 100).toFixed(2),
+              currency: invoice.currency || "USD",
+              status: "failed",
+              description: "Invoice payment failed",
+            });
+          }
+        }
+
+        audit({
+          action: "billing.payment_failed",
+          metadata: { invoiceId: invoice.id, customerId },
+        });
+        break;
+      }
+
+      default:
+        logger.info({ eventType: event.type }, "Unhandled webhook event type");
+    }
+
+    markProcessed(event.id);
     return NextResponse.json({ received: true }, { status: 200 });
   } catch (error) {
-    console.error("Webhook error:", error);
+    logger.error({ error }, "Webhook processing error");
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

@@ -1,84 +1,83 @@
 import crypto from "crypto";
+import { getDb } from "./db";
+import { revokedTokens, userRevocations as userRevocationsTable } from "./db/schema";
+import { eq } from "drizzle-orm";
 
 /**
  * JWT session denylist for token revocation.
  *
- * Current: in-memory Map (sufficient for single-instance dev/staging).
- * Production: replace with Redis SET + TTL or Postgres table.
- *
- * The denylist stores jti (JWT ID) values of revoked tokens.
- * On every authenticated request, middleware checks if the token's jti
- * is in the denylist. If so, the request is rejected as unauthorized.
+ * Uses DB-backed storage (revoked_tokens and user_revocations tables)
+ * when DATABASE_URL is available, with in-memory fallback for dev.
  */
 
-interface DenylistEntry {
-  revokedAt: number;
-  expiresAt: number; // When the original token expires (cleanup after this)
+// In-memory fallback for dev environments without DB
+const memDenylist = new Map<string, { revokedAt: number; expiresAt: number }>();
+const memUserRevocations = new Map<string, number>();
+
+function useDb(): boolean {
+  return !!process.env.DATABASE_URL;
 }
 
-// TODO: Replace with Redis or Postgres in production
-const denylist = new Map<string, DenylistEntry>();
-
-// Cleanup expired entries every 10 minutes
-const CLEANUP_INTERVAL_MS = 10 * 60 * 1000;
-let lastCleanup = Date.now();
-
-function cleanupExpired() {
-  const now = Date.now();
-  if (now - lastCleanup < CLEANUP_INTERVAL_MS) return;
-
-  for (const [jti, entry] of denylist) {
-    if (now > entry.expiresAt) {
-      denylist.delete(jti);
-    }
-  }
-  lastCleanup = now;
-}
-
-/**
- * Generate a unique JWT ID for new tokens.
- */
 export function generateJti(): string {
   return crypto.randomUUID();
 }
 
 /**
  * Revoke a specific token by its jti.
- * @param jti - The JWT ID to revoke
- * @param tokenExpiresAt - When the token naturally expires (for cleanup)
  */
-export function revokeToken(jti: string, tokenExpiresAt: Date): void {
-  denylist.set(jti, {
-    revokedAt: Date.now(),
-    expiresAt: tokenExpiresAt.getTime(),
-  });
+export async function revokeToken(jti: string, tokenExpiresAt: Date): Promise<void> {
+  if (useDb()) {
+    const db = getDb();
+    await db.insert(revokedTokens).values({
+      jti,
+      expiresAt: tokenExpiresAt,
+    }).onConflictDoNothing();
+  } else {
+    memDenylist.set(jti, { revokedAt: Date.now(), expiresAt: tokenExpiresAt.getTime() });
+  }
 }
 
 /**
- * Revoke all tokens for a user by storing their user ID with a timestamp.
- * Any token issued before this timestamp is considered revoked.
+ * Revoke all tokens for a user issued before now.
  */
-const userRevocations = new Map<string, number>();
-
-export function revokeAllUserTokens(userId: string): void {
-  userRevocations.set(userId, Date.now());
+export async function revokeAllUserTokens(userId: string): Promise<void> {
+  if (useDb()) {
+    const db = getDb();
+    await db
+      .insert(userRevocationsTable)
+      .values({ userId })
+      .onConflictDoUpdate({
+        target: userRevocationsTable.userId,
+        set: { revokedAt: new Date() },
+      });
+  } else {
+    memUserRevocations.set(userId, Date.now());
+  }
 }
 
 /**
  * Check if a specific token has been revoked.
  */
-export function isTokenRevoked(jti: string): boolean {
-  cleanupExpired();
-  return denylist.has(jti);
+export async function isTokenRevoked(jti: string): Promise<boolean> {
+  if (useDb()) {
+    const db = getDb();
+    const [row] = await db.select({ jti: revokedTokens.jti }).from(revokedTokens).where(eq(revokedTokens.jti, jti)).limit(1);
+    return !!row;
+  }
+  return memDenylist.has(jti);
 }
 
 /**
  * Check if a token was issued before the user's last revocation.
- * @param userId - The user ID
- * @param issuedAt - When the token was issued (in ms)
  */
-export function isUserTokenRevoked(userId: string, issuedAt: number): boolean {
-  const revokedAt = userRevocations.get(userId);
+export async function isUserTokenRevoked(userId: string, issuedAt: number): Promise<boolean> {
+  if (useDb()) {
+    const db = getDb();
+    const [row] = await db.select({ revokedAt: userRevocationsTable.revokedAt }).from(userRevocationsTable).where(eq(userRevocationsTable.userId, userId)).limit(1);
+    if (!row) return false;
+    return issuedAt < row.revokedAt.getTime();
+  }
+  const revokedAt = memUserRevocations.get(userId);
   if (!revokedAt) return false;
   return issuedAt < revokedAt;
 }

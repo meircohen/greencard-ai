@@ -80,14 +80,14 @@ export async function verifyJWT(token: string): Promise<AuthUser | null> {
     const payload = verified.payload;
 
     // Check if this specific token has been revoked by jti
-    if (payload.jti && isTokenRevoked(payload.jti)) {
+    if (payload.jti && await isTokenRevoked(payload.jti)) {
       return null;
     }
 
     // Check if all tokens for this user were revoked (e.g. password change)
     const userId = payload.id as string;
     const issuedAt = (payload.iat ?? 0) * 1000; // jose uses seconds, we use ms
-    if (userId && isUserTokenRevoked(userId, issuedAt)) {
+    if (userId && await isUserTokenRevoked(userId, issuedAt)) {
       return null;
     }
 

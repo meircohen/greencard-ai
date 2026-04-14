@@ -1,6 +1,10 @@
 import { authenticator } from "otplib";
 import * as QRCode from "qrcode";
 import crypto from "crypto";
+import { getDb } from "./db";
+import { mfaSettings } from "./db/schema";
+import { eq } from "drizzle-orm";
+import { encryptField, decryptField, type EncryptedField } from "./encryption";
 
 /**
  * TOTP-based Multi-Factor Authentication.
@@ -8,24 +12,21 @@ import crypto from "crypto";
  * Uses otplib v12 (RFC 6238 compliant TOTP) with QR code generation.
  * Compatible with Google Authenticator, Authy, 1Password, etc.
  *
- * Production: store MFA secrets encrypted in DB (use encryption.ts).
- * Current: in-memory for development.
+ * MFA secrets are encrypted at rest using AES-256-GCM (via encryption.ts)
+ * and stored in the mfa_settings DB table.
  */
 
 const APP_NAME = "GreenCard.ai";
 
-interface MfaRecord {
-  secret: string;
-  enabled: boolean;
-  backupCodes: string[];
-}
+// In-memory fallback for environments without PII_ENCRYPTION_KEY (dev)
+const devStore = new Map<string, { secret: string; enabled: boolean; backupCodes: string[] }>();
 
-// TODO: Replace with DB storage (mfa_settings table, secret encrypted with encryption.ts)
-const mfaStore = new Map<string, MfaRecord>();
+function useDb(): boolean {
+  return !!process.env.PII_ENCRYPTION_KEY && !!process.env.DATABASE_URL;
+}
 
 /**
  * Generate a new TOTP secret and QR code for a user.
- * Call this when user initiates MFA setup.
  */
 export async function generateMfaSetup(
   userId: string,
@@ -33,40 +34,75 @@ export async function generateMfaSetup(
 ): Promise<{ secret: string; qrCodeDataUrl: string; backupCodes: string[] }> {
   const secret = authenticator.generateSecret();
 
-  // Generate backup codes (8 codes, 8 chars each)
   const backupCodes: string[] = [];
   for (let i = 0; i < 8; i++) {
-    const code = crypto.randomBytes(4).toString("hex");
-    backupCodes.push(code);
+    backupCodes.push(crypto.randomBytes(4).toString("hex"));
   }
 
-  // Store secret (not yet enabled, user must verify first)
-  mfaStore.set(userId, {
-    secret,
-    enabled: false,
-    backupCodes,
-  });
+  if (useDb()) {
+    const encrypted = encryptField(secret);
+    const db = getDb();
+    await db
+      .insert(mfaSettings)
+      .values({
+        userId,
+        secret: JSON.stringify(encrypted),
+        enabled: false,
+        backupCodes,
+      })
+      .onConflictDoUpdate({
+        target: mfaSettings.userId,
+        set: {
+          secret: JSON.stringify(encrypted),
+          enabled: false,
+          backupCodes,
+          updatedAt: new Date(),
+        },
+      });
+  } else {
+    devStore.set(userId, { secret, enabled: false, backupCodes: [...backupCodes] });
+  }
 
-  // Generate otpauth URI
   const otpauthUrl = authenticator.keyuri(userEmail, APP_NAME, secret);
-
-  // Generate QR code as data URL
   const qrCodeDataUrl = await QRCode.toDataURL(otpauthUrl);
 
   return { secret, qrCodeDataUrl, backupCodes };
 }
 
+async function getRecord(userId: string): Promise<{ secret: string; enabled: boolean; backupCodes: string[] } | null> {
+  if (useDb()) {
+    const db = getDb();
+    const [row] = await db.select().from(mfaSettings).where(eq(mfaSettings.userId, userId)).limit(1);
+    if (!row) return null;
+
+    let secret: string;
+    try {
+      const parsed = JSON.parse(row.secret) as EncryptedField;
+      secret = decryptField(parsed);
+    } catch {
+      secret = row.secret; // Fallback for unencrypted dev data
+    }
+    return { secret, enabled: row.enabled, backupCodes: (row.backupCodes || []) as string[] };
+  }
+  return devStore.get(userId) || null;
+}
+
 /**
  * Verify a TOTP code and enable MFA if this is the setup verification.
  */
-export function verifyMfaCode(userId: string, code: string): boolean {
-  const record = mfaStore.get(userId);
+export async function verifyMfaCode(userId: string, code: string): Promise<boolean> {
+  const record = await getRecord(userId);
   if (!record) return false;
 
   const isValid = authenticator.verify({ token: code, secret: record.secret });
 
   if (isValid && !record.enabled) {
-    record.enabled = true;
+    if (useDb()) {
+      const db = getDb();
+      await db.update(mfaSettings).set({ enabled: true, updatedAt: new Date() }).where(eq(mfaSettings.userId, userId));
+    } else {
+      record.enabled = true;
+    }
   }
 
   return isValid;
@@ -75,39 +111,48 @@ export function verifyMfaCode(userId: string, code: string): boolean {
 /**
  * Verify a backup code (one-time use).
  */
-export function verifyBackupCode(userId: string, code: string): boolean {
-  const record = mfaStore.get(userId);
+export async function verifyBackupCode(userId: string, code: string): Promise<boolean> {
+  const record = await getRecord(userId);
   if (!record) return false;
 
-  const normalizedCode = code.toLowerCase().replace(/\s/g, "");
-  const index = record.backupCodes.indexOf(normalizedCode);
+  const normalized = code.toLowerCase().replace(/\s/g, "");
+  const idx = record.backupCodes.indexOf(normalized);
+  if (idx === -1) return false;
 
-  if (index === -1) return false;
+  record.backupCodes.splice(idx, 1);
 
-  // Remove used backup code
-  record.backupCodes.splice(index, 1);
+  if (useDb()) {
+    const db = getDb();
+    await db.update(mfaSettings).set({ backupCodes: record.backupCodes, updatedAt: new Date() }).where(eq(mfaSettings.userId, userId));
+  }
+
   return true;
 }
 
 /**
  * Check if a user has MFA enabled.
  */
-export function isMfaEnabled(userId: string): boolean {
-  const record = mfaStore.get(userId);
+export async function isMfaEnabled(userId: string): Promise<boolean> {
+  const record = await getRecord(userId);
   return record?.enabled ?? false;
 }
 
 /**
- * Disable MFA for a user (e.g., after password reset or admin action).
+ * Disable MFA for a user.
  */
-export function disableMfa(userId: string): void {
-  mfaStore.delete(userId);
+export async function disableMfa(userId: string): Promise<void> {
+  if (useDb()) {
+    const db = getDb();
+    await db.delete(mfaSettings).where(eq(mfaSettings.userId, userId));
+  } else {
+    devStore.delete(userId);
+  }
 }
 
 /**
  * Get remaining backup codes count.
  */
-export function getBackupCodesCount(userId: string): number {
-  const record = mfaStore.get(userId);
+export async function getBackupCodesCount(userId: string): Promise<number> {
+  const record = await getRecord(userId);
   return record?.backupCodes.length ?? 0;
 }

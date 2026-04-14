@@ -1,8 +1,11 @@
+import { Resend } from "resend";
+import { logger } from "./logger";
+
 /**
- * Email sending stub.
+ * Email service using Resend.
  *
- * Production: replace with SendGrid, AWS SES, Resend, or Postmark.
- * For now, logs to console so the rest of the auth flow can be built end-to-end.
+ * Set RESEND_API_KEY env var to enable real sending.
+ * Without it, logs to console (dev mode).
  */
 
 export interface EmailPayload {
@@ -12,30 +15,46 @@ export interface EmailPayload {
   text?: string;
 }
 
-export async function sendEmail(payload: EmailPayload): Promise<boolean> {
-  const provider = process.env.EMAIL_PROVIDER; // e.g. "sendgrid", "ses", "resend"
+const FROM_ADDRESS = process.env.EMAIL_FROM || "GreenCard.ai <noreply@greencard.ai>";
 
-  if (!provider) {
+export async function sendEmail(payload: EmailPayload): Promise<boolean> {
+  const apiKey = process.env.RESEND_API_KEY;
+
+  if (!apiKey) {
     // Dev/staging: log instead of sending
-    console.log(`[email-stub] To: ${payload.to}`);
-    console.log(`[email-stub] Subject: ${payload.subject}`);
-    console.log(`[email-stub] Body (text): ${payload.text ?? "(html only)"}`);
+    logger.info(
+      { to: payload.to, subject: payload.subject },
+      "Email stub (no RESEND_API_KEY): would send email"
+    );
     return true;
   }
 
-  // TODO: Implement real providers
-  // switch (provider) {
-  //   case "sendgrid": ...
-  //   case "resend": ...
-  // }
+  try {
+    const resend = new Resend(apiKey);
+    const { error } = await resend.emails.send({
+      from: FROM_ADDRESS,
+      to: payload.to,
+      subject: payload.subject,
+      html: payload.html,
+      text: payload.text,
+    });
 
-  console.warn(`[email] Unknown provider "${provider}", email not sent.`);
-  return false;
+    if (error) {
+      logger.error({ error, to: payload.to }, "Failed to send email via Resend");
+      return false;
+    }
+
+    logger.info({ to: payload.to, subject: payload.subject }, "Email sent successfully");
+    return true;
+  } catch (err) {
+    logger.error({ err, to: payload.to }, "Email sending error");
+    return false;
+  }
 }
 
 export function passwordResetEmail(resetUrl: string): EmailPayload & { subject: string; html: string } {
   return {
-    to: "", // caller fills this in
+    to: "",
     subject: "Reset your GreenCard.ai password",
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">

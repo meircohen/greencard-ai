@@ -39,6 +39,10 @@ export type AuditAction =
   | "admin.case_reassigned"
   | "billing.checkout_started"
   | "billing.payment_received"
+  | "billing.subscription_created"
+  | "billing.subscription_updated"
+  | "billing.subscription_canceled"
+  | "billing.payment_failed"
   | "rate_limit.exceeded";
 
 export interface AuditEntry {

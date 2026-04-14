@@ -472,6 +472,92 @@ export const payments = pgTable(
 );
 
 // ============================================================================
+// SECURITY & SESSION TABLES
+// ============================================================================
+
+export const mfaSettings = pgTable(
+  'mfa_settings',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .unique()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    secret: text('secret').notNull(), // Encrypted TOTP secret
+    enabled: boolean('enabled').notNull().default(false),
+    backupCodes: jsonb('backup_codes').$type<string[]>().notNull().default([]),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => ({
+    userIdIdx: index('idx_mfa_settings_user_id').on(table.userId),
+  })
+);
+
+export const revokedTokens = pgTable(
+  'revoked_tokens',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    jti: varchar('jti', { length: 255 }).notNull().unique(),
+    userId: uuid('user_id').references(() => users.id, { onDelete: 'cascade' }),
+    revokedAt: timestamp('revoked_at', { withTimezone: true }).notNull().defaultNow(),
+    expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+  },
+  (table) => ({
+    jtiIdx: index('idx_revoked_tokens_jti').on(table.jti),
+    expiresAtIdx: index('idx_revoked_tokens_expires_at').on(table.expiresAt),
+  })
+);
+
+export const userRevocations = pgTable(
+  'user_revocations',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .unique()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    revokedAt: timestamp('revoked_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => ({
+    userIdIdx: index('idx_user_revocations_user_id').on(table.userId),
+  })
+);
+
+export const rateLimitBuckets = pgTable(
+  'rate_limit_buckets',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    key: varchar('key', { length: 255 }).notNull().unique(),
+    tokens: integer('tokens').notNull(),
+    lastRefill: timestamp('last_refill', { withTimezone: true }).notNull().defaultNow(),
+    expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+  },
+  (table) => ({
+    keyIdx: index('idx_rate_limit_buckets_key').on(table.key),
+    expiresAtIdx: index('idx_rate_limit_buckets_expires_at').on(table.expiresAt),
+  })
+);
+
+export const processedWebhookEvents = pgTable(
+  'processed_webhook_events',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    eventId: varchar('event_id', { length: 255 }).notNull().unique(),
+    processedAt: timestamp('processed_at', { withTimezone: true }).notNull().defaultNow(),
+    expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+  },
+  (table) => ({
+    eventIdIdx: index('idx_processed_webhook_events_event_id').on(table.eventId),
+  })
+);
+
+// Type exports for new tables
+export type MfaSetting = typeof mfaSettings.$inferSelect;
+export type RevokedToken = typeof revokedTokens.$inferSelect;
+export type RateLimitBucket = typeof rateLimitBuckets.$inferSelect;
+
+// ============================================================================
 // RELATIONS
 // ============================================================================
 
