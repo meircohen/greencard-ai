@@ -1,10 +1,8 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@config "../../tailwind.config.ts";
 
 :root {
   /* Light Theme Colors */
-  /* Brand Colors */
   --color-primary: #059669;
   --color-primary-dark: #047857;
   --color-brand: #059669;
@@ -12,40 +10,16 @@
   --color-accent: #1E3A5F;
   --color-accent-dark: #1a2f52;
 
-  /* Backgrounds */
   --bg-primary: #FFFFFF;
   --bg-secondary: #F8FAFC;
   --bg-tertiary: #F1F5F9;
 
-  /* Text */
   --text-primary: #1E293B;
   --text-secondary: #475569;
   --text-muted: #64748B;
 
-  /* Borders */
   --border-color: rgba(15, 23, 42, 0.08);
   --border-color-light: rgba(15, 23, 42, 0.12);
-}
-
-/* Dark theme fallback (for future use) */
-.dark {
-  --color-primary: #059669;
-  --color-primary-dark: #047857;
-  --color-brand: #10b981;
-  --color-brand-light: #34d399;
-  --color-accent: #2563eb;
-  --color-accent-dark: #1d4ed8;
-
-  --bg-primary: #0a0f1e;
-  --bg-secondary: #1a2035;
-  --bg-tertiary: #1f2937;
-
-  --text-primary: #f1f5f9;
-  --text-secondary: #94a3b8;
-  --text-muted: #7a8ba0;
-
-  --border-color: rgba(203, 213, 225, 0.1);
-  --border-color-light: rgba(203, 213, 225, 0.2);
 }
 
 /* Scrollbar styling */
@@ -61,23 +35,21 @@
 ::-webkit-scrollbar-thumb {
   background: var(--border-color-light);
   border-radius: 4px;
-  transition: background-color 0.2s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--text-muted);
 }
 
-/* Firefox scrollbar */
 * {
   scrollbar-color: var(--border-color-light) var(--bg-secondary);
   scrollbar-width: thin;
 }
 
-/* Base styles */
 html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
 }
 
 body {
@@ -94,49 +66,11 @@ body {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
-.glass-hover {
-  transition: all 0.3s;
-}
-
-.glass-hover:hover {
-  background: rgba(255, 255, 255, 0.85);
-  border-color: rgba(30, 41, 59, 0.12);
-}
-
 .gradient-text {
   background: linear-gradient(to right, #1E3A5F, #059669);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-}
-
-.gradient-border {
-  position: relative;
-  background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%) border-box;
-  border: 1px solid rgba(30, 41, 59, 0.08);
-}
-
-.glow-green {
-  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.1);
-}
-
-.glow-green-hover:hover {
-  transition: box-shadow 0.3s;
-  box-shadow: 0 8px 20px rgba(5, 150, 105, 0.15);
-}
-
-.glow-blue {
-  box-shadow: 0 4px 12px rgba(30, 58, 95, 0.1);
-}
-
-.glow-blue-hover:hover {
-  transition: box-shadow 0.3s;
-  box-shadow: 0 8px 20px rgba(30, 58, 95, 0.15);
-}
-
-/* Smooth scrolling */
-html {
-  scroll-behavior: smooth;
 }
 
 /* Selection styling */
@@ -145,62 +79,32 @@ html {
   color: white;
 }
 
-::-moz-selection {
-  background-color: var(--color-primary);
-  color: white;
-}
-
-/* Links */
-a {
-  transition: color 0.2s;
-}
-
-a:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
-}
-
-/* Focus visible for better accessibility */
+/* Focus visible for accessibility */
 :focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
 
-/* Input and form elements */
-input,
-textarea,
-select {
+input, textarea, select {
   font-family: inherit;
 }
 
-input:focus,
-textarea:focus,
-select:focus {
+input:focus, textarea:focus, select:focus {
   outline: none;
 }
 
 /* Animation utilities */
 @keyframes shimmer {
-  0% {
-    background-position: -1000px 0;
-  }
-  100% {
-    background-position: 1000px 0;
-  }
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
 }
 
 .shimmer {
   animation: shimmer 2s infinite;
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.05) 0%,
-    rgba(255, 255, 255, 0.1) 50%,
-    rgba(255, 255, 255, 0.05) 100%
-  );
+  background: linear-gradient(90deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 100%);
   background-size: 1000px 100%;
 }
 
-/* Responsive utilities */
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.01ms !important;
