@@ -26,6 +26,7 @@ import {
   User,
   LogOut,
   Loader,
+  Download,
 } from "lucide-react";
 import { useAuthStore } from "@/lib/store";
 
@@ -400,6 +401,35 @@ export default function Dashboard() {
                       <span className="text-emerald-950 font-semibold">
                         {cases[0].category}
                       </span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <a
+                        href={`/api/cases/${cases[0].id}/pdf?type=form&formNumber=${cases[0].caseType}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center gap-2 px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold rounded-lg transition-colors"
+                      >
+                        <Download className="w-4 h-4" />
+                        <span className="text-sm">Application</span>
+                      </a>
+                      <a
+                        href={`/api/cases/${cases[0].id}/pdf?type=g28`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center gap-2 px-4 py-2 bg-purple-50 hover:bg-purple-100 text-purple-700 font-semibold rounded-lg transition-colors"
+                      >
+                        <Download className="w-4 h-4" />
+                        <span className="text-sm">G-28</span>
+                      </a>
+                      <a
+                        href={`/api/cases/${cases[0].id}/pdf?type=packet`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center gap-2 px-4 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold rounded-lg transition-colors col-span-2"
+                      >
+                        <Download className="w-4 h-4" />
+                        <span className="text-sm">Filing Packet</span>
+                      </a>
                     </div>
                   </div>
                 )}
