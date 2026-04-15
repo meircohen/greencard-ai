@@ -8,9 +8,11 @@ import { LanguageSwitcher } from "./LanguageSwitcher";
 import { useAuthStore } from "@/lib/store";
 
 const baseNavLinks = [
-  { label: "How it Works", href: "/#how-it-works" },
+  { label: "Services", href: "/#services" },
+  { label: "How It Works", href: "/#how-it-works" },
   { label: "Pricing", href: "/pricing" },
-  { label: "Login", href: "/login" },
+  { label: "Resources", href: "/resources" },
+  { label: "Contact", href: "/#contact" },
 ];
 
 export const Navbar: React.FC = () => {
@@ -61,6 +63,7 @@ export const Navbar: React.FC = () => {
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
+            <span className="text-lg font-bold text-slate-700">⚖</span>
             <div className="text-2xl font-bold text-blue-900">
               GreenCard.ai
             </div>
@@ -82,9 +85,9 @@ export const Navbar: React.FC = () => {
           {/* Desktop Language Switcher & CTA Button */}
           <div className="hidden md:flex items-center gap-4">
             <LanguageSwitcher />
-            <Link href="/assessment">
+            <Link href="/evaluation">
               <Button variant="primary" size="md">
-                Start Free Assessment
+                Free Case Evaluation
               </Button>
             </Link>
           </div>
@@ -118,9 +121,9 @@ export const Navbar: React.FC = () => {
             ))}
             <div className="px-4 py-2 flex items-center justify-between">
               <LanguageSwitcher />
-              <Link href="/assessment" className="flex-1 ml-4">
+              <Link href="/evaluation" className="flex-1 ml-4">
                 <Button variant="primary" size="md">
-                  Start Free Assessment
+                  Free Case Evaluation
                 </Button>
               </Link>
             </div>

@@ -1,25 +1,35 @@
 import React from "react";
 import Link from "next/link";
 
-const platformLinks = [
-  { label: "Assessment Tool", href: "/assessment" },
-  { label: "Document Assistant", href: "/chat" },
-  { label: "Our Attorney", href: "/attorneys" },
+const servicesLinks = [
+  { label: "Marriage Green Cards", href: "/services/marriage" },
+  { label: "Family Sponsorship", href: "/services/family-sponsorship" },
+  { label: "Adjustment of Status", href: "/services/adjustment-of-status" },
+  { label: "Work Permits", href: "/services/work-permits" },
+  { label: "Citizenship", href: "/services/citizenship" },
+  { label: "Consular Processing", href: "/services/consular-processing" },
 ];
 
 const resourceLinks = [
   { label: "Visa Bulletin", href: "/visa-bulletin" },
   { label: "Cost Calculator", href: "/cost-calculator" },
-  { label: "RFE Decoder", href: "/rfe-decoder" },
-  { label: "Chat", href: "/chat" },
+  { label: "Immigration Guides", href: "/guides" },
   { label: "Blog", href: "/blog" },
+  { label: "FAQ", href: "/faq" },
 ];
 
-const companyLinks = [
-  { label: "About Us", href: "/about" },
+const contactLinks = [
+  { label: "Schedule Consultation", href: "/schedule-consultation" },
   { label: "Contact", href: "/contact" },
+  { label: "Phone", href: "tel:1-888-GREEN-01", isPhone: true },
+  { label: "Email", href: "mailto:hello@greencard.ai", isEmail: true },
+];
+
+const legalLinks = [
   { label: "Privacy Policy", href: "/privacy" },
   { label: "Terms of Service", href: "/terms" },
+  { label: "Attorney Advertising Disclaimer", href: "/disclaimer" },
+  { label: "Accessibility", href: "/accessibility" },
 ];
 
 export const Footer: React.FC = () => {
@@ -36,15 +46,15 @@ export const Footer: React.FC = () => {
               GreenCard.ai
             </div>
             <p className="text-blue-100 text-sm">
-              AI-powered guidance for your US immigration journey. Get expert insights, timeline predictions, and cost estimates.
+              Modern immigration legal services for families across America. Expert attorneys, transparent pricing, and a process designed around you.
             </p>
           </div>
 
-          {/* Platform links */}
+          {/* Services links */}
           <div>
-            <h3 className="font-semibold text-white mb-4">Platform</h3>
+            <h3 className="font-semibold text-white mb-4">Services</h3>
             <ul className="space-y-3">
-              {platformLinks.map((link) => (
+              {servicesLinks.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
@@ -74,11 +84,11 @@ export const Footer: React.FC = () => {
             </ul>
           </div>
 
-          {/* Company links */}
+          {/* Contact links */}
           <div>
-            <h3 className="font-semibold text-white mb-4">Company</h3>
+            <h3 className="font-semibold text-white mb-4">Contact</h3>
             <ul className="space-y-3">
-              {companyLinks.map((link) => (
+              {contactLinks.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
@@ -88,6 +98,9 @@ export const Footer: React.FC = () => {
                   </Link>
                 </li>
               ))}
+              <li className="text-blue-100 text-sm pt-2">
+                Office hours: Monday through Friday, 9am-6pm EST
+              </li>
             </ul>
           </div>
         </div>
@@ -98,12 +111,23 @@ export const Footer: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col gap-4">
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+              <div className="flex flex-wrap gap-6 justify-center md:justify-start text-blue-100 text-sm">
+                {legalLinks.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className="hover:text-white transition-colors duration-200"
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
               <p className="text-blue-100 text-sm">
                 &copy; {currentYear} GreenCard.ai. All rights reserved.
               </p>
             </div>
             <p className="text-blue-100 text-xs text-center md:text-left">
-              Disclaimer: GreenCard.ai is not a law firm and does not provide legal advice. Legal services are provided by Partner Immigration Law, PLLC, a licensed immigration law firm. GreenCard.ai is a technology platform.
+              Legal services provided by Partner Immigration Law, PLLC, a licensed immigration law firm. GreenCard.ai and Partner Immigration Law, PLLC are affiliated entities. Past results do not guarantee future outcomes. Free consultations are available for qualifying cases.
             </p>
           </div>
         </div>
