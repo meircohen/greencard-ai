@@ -18,6 +18,8 @@ export default function ContactPage() {
     message: '',
   });
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState('');
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -26,13 +28,30 @@ export default function ContactPage() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setSubmitted(true);
-    setTimeout(() => {
+    setSubmitting(true);
+    setError('');
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Failed to send message');
+      }
+
+      setSubmitted(true);
       setFormData({ name: '', email: '', phone: '', caseType: '', message: '' });
-      setSubmitted(false);
-    }, 3000);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const caseTypes = [
@@ -265,14 +284,22 @@ export default function ContactPage() {
                       />
                     </div>
 
+                    {/* Error Message */}
+                    {error && (
+                      <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700 text-sm">
+                        {error}
+                      </div>
+                    )}
+
                     {/* Submit Button */}
                     <Button
                       type="submit"
                       variant="primary"
                       size="lg"
                       className="w-full"
+                      disabled={submitting}
                     >
-                      {t('contact.sendButton')}
+                      {submitting ? 'Sending...' : t('contact.sendButton')}
                     </Button>
                   </form>
                 )}

@@ -1,32 +1,37 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { sendEmail, contactConfirmationEmail, contactNotificationEmail } from "@/lib/email";
 
 const contactSchema = z.object({
   name: z.string().min(2),
   email: z.string().email(),
   phone: z.string().optional(),
+  caseType: z.string().optional(),
   message: z.string().min(10),
-  type: z.enum(["general", "attorney", "support"]),
 });
-
-type ContactForm = z.infer<typeof contactSchema>;
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-
-    // Validate with Zod
     const validatedData = contactSchema.parse(body);
 
-    // TODO: Send email using Resend
-    // const response = await resend.emails.send({
-    //   from: "contact@greencard.ai",
-    //   to: validatedData.email,
-    //   subject: "We received your message",
-    //   html: `<p>Thank you for contacting GreenCard.ai</p>`,
-    // });
-
     const ticketId = `TICKET-${Date.now()}`;
+
+    // Send confirmation email to user (non-blocking)
+    const confirmation = contactConfirmationEmail(validatedData.name, ticketId);
+    sendEmail({ ...confirmation, to: validatedData.email }).catch(() => {});
+
+    // Send notification email to team (non-blocking)
+    const teamEmail = process.env.CONTACT_EMAIL || "hello@greencard.ai";
+    const notification = contactNotificationEmail(
+      validatedData.name,
+      validatedData.email,
+      validatedData.phone,
+      validatedData.caseType || "",
+      validatedData.message,
+      ticketId
+    );
+    sendEmail({ ...notification, to: teamEmail }).catch(() => {});
 
     return NextResponse.json(
       {

@@ -450,3 +450,97 @@ export function paymentConfirmationEmail(
     text: `Payment Confirmed - ${planName} Plan\n\nThank you for your payment!\n\nPlan: ${planName}\nAmount: ${amount}\nStatus: Active\n\nYour subscription is now active. Manage your account: ${siteUrl}/dashboard`,
   };
 }
+
+export function contactConfirmationEmail(
+  name: string,
+  ticketId: string
+): EmailPayload {
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://greencard.ai";
+
+  return {
+    to: "",
+    subject: `We received your message - ${ticketId}`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <h1 style="color: #10b981; text-align: center; margin-bottom: 30px;">Message Received</h1>
+
+        <p style="color: #374151; font-size: 16px; line-height: 1.6;">Hello ${name},</p>
+
+        <p style="color: #374151; font-size: 16px; line-height: 1.6;">
+          Thank you for reaching out to GreenCard.ai. We have received your message and our team will get back to you within 1 business day.
+        </p>
+
+        <div style="background: #f0fdf4; border: 1px solid #86efac; border-radius: 6px; padding: 16px; margin: 20px 0;">
+          <p style="color: #374151; margin: 0;">
+            <strong>Reference:</strong> ${ticketId}
+          </p>
+        </div>
+
+        <p style="color: #374151; font-size: 16px; line-height: 1.6;">
+          In the meantime, you can start your free eligibility assessment to get an instant overview of your immigration options.
+        </p>
+
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="${siteUrl}/assessment" style="display: inline-block; background: #10b981; color: white; padding: 14px 32px; border-radius: 6px; text-decoration: none; font-weight: bold;">
+            Start Free Assessment
+          </a>
+        </div>
+
+        <p style="color: #6b7280; font-size: 12px; text-align: center; margin-top: 20px;">
+          &copy; 2024 GreenCard.ai. All rights reserved.
+        </p>
+      </div>
+    `,
+    text: `Message Received\n\nHello ${name},\n\nThank you for reaching out. We received your message and will get back to you within 1 business day.\n\nReference: ${ticketId}\n\nStart your free assessment: ${siteUrl}/assessment`,
+  };
+}
+
+export function contactNotificationEmail(
+  name: string,
+  email: string,
+  phone: string | undefined,
+  caseType: string,
+  message: string,
+  ticketId: string
+): EmailPayload {
+  return {
+    to: "",
+    subject: `New Contact Form: ${ticketId} - ${caseType || "General"}`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <h1 style="color: #10b981; text-align: center; margin-bottom: 30px;">New Contact Form Submission</h1>
+
+        <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 20px; margin: 20px 0;">
+          <table style="width: 100%; color: #374151;">
+            <tr>
+              <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb; font-weight: bold; width: 120px;">Ticket:</td>
+              <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;">${ticketId}</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb; font-weight: bold;">Name:</td>
+              <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;">${name}</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb; font-weight: bold;">Email:</td>
+              <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;"><a href="mailto:${email}">${email}</a></td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb; font-weight: bold;">Phone:</td>
+              <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;">${phone || "Not provided"}</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 0; font-weight: bold;">Case Type:</td>
+              <td style="padding: 8px 0;">${caseType || "Not specified"}</td>
+            </tr>
+          </table>
+        </div>
+
+        <div style="background: #fff; border: 1px solid #e5e7eb; border-radius: 6px; padding: 16px; margin: 20px 0;">
+          <p style="color: #374151; font-weight: bold; margin: 0 0 8px 0;">Message:</p>
+          <p style="color: #374151; margin: 0; white-space: pre-wrap;">${message}</p>
+        </div>
+      </div>
+    `,
+    text: `New Contact Form Submission\n\nTicket: ${ticketId}\nName: ${name}\nEmail: ${email}\nPhone: ${phone || "Not provided"}\nCase Type: ${caseType || "Not specified"}\n\nMessage:\n${message}`,
+  };
+}
