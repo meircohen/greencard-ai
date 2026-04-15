@@ -536,10 +536,10 @@ export default function AttorneyDashboard() {
         {/* Content Area */}
         <div className="flex-1 overflow-auto bg-white p-4 sm:p-6 md:p-8">
           {activeTab === "dashboard" && (
-            <DashboardView stats={stats} priorityCases={cases} activities={SAMPLE_ACTIVITIES} />
+            <DashboardView stats={stats} priorityCases={cases} activities={SAMPLE_ACTIVITIES} router={router} />
           )}
-          {activeTab === "cases" && <CaseQueueView cases={cases} />}
-          {activeTab === "reviews" && <ReviewsView cases={cases} />}
+          {activeTab === "cases" && <CaseQueueView cases={cases} router={router} />}
+          {activeTab === "reviews" && <ReviewsView cases={cases} router={router} />}
           {activeTab === "calendar" && <CalendarView activities={SAMPLE_ACTIVITIES} />}
           {activeTab === "analytics" && <AnalyticsView stats={stats} />}
           {activeTab === "settings" && <SettingsView />}
@@ -583,10 +583,12 @@ function DashboardView({
   stats,
   priorityCases,
   activities,
+  router,
 }: {
   stats: DashboardStats | null;
   priorityCases: PriorityCase[];
   activities: ActivityEvent[];
+  router: ReturnType<typeof useRouter>;
 }) {
   const urgentCount = priorityCases.filter((c) => c.priority === "urgent").length;
   const filedThisMonth = 3;
@@ -685,7 +687,9 @@ function DashboardView({
                         {c.dueDate.toLocaleDateString()}
                       </td>
                       <td className="px-6 py-4 text-right space-x-2 flex justify-end">
-                        <button className="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium rounded transition-colors">
+                        <button
+                          onClick={() => router.push(`/attorney/dashboard/cases/${c.id}`)}
+                          className="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium rounded transition-colors">
                           Review
                         </button>
                         <button className="px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-medium rounded transition-colors border border-slate-200">
@@ -748,7 +752,7 @@ function DashboardView({
   );
 }
 
-function CaseQueueView({ cases }: { cases: PriorityCase[] }) {
+function CaseQueueView({ cases, router }: { cases: PriorityCase[]; router: ReturnType<typeof useRouter> }) {
   const [sortBy, setSortBy] = React.useState<"priority" | "dueDate" | "status">("priority");
 
   const sortedCases = [...cases].sort((a, b) => {
@@ -823,7 +827,10 @@ function CaseQueueView({ cases }: { cases: PriorityCase[] }) {
                   <p className="text-xs text-slate-500 mt-1">{c.score}%</p>
                 </td>
                 <td className="px-6 py-4 text-right">
-                  <Button variant="primary" size="sm">
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    onClick={() => router.push(`/attorney/dashboard/cases/${c.id}`)}>
                     Review
                   </Button>
                 </td>
@@ -836,7 +843,7 @@ function CaseQueueView({ cases }: { cases: PriorityCase[] }) {
   );
 }
 
-function ReviewsView({ cases }: { cases: PriorityCase[] }) {
+function ReviewsView({ cases, router }: { cases: PriorityCase[]; router: ReturnType<typeof useRouter> }) {
   const needsReview = cases.filter((c) => c.reviewStatus === "needs_review");
   const rfeResponse = cases.filter((c) => c.reviewStatus === "rfe_response");
   const readyToFile = cases.filter((c) => c.reviewStatus === "ready_to_file");
@@ -879,10 +886,17 @@ function ReviewsView({ cases }: { cases: PriorityCase[] }) {
                 </div>
               </div>
               <div className="mt-3 sm:mt-4 flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-                <Button variant="primary" size="sm">
+                <Button
+                  variant="primary"
+                  size="sm"
+                  onClick={() => router.push(`/attorney/dashboard/cases/${c.id}`)}>
                   Start Review
                 </Button>
-                <Button variant="secondary" size="sm" className="border-slate-200 text-slate-700">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="border-slate-200 text-slate-700"
+                  onClick={() => router.push(`/attorney/dashboard/cases/${c.id}`)}>
                   View Details
                 </Button>
               </div>
