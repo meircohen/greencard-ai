@@ -10,14 +10,14 @@ const servicesLinks = [
 const companyNavLinks = [
   { label: "Pricing", href: "/pricing" },
   { label: "Contact", href: "/contact" },
-  { label: "Find an Attorney", href: "/attorneys" },
+  { label: "Our Attorney", href: "/attorneys" },
 ];
 
 const contactLinks = [
   { label: "Schedule Consultation", href: "/assessment" },
   { label: "Contact", href: "/contact" },
   { label: "Phone", href: "tel:+19547776678", isPhone: true },
-  { label: "Email", href: "mailto:hello@greencard.ai", isEmail: true },
+  { label: "Email", href: "mailto:Yirmi@LadyLibertyLawyers.com", isEmail: true },
 ];
 
 const legalLinks = [

@@ -13,17 +13,16 @@ const publicPageRoutes = [
   "/",
   "/login",
   "/signup",
-  "/chat",
-  "/assessment",
+    "/assessment",
   "/pricing",
-  "/attorneys",
-  "/about",
+    "/about",
   "/contact",
   "/privacy",
   "/terms",
   "/guides",
   "/reset-password",
   "/verify",
+  "/attorneys",
 ];
 
 // Public API routes (no auth required)

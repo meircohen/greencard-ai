@@ -1,6 +1,7 @@
 import { MetadataRoute } from "next";
 
 export default function robots(): MetadataRoute.Robots {
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://greencard.bigcohen.org";
   return {
     rules: [
       {
@@ -9,7 +10,6 @@ export default function robots(): MetadataRoute.Robots {
           "/",
           "/assessment",
           "/pricing",
-          "/attorneys",
           "/guides",
           "/contact",
           "/login",
@@ -22,9 +22,11 @@ export default function robots(): MetadataRoute.Robots {
           "/settings",
           "/admin",
           "/api",
+          "/onboarding",
+          "/notifications",
         ],
       },
     ],
-    sitemap: "https://greencard.ai/sitemap.xml",
+    sitemap: `${baseUrl}/sitemap.xml`,
   };
 }

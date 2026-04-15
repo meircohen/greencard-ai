@@ -1016,7 +1016,7 @@ function SettingsView() {
             <label className="text-sm font-medium text-slate-700">Email</label>
             <input
               type="email"
-              defaultValue="jeremy@greencard.ai"
+              defaultValue="Yirmi@LadyLibertyLawyers.com"
               className="mt-1 w-full bg-white border border-slate-200 rounded px-3 py-2 text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none"
             />
           </div>

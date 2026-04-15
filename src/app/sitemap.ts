@@ -1,10 +1,10 @@
 import { MetadataRoute } from "next";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://greencard.ai";
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://greencard.bigcohen.org";
   const today = new Date().toISOString().split("T")[0];
 
-  const staticPages: MetadataRoute.Sitemap = [
+  return [
     {
       url: `${baseUrl}/`,
       lastModified: today,
@@ -18,56 +18,52 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.9,
     },
     {
+      url: `${baseUrl}/pricing`,
+      lastModified: today,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
       url: `${baseUrl}/guides`,
       lastModified: today,
       changeFrequency: "monthly",
       priority: 0.7,
     },
     {
-      url: `${baseUrl}/pricing`,
+      url: `${baseUrl}/guides/marriage-green-card`,
       lastModified: today,
       changeFrequency: "monthly",
       priority: 0.7,
     },
     {
-      url: `${baseUrl}/attorneys`,
-      lastModified: today,
-      changeFrequency: "weekly",
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/rfe-decoder`,
-      lastModified: today,
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/assessment`,
-      lastModified: today,
-      changeFrequency: "weekly",
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/interview-prep`,
+      url: `${baseUrl}/guides/i-485-guide`,
       lastModified: today,
       changeFrequency: "monthly",
       priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/contact`,
+      lastModified: today,
+      changeFrequency: "monthly",
+      priority: 0.6,
+    },
+    {
+      url: `${baseUrl}/privacy`,
+      lastModified: today,
+      changeFrequency: "yearly",
+      priority: 0.3,
+    },
+    {
+      url: `${baseUrl}/terms`,
+      lastModified: today,
+      changeFrequency: "yearly",
+      priority: 0.3,
     },
     {
       url: `${baseUrl}/login`,
       lastModified: today,
       changeFrequency: "yearly",
-      priority: 0.5,
+      priority: 0.4,
     },
   ];
-
-  // Dynamic attorney pages
-  const attorneyPages: MetadataRoute.Sitemap = [1, 2, 3].map((id) => ({
-    url: `${baseUrl}/attorneys/${id}`,
-    lastModified: today,
-    changeFrequency: "monthly" as const,
-    priority: 0.8,
-  }));
-
-  return [...staticPages, ...attorneyPages];
 }

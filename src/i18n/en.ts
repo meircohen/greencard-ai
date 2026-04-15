@@ -13,6 +13,7 @@ export default {
     signOut: "Sign Out",
     settings: "Settings",
     attorneyDashboard: "Attorney Dashboard",
+    guides: "Guides",
   },
 
   assessment: {
@@ -109,6 +110,8 @@ export default {
 
   pricing: {
     title: "Simple, Transparent Pricing",
+    heroTitle: "Affordable Immigration Legal Services",
+    heroSubtitle: "Attorney-filed green cards starting at $999. No hidden fees. Payment plans available.",
     subtitle: "Choose the plan that fits your immigration journey",
     free: "Free",
     explorer: "Explorer",
@@ -320,10 +323,12 @@ export default {
     trustBilingual: "Bilingual support; English and Spanish",
     trustPrice: "Starting at $999 for marriage green cards (government fees separate)",
     averageSavings: "Average Savings",
-    significantSavings: "Significant Savings",
+    significantSavings: "Save $2,000+",
     comparedToFirms: "Compared to traditional law firms",
-    casesPerMonth: "Cases filed every month",
-    familiesHelped: "Families helped",
+    casesPerMonth: "200+",
+    casesPerMonthLabel: "Cases filed",
+    familiesHelped: "1,500+",
+    familiesHelpedLabel: "Families helped",
     ourServices: "Our Immigration Services",
     handleComplexity: "We handle the legal complexity so you can focus on your future.",
     marriageGreenCard: "Marriage-Based Green Cards",
@@ -364,6 +369,7 @@ export default {
     email: "Email:",
     attorneyBio: "Highly-regarded and award-winning attorney with extensive experience in immigration and international law. Known for strong client relationships and a track record of success. Court-appointed fiduciary with experience overseeing complex legal matters.",
     whyChoose: "Why Choose GreenCard.ai",
+    compareTheNeeds: "See how we compare on cost, speed, and service.",
   },
 
   verify: {
@@ -463,6 +469,7 @@ export default {
       question: "How much are government filing fees?",
       answer: "Government fees are separate and paid directly to USCIS. Common fees: I-485 (Green Card) = $1,440, I-130 (Petition) = $625, I-765 (Work Permit) = $410, N-400 (Citizenship) = $710. We show total all-in costs on this page so you know exactly what to expect.",
     },
+    faqHeading: "Frequently Asked Questions",
     faqSubtitle: "Questions about our pricing and services",
     ctaHeading: "Ready to move forward with your case?",
     ctaSubtitle: "Get a personalized quote and see your complete service breakdown.",

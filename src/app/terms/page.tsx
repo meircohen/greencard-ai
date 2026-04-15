@@ -117,7 +117,7 @@ export default function TermsPage() {
               </p>
               <ul className="list-disc pl-6 text-slate-600 space-y-2">
                 <li>Full refund available within 14 days of purchase if you are not satisfied</li>
-                <li>Refund requests must be submitted in writing to hello@greencard.ai</li>
+                <li>Refund requests must be submitted in writing to Yirmi@LadyLibertyLawyers.com</li>
                 <li>Attorney services are not refundable once provided</li>
                 <li>Refunds are processed within 5-7 business days</li>
               </ul>
@@ -206,7 +206,7 @@ export default function TermsPage() {
                 <li>The site is designed to work with screen readers</li>
                 <li>Keyboard navigation is supported throughout the site</li>
                 <li>We continue to improve accessibility features</li>
-                <li>If you encounter accessibility issues, please contact us at hello@greencard.ai</li>
+                <li>If you encounter accessibility issues, please contact us at Yirmi@LadyLibertyLawyers.com</li>
               </ul>
             </div>
 
@@ -252,7 +252,7 @@ export default function TermsPage() {
                 <p className="text-slate-900 font-semibold">Partner Immigration Law, PLLC</p>
                 <p className="text-slate-600">Operating as GreenCard.ai</p>
                 <p className="text-slate-600">Fort Lauderdale, Florida</p>
-                <p className="text-slate-600">Email: <a href="mailto:hello@greencard.ai" className="text-emerald-600 hover:underline">hello@greencard.ai</a></p>
+                <p className="text-slate-600">Email: <a href="mailto:Yirmi@LadyLibertyLawyers.com" className="text-emerald-600 hover:underline">Yirmi@LadyLibertyLawyers.com</a></p>
               </div>
             </div>
 

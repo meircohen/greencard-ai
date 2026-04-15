@@ -118,8 +118,8 @@ export default function ContactPage() {
                 <div>
                   <h3 className="font-semibold text-slate-900 mb-1">{t('contact.email')}</h3>
                   <p className="text-slate-600">
-                    <a href="mailto:hello@greencard.ai" className="hover:text-emerald-600 transition-colors">
-                      hello@greencard.ai
+                    <a href="mailto:Yirmi@LadyLibertyLawyers.com" className="hover:text-emerald-600 transition-colors">
+                      Yirmi@LadyLibertyLawyers.com
                     </a>
                   </p>
                 </div>

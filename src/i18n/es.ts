@@ -13,6 +13,7 @@ export default {
     signOut: "Cerrar Sesión",
     settings: "Configuración",
     attorneyDashboard: "Panel del Abogado",
+    guides: "Guías",
   },
 
   assessment: {
@@ -109,6 +110,8 @@ export default {
 
   pricing: {
     title: "Precios Simples y Transparentes",
+    heroTitle: "Servicios Legales de Inmigración Asequibles",
+    heroSubtitle: "Tarjetas verdes con abogado desde $999. Sin costos ocultos. Planes de pago disponibles.",
     subtitle: "Elige el plan que se ajuste a tu viaje de inmigración",
     free: "Gratis",
     explorer: "Explorador",
@@ -320,10 +323,12 @@ export default {
     trustBilingual: "Apoyo bilingüe; inglés y español",
     trustPrice: "Desde $999 para green cards por matrimonio (cuotas del gobierno aparte)",
     averageSavings: "Ahorros Promedio",
-    significantSavings: "Ahorros Significativos",
+    significantSavings: "Ahorre $2,000+",
     comparedToFirms: "En comparación con despachos de abogados tradicionales",
-    casesPerMonth: "Casos presentados cada mes",
-    familiesHelped: "Familias ayudadas",
+    casesPerMonth: "200+",
+    casesPerMonthLabel: "Casos presentados",
+    familiesHelped: "1,500+",
+    familiesHelpedLabel: "Familias ayudadas",
     ourServices: "Nuestros Servicios de Inmigración",
     handleComplexity: "Manejamos la complejidad legal para que te enfoques en tu futuro.",
     marriageGreenCard: "Green Cards por Matrimonio",
@@ -363,7 +368,8 @@ export default {
     phone: "Teléfono:",
     email: "Correo Electrónico:",
     attorneyBio: "Abogado muy respetado y galardonado con amplia experiencia en derecho de inmigración e internacional. Conocido por fuertes relaciones con clientes y un historial de éxito. Fiduciario designado por la corte con experiencia supervisando asuntos legales complejos.",
-    whyChoose: "Por Qué Elegir GreenCard.ai",
+    whyChoose: "Por qué elegir GreenCard.ai",
+    compareTheNeeds: "Compara costos, velocidad y servicio.",
   },
 
   verify: {
@@ -463,6 +469,7 @@ export default {
       question: "¿Cuánto son las cuotas de presentación del gobierno?",
       answer: "Las cuotas del gobierno son independientes y se pagan directamente a USCIS. Cuotas comunes: I-485 (Tarjeta de Residencia) = $1,440, I-130 (Petición) = $625, I-765 (Permiso de Trabajo) = $410, N-400 (Ciudadanía) = $710. Mostramos los costos totales en esta página para que sepas exactamente qué esperar.",
     },
+    faqHeading: "Preguntas Frecuentes",
     faqSubtitle: "Preguntas sobre nuestros precios y servicios",
     ctaHeading: "¿Listo para avanzar con tu caso?",
     ctaSubtitle: "Obtén una cotización personalizada y ve el desglose completo de tu servicio.",

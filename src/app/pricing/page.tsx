@@ -324,7 +324,7 @@ function PricingPageInner() {
           <Button
             variant="secondary"
             size="lg"
-            onClick={() => (window.location.href = 'mailto:hello@greencard.ai')}
+            onClick={() => (window.location.href = 'mailto:Yirmi@LadyLibertyLawyers.com')}
           >
             {t('pricingPage.contactButton')}
           </Button>

@@ -127,11 +127,11 @@ export default function Home() {
                   <div className="grid grid-cols-2 gap-6 pt-4 border-t border-slate-100">
                     <div>
                       <p className="text-3xl font-bold text-slate-900">{t('home.casesPerMonth')}</p>
-                      <p className="text-xs text-slate-500 mt-1">{t('home.casesPerMonth')}</p>
+                      <p className="text-xs text-slate-500 mt-1">{t('home.casesPerMonthLabel')}</p>
                     </div>
                     <div>
                       <p className="text-3xl font-bold text-slate-900">{t('home.familiesHelped')}</p>
-                      <p className="text-xs text-slate-500 mt-1">{t('home.familiesHelped')}</p>
+                      <p className="text-xs text-slate-500 mt-1">{t('home.familiesHelpedLabel')}</p>
                     </div>
                   </div>
                 </div>

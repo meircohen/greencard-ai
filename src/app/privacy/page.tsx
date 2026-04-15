@@ -153,7 +153,7 @@ export default function PrivacyPage() {
                 <li>Right to non-discrimination for exercising your privacy rights</li>
               </ul>
               <p className="text-slate-600 leading-relaxed mt-4">
-                Residents of other states with privacy laws (Virginia, Colorado, Connecticut, Utah) have similar rights. To exercise these rights, please contact us at hello@greencard.ai.
+                Residents of other states with privacy laws (Virginia, Colorado, Connecticut, Utah) have similar rights. To exercise these rights, please contact us at Yirmi@LadyLibertyLawyers.com.
               </p>
             </div>
 
@@ -191,7 +191,7 @@ export default function PrivacyPage() {
                 <p className="text-slate-900 font-semibold">Partner Immigration Law, PLLC</p>
                 <p className="text-slate-600">Operating as GreenCard.ai</p>
                 <p className="text-slate-600">Fort Lauderdale, Florida</p>
-                <p className="text-slate-600">Email: <a href="mailto:hello@greencard.ai" className="text-emerald-600 hover:underline">hello@greencard.ai</a></p>
+                <p className="text-slate-600">Email: <a href="mailto:Yirmi@LadyLibertyLawyers.com" className="text-emerald-600 hover:underline">Yirmi@LadyLibertyLawyers.com</a></p>
               </div>
             </div>
 

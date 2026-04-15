@@ -129,7 +129,7 @@ export function welcomeEmail(name: string): EmailPayload & { subject: string; ht
         </div>
 
         <p style="color: #6b7280; font-size: 14px; line-height: 1.6; border-top: 1px solid #e5e7eb; padding-top: 20px;">
-          If you have any questions, our support team is here to help. Visit our <a href="${siteUrl}/help" style="color: #10b981; text-decoration: none;">Help Center</a> or contact support@greencard.ai.
+          If you have any questions, our support team is here to help. Visit our <a href="${siteUrl}/help" style="color: #10b981; text-decoration: none;">Help Center</a> or contact Yirmi@LadyLibertyLawyers.com.
         </p>
 
         <p style="color: #6b7280; font-size: 12px; text-align: center; margin-top: 20px;">

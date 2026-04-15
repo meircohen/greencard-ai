@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
     sendEmail({ ...confirmation, to: validatedData.email }).catch(() => {});
 
     // Send notification email to team (non-blocking)
-    const teamEmail = process.env.CONTACT_EMAIL || "hello@greencard.ai";
+    const teamEmail = process.env.CONTACT_EMAIL || "Yirmi@LadyLibertyLawyers.com";
     const notification = contactNotificationEmail(
       validatedData.name,
       validatedData.email,
