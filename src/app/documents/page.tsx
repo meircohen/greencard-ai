@@ -317,7 +317,7 @@ export default function DocumentsPage() {
 
   const steps = [
     { step: "Draft", active: true, completed: true },
-    { step: "AI Review", active: false, completed: false },
+    { step: "Review", active: false, completed: false },
     { step: "Human Review", active: false, completed: false },
     { step: "Filed", active: false, completed: false },
     { step: "Received", active: false, completed: false },
@@ -332,7 +332,7 @@ export default function DocumentsPage() {
             Document Management
           </h1>
           <p className="text-secondary">
-            Manage your USCIS forms with AI-powered assistance
+            Manage your USCIS forms with professional assistance
           </p>
         </div>
 
@@ -521,7 +521,7 @@ export default function DocumentsPage() {
               ))}
             </div>
 
-            {/* AI Suggestions Panel */}
+            {/* Suggestions Panel */}
             <Card className="p-6 bg-green-500/5 border-green-500/30">
               <div className="flex items-start gap-4 mb-4">
                 <Lightbulb
@@ -530,7 +530,7 @@ export default function DocumentsPage() {
                 />
                 <div>
                   <h3 className="font-semibold text-primary mb-4">
-                    AI Suggestions
+                    Smart Suggestions
                   </h3>
                   <div className="space-y-3">
                     {aiSuggestions.map((suggestion, idx) => (

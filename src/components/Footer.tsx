@@ -99,6 +99,9 @@ export const Footer: React.FC = () => {
                 </li>
               ))}
               <li className="text-blue-100 text-sm pt-2">
+                Fort Lauderdale, FL 33312
+              </li>
+              <li className="text-blue-100 text-sm">
                 Office hours: Monday through Friday, 9am-6pm EST
               </li>
             </ul>
@@ -127,7 +130,7 @@ export const Footer: React.FC = () => {
               </p>
             </div>
             <p className="text-blue-100 text-xs text-center md:text-left">
-              Legal services provided by Partner Immigration Law, PLLC, a licensed immigration law firm. GreenCard.ai and Partner Immigration Law, PLLC are affiliated entities. Past results do not guarantee future outcomes. Free consultations are available for qualifying cases.
+              Legal services provided by Partner Immigration Law, PLLC, a Florida-licensed immigration law firm. Jeremy Knight, Esq., Florida Bar No. 1009132, Fort Lauderdale, Broward County, Florida. GreenCard.ai is the technology platform that powers our client experience. Past results do not guarantee future outcomes.
             </p>
           </div>
         </div>

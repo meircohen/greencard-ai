@@ -87,7 +87,7 @@ export const Navbar: React.FC = () => {
             <LanguageSwitcher />
             <Link href="/assessment">
               <Button variant="primary" size="md">
-                Free Case Evaluation
+                Check Your Eligibility
               </Button>
             </Link>
           </div>
@@ -123,7 +123,7 @@ export const Navbar: React.FC = () => {
               <LanguageSwitcher />
               <Link href="/assessment" className="flex-1 ml-4">
                 <Button variant="primary" size="md">
-                  Free Case Evaluation
+                  Check Your Eligibility
                 </Button>
               </Link>
             </div>

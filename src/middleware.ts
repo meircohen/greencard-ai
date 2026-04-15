@@ -50,6 +50,42 @@ const publicApiRoutes = [
   "/api/rfe-decoder",     // RFE decoder endpoint (public)
 ];
 
+/**
+ * Apply security headers to response
+ */
+function addSecurityHeaders(response: NextResponse): void {
+  // Content Security Policy
+  const cspDirectives = [
+    "default-src 'self'",
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' cdnjs.cloudflare.com cdn.jsdelivr.net",
+    "style-src 'self' 'unsafe-inline' cdnjs.cloudflare.com cdn.jsdelivr.net fonts.googleapis.com",
+    "img-src 'self' data: https: blob:",
+    "font-src 'self' data: cdnjs.cloudflare.com cdn.jsdelivr.net fonts.gstatic.com",
+    "connect-src 'self' https://api.anthropic.com https://api.stripe.com https://wa.me wss:",
+    "frame-ancestors 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "upgrade-insecure-requests",
+  ].join("; ");
+
+  response.headers.set("Content-Security-Policy", cspDirectives);
+
+  // Additional security headers
+  response.headers.set("X-Content-Type-Options", "nosniff");
+  response.headers.set("X-Frame-Options", "DENY");
+  response.headers.set("X-XSS-Protection", "1; mode=block");
+  response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+  response.headers.set(
+    "Permissions-Policy",
+    "geolocation=(), microphone=(), camera=(), payment=(self)"
+  );
+  response.headers.set(
+    "Strict-Transport-Security",
+    "max-age=63072000; includeSubDomains; preload"
+  );
+  response.headers.set("X-DNS-Prefetch-Control", "on");
+}
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
@@ -62,7 +98,9 @@ export async function middleware(request: NextRequest) {
 
     // For public API routes that are GET/OPTIONS, pass through
     if (isPublicApi && (request.method === "GET" || request.method === "OPTIONS" || request.method === "HEAD")) {
-      return NextResponse.next();
+      const response = NextResponse.next();
+      addSecurityHeaders(response);
+      return response;
     }
 
     // For public API POST routes (login, signup, contact, webhook), skip auth but still set CSRF
@@ -72,25 +110,30 @@ export async function middleware(request: NextRequest) {
       if (!request.cookies.get("gc-csrf")?.value) {
         setCsrfCookie(response, generateCsrfToken());
       }
+      addSecurityHeaders(response);
       return response;
     }
 
     // All other API routes require authentication
     const session = await getSession(request);
     if (!session) {
-      return NextResponse.json(
+      const response = NextResponse.json(
         { error: "Authentication required" },
         { status: 401 }
       );
+      addSecurityHeaders(response);
+      return response;
     }
 
     // CSRF validation for state-changing requests on authenticated routes
     if (requiresCsrfValidation(request) && !isCsrfExempt(pathname)) {
       if (!validateCsrf(request)) {
-        return NextResponse.json(
+        const response = NextResponse.json(
           { error: "Invalid or missing CSRF token" },
           { status: 403 }
         );
+        addSecurityHeaders(response);
+        return response;
       }
     }
 
@@ -108,6 +151,7 @@ export async function middleware(request: NextRequest) {
       setCsrfCookie(response, generateCsrfToken());
     }
 
+    addSecurityHeaders(response);
     return response;
   }
 
@@ -122,6 +166,7 @@ export async function middleware(request: NextRequest) {
     if (!request.cookies.get("gc-csrf")?.value) {
       setCsrfCookie(response, generateCsrfToken());
     }
+    addSecurityHeaders(response);
     return response;
   }
 
@@ -132,7 +177,9 @@ export async function middleware(request: NextRequest) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     url.searchParams.set("from", pathname);
-    return NextResponse.redirect(url);
+    const response = NextResponse.redirect(url);
+    addSecurityHeaders(response);
+    return response;
   }
 
   // Pass non-PII user info for server components
@@ -148,6 +195,7 @@ export async function middleware(request: NextRequest) {
     setCsrfCookie(response, generateCsrfToken());
   }
 
+  addSecurityHeaders(response);
   return response;
 }
 

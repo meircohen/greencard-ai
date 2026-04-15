@@ -48,7 +48,7 @@ export default function TermsPage() {
                 GreenCard.ai provides:
               </p>
               <ul className="list-disc pl-6 text-slate-600 space-y-2">
-                <li>AI-powered immigration visa assessment tools</li>
+                <li>Immigration visa assessment tools</li>
                 <li>Immigration form guidance and preparation tools</li>
                 <li>Case tracking and document management services</li>
                 <li>Access to immigration information and resources</li>
@@ -63,7 +63,7 @@ export default function TermsPage() {
             <div>
               <h2 className="text-2xl font-bold text-slate-900 mb-4">3. Attorney-Client Relationship Disclaimer</h2>
               <p className="text-slate-600 leading-relaxed mb-4">
-                IMPORTANT: No attorney-client relationship exists between you and Partner Immigration Law, PLLC unless and until all of the following occur:
+                IMPORTANT: No attorney-client relationship exists between you and Partner Immigration Law, PLLC (Jeremy Knight, Esq., Florida Bar No. 1009132) unless and until all of the following occur:
               </p>
               <ol className="list-decimal pl-6 text-slate-600 space-y-2">
                 <li>You and the firm have executed a written engagement letter</li>
@@ -71,7 +71,7 @@ export default function TermsPage() {
                 <li>You have paid any required retainer or fees</li>
               </ol>
               <p className="text-slate-600 leading-relaxed mt-4">
-                Use of GreenCard.ai does not create this relationship. Information provided through the platform is general in nature and may not apply to your specific situation. Do not rely on information provided through the Services as a substitute for legal advice from a licensed attorney.
+                GreenCard.ai is the technology platform that facilitates your engagement with Partner Immigration Law, PLLC. Use of GreenCard.ai does not create an attorney-client relationship. Information provided through the platform is general in nature and may not apply to your specific situation. Do not rely on information provided through the Services as a substitute for legal advice from a licensed attorney.
               </p>
             </div>
 
@@ -184,10 +184,11 @@ export default function TermsPage() {
             <div>
               <h2 className="text-2xl font-bold text-slate-900 mb-4">11. Attorney Advertising Disclaimer</h2>
               <p className="text-slate-600 leading-relaxed mb-4">
-                ATTORNEY ADVERTISING NOTICE: This website is a commercial advertisement. GreenCard.ai is an online platform operated by Partner Immigration Law, PLLC. Attorney services are offered through Partner Immigration Law, PLLC, a licensed law firm authorized to practice immigration law in the United States.
+                ATTORNEY ADVERTISING NOTICE: This website is a commercial advertisement. GreenCard.ai is a technology platform operated by Partner Immigration Law, PLLC. Attorney services are provided by Partner Immigration Law, PLLC, a Florida-licensed law firm authorized to practice immigration law in the United States.
               </p>
               <ul className="list-disc pl-6 text-slate-600 space-y-2">
-                <li>Jeremy "Yirmi" Knight, Esq., is a Partner at Partner Immigration Law, PLLC</li>
+                <li>Jeremy "Yirmi" Knight, Esq., Florida Bar No. 1009132, is located in Fort Lauderdale, Broward County, Florida</li>
+                <li>GreenCard.ai is the technology platform; Partner Immigration Law, PLLC is the law firm providing legal services</li>
                 <li>This is not a solicitation of a specific client</li>
                 <li>Clients are not guaranteed specific outcomes</li>
                 <li>Past performance does not guarantee future results</li>

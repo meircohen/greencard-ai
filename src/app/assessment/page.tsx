@@ -130,7 +130,7 @@ export default function AssessmentPage() {
           <AlertCircle className="w-12 h-12 text-amber-500 mx-auto" />
           <h1 className="text-2xl font-bold text-primary">No Assessment Found</h1>
           <p className="text-secondary">
-            Start a conversation with our AI advisor to get your personalized assessment.
+            Start a conversation to get your personalized assessment.
           </p>
           <Link href="/chat">
             <Button variant="primary" size="lg">

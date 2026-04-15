@@ -64,25 +64,25 @@ export default function Home() {
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
                     <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
                   </span>
-                  Trusted by 500+ families nationwide
+                  Trusted by families nationwide
                 </span>
               </div>
 
               <h1 className="animate-fade-up-d1 text-4xl sm:text-5xl lg:text-[3.5rem] font-extrabold tracking-tight leading-[1.1] text-slate-900">
-                Your American dream deserves the{' '}
+                Attorney-Filed Green Cards{' '}
                 <span className="bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">
-                  right legal team
+                  Starting at $999
                 </span>
               </h1>
 
               <p className="animate-fade-up-d2 text-lg sm:text-xl text-slate-600 leading-relaxed max-w-lg">
-                We handle everything from paperwork to filing, so you can focus on your family. Faster, cheaper, and easier than traditional attorneys.
+                A licensed immigration attorney prepares, reviews, and files your case with USCIS. You never touch a government form. Bilingual support, payment plans, and a 14-day money-back guarantee.
               </p>
 
               <div className="animate-fade-up-d3 flex flex-col sm:flex-row gap-3">
                 <Link href="/assessment">
                   <button className="w-full sm:w-auto px-7 py-3.5 rounded-xl text-[15px] font-semibold text-white bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-700 hover:to-emerald-600 transition-all duration-200 shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/30 flex items-center justify-center gap-2">
-                    Free Case Evaluation
+                    Check Your Eligibility
                     <ArrowRight className="w-4 h-4" />
                   </button>
                 </Link>
@@ -103,11 +103,15 @@ export default function Home() {
                 </div>
                 <div className="flex items-center gap-2 text-sm text-slate-600">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                  93% approval rate
+                  High approval rates
                 </div>
                 <div className="flex items-center gap-2 text-sm text-slate-600">
                   <Globe className="w-4 h-4 text-emerald-600" />
                   Bilingual support; English and Spanish
+                </div>
+                <div className="flex items-center gap-2 text-sm text-slate-600">
+                  <DollarSign className="w-4 h-4 text-emerald-600" />
+                  Starting at $999 for marriage green cards (government fees separate)
                 </div>
               </div>
             </div>
@@ -118,16 +122,16 @@ export default function Home() {
                 <div className="space-y-8">
                   <div className="space-y-2">
                     <p className="text-sm font-semibold text-emerald-600 uppercase tracking-wide">Average Savings</p>
-                    <p className="text-4xl font-bold text-slate-900">$4,000+</p>
+                    <p className="text-4xl font-bold text-slate-900">Significant Savings</p>
                     <p className="text-sm text-slate-500">Compared to traditional law firms</p>
                   </div>
                   <div className="grid grid-cols-2 gap-6 pt-4 border-t border-slate-100">
                     <div>
-                      <p className="text-3xl font-bold text-slate-900">47</p>
-                      <p className="text-xs text-slate-500 mt-1">Cases filed this month</p>
+                      <p className="text-3xl font-bold text-slate-900">Growing</p>
+                      <p className="text-xs text-slate-500 mt-1">Cases filed every month</p>
                     </div>
                     <div>
-                      <p className="text-3xl font-bold text-slate-900">2K+</p>
+                      <p className="text-3xl font-bold text-slate-900">Thousands</p>
                       <p className="text-xs text-slate-500 mt-1">Families helped</p>
                     </div>
                   </div>
@@ -401,17 +405,31 @@ export default function Home() {
                   </th>
                 </tr>
               </thead>
-              <tbody>
+                            <tbody>
+                <tr className="border-b border-slate-100 bg-emerald-50/30">
+                  <td className="px-6 py-4 font-medium text-slate-900">
+                    Attorney Files with USCIS
+                  </td>
+                  <td className="px-6 py-4 text-center">
+                    <CheckCircle2 className="w-5 h-5 text-emerald-600 mx-auto" />
+                  </td>
+                  <td className="px-6 py-4 text-center text-slate-400">
+                    <X className="w-5 h-5 mx-auto" />
+                  </td>
+                  <td className="px-6 py-4 text-center">
+                    <CheckCircle2 className="w-5 h-5 text-emerald-600 mx-auto" />
+                  </td>
+                </tr>
                 <tr className="border-b border-slate-100">
-                  <td className="px-6 py-4 font-medium text-slate-900">Cost</td>
+                  <td className="px-6 py-4 font-medium text-slate-900">Cost (Attorney Fees)</td>
                   <td className="px-6 py-4 text-center text-slate-600">
-                    $5,000 - $15,000
+                    $3,500 - $6,000
                   </td>
                   <td className="px-6 py-4 text-center text-slate-600">
-                    $500 - $1,000
+                    $599 - $1,249
                   </td>
                   <td className="px-6 py-4 text-center font-semibold text-emerald-600">
-                    $499 - $1,499
+                    $999 - $1,499
                   </td>
                 </tr>
                 <tr className="border-b border-slate-100">
@@ -456,12 +474,26 @@ export default function Home() {
                     <CheckCircle2 className="w-5 h-5 text-emerald-600 mx-auto" />
                   </td>
                 </tr>
-                <tr>
+                <tr className="border-b border-slate-100">
                   <td className="px-6 py-4 font-medium text-slate-900">
-                    Error Protection
+                    Bilingual Support
+                  </td>
+                  <td className="px-6 py-4 text-center text-slate-600">
+                    Sometimes
+                  </td>
+                  <td className="px-6 py-4 text-center text-slate-600">
+                    Limited
                   </td>
                   <td className="px-6 py-4 text-center">
                     <CheckCircle2 className="w-5 h-5 text-emerald-600 mx-auto" />
+                  </td>
+                </tr>
+                <tr>
+                  <td className="px-6 py-4 font-medium text-slate-900">
+                    RFE Assistance
+                  </td>
+                  <td className="px-6 py-4 text-center text-slate-600">
+                    Extra Fee
                   </td>
                   <td className="px-6 py-4 text-center text-slate-400">
                     <X className="w-5 h-5 mx-auto" />
@@ -479,12 +511,11 @@ export default function Home() {
       {/* ═══════════════ SOCIAL PROOF / STATS ═══════════════ */}
       <section className="py-24 sm:py-32 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
-              { value: '2,000+', label: 'Cases Filed' },
-              { value: '93%', label: 'Approval Rate' },
-              { value: '$4,000+', label: 'Average Savings' },
-              { value: '4.9/5', label: 'Client Rating' },
+              { value: 'Thousands', label: 'Cases Filed' },
+              { value: 'High', label: 'Approval Rate' },
+              { value: 'Significant', label: 'Average Savings' },
             ].map((stat, i) => (
               <div key={i} className="text-center">
                 <p className="text-4xl sm:text-5xl font-bold text-emerald-600 mb-2">
@@ -599,7 +630,7 @@ export default function Home() {
           </p>
           <Link href="/assessment">
             <button className="px-8 py-4 rounded-xl text-base font-semibold text-white bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-700 hover:to-emerald-600 transition-all duration-200 shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 mx-auto mb-6">
-              Free Case Evaluation
+              Check Your Eligibility
               <ArrowRight className="w-5 h-5" />
             </button>
           </Link>
@@ -607,7 +638,7 @@ export default function Home() {
             No upfront fees. No hidden costs. Cancel anytime.
           </p>
           <p className="text-xs text-slate-400 max-w-lg mx-auto leading-relaxed">
-            GreenCard.ai is not a law firm and does not provide legal advice. Legal services are provided by Partner Immigration Law, PLLC. All information is for educational purposes only. This is not a substitute for professional legal advice.
+            Legal services provided by Partner Immigration Law, PLLC, Jeremy Knight, Esq., Florida Bar No. 1009132, Fort Lauderdale, Broward County, FL. GreenCard.ai is the technology platform facilitating your engagement with licensed attorneys. This is attorney advertising.
           </p>
         </div>
       </section>

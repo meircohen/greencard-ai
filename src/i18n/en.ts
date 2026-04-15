@@ -12,11 +12,11 @@ export default {
   },
 
   hero: {
-    badge: "Powered by Real USCIS Data + AI",
+    badge: "Powered by Real USCIS Data",
     title: "Your path to the",
     titleGradient: "Green Card",
     subtitle:
-      "AI that actually understands immigration law. Real approval rates, real processing times, real costs. No guessing.",
+      "Advanced technology that understands immigration law. Real approval rates, real processing times, real costs. No guessing.",
     ctaPrimary: "Start Your Assessment",
     ctaSecondary: "Take a Quick Tour",
     stat1Value: "2.4M",
@@ -33,8 +33,8 @@ export default {
     sectionLabel: "Why Choose GreenCard.ai",
     title: "Everything You Need to Immigrate",
     subtitle:
-      "From assessment to green card, we've got your entire immigration journey covered with AI intelligence.",
-    feature1Title: "AI Case Assessment",
+      "From assessment to green card, we've got your entire immigration journey covered with advanced technology.",
+    feature1Title: "Case Assessment",
     feature1Desc:
       "Get an honest evaluation of your case with approval probability and timeline estimates.",
     feature2Title: "Real-Time Visa Bulletin",
@@ -45,17 +45,17 @@ export default {
       "Know exactly what your immigration will cost—government fees, attorney fees, and more.",
     feature4Title: "Document Automation",
     feature4Desc:
-      "AI-generated forms, templates, and checklists tailored to your case.",
+      "Generated forms, templates, and checklists tailored to your case.",
     feature5Title: "Interview Preparation",
     feature5Desc:
-      "Practice with our AI interviewer for marriage, green card, and citizenship interviews.",
+      "Practice interview scenarios for marriage, green card, and citizenship interviews.",
     feature6Title: "Attorney Network",
     feature6Desc:
       "Find vetted immigration attorneys and get real-time consultations.",
   },
 
   chat: {
-    title: "Meet Your Immigration AI Advisor",
+    title: "Meet Your Immigration Advisor",
     subtitle: "Get instant answers to your immigration questions",
     welcomeMessage:
       "Hi! I'm your GreenCard.ai advisor. I'm trained on USCIS regulations, visa bulletin data, and thousands of real cases. I can help you:\n\n• Understand your visa options\n• Calculate your case timeline\n• Estimate costs\n• Review your case strategy\n• Answer visa bulletin questions\n• Prepare for interviews\n\nWhat can I help with today?",
@@ -65,10 +65,10 @@ export default {
     suggestion2: "How long will my green card take?",
     suggestion3: "What's the total cost?",
     suggestion4: "Practice an interview with me",
-    liveAI: "Live AI Advisor",
+    liveAI: "Live Advisor",
     demoMode: "(Demo Mode)",
     disclaimer:
-      "This is an AI advisor for educational purposes. Always consult a qualified immigration attorney for legal advice.",
+      "This is an advisor tool for educational purposes. Always consult a qualified immigration attorney for legal advice.",
   },
 
   assessment: {
@@ -138,7 +138,7 @@ export default {
     underReview: "Under Review",
     pending: "Pending",
     upcomingDeadlines: "Upcoming Deadlines",
-    aiInsight: "AI Insight",
+    aiInsight: "Case Insight",
   },
 
   pricing: {
@@ -200,7 +200,7 @@ export default {
 
   footer: {
     description:
-      "AI-powered immigration guidance backed by real data and expert knowledge.",
+      "Professional immigration guidance backed by real data and expert knowledge.",
     platform: "Platform",
     resources: "Resources",
     company: "Company",
@@ -230,15 +230,15 @@ export default {
     validate: "Validate",
     generatePdf: "Generate PDF",
     saveDraft: "Save Draft",
-    aiSuggestions: "AI Suggestions",
+    aiSuggestions: "Smart Suggestions",
     uploadDocuments: "Upload Documents",
     dragDrop: "Drag and drop your documents here",
   },
 
   interview: {
     title: "Interview Preparation",
-    subtitle: "Practice with AI for your immigration interview",
-    practiceWithAI: "Practice with AI",
+    subtitle: "Practice for your immigration interview",
+    practiceWithAI: "Practice Interview",
     marriageInterview: "Marriage Interview",
     civicsTest: "Civics Test",
     questionOf: "Question {current} of {total}",

@@ -19,7 +19,7 @@ const pricingTiers = [
       'Case status tracking',
       'Bilingual support (EN/ES)',
       'One round of RFE response',
-      '90-day money-back guarantee',
+      '14-day money-back guarantee',
     ],
   },
   {
@@ -60,12 +60,18 @@ const caseTypes = [
   { name: 'Family Sponsorship', essential: 599, complete: 899, premium: null },
 ];
 
+const governmentFees = {
+  'Marriage Green Card (AOS)': { i485: 1440, i130: 625, total: 2065 },
+  'Citizenship (N-400)': { n400: 710, total: 710 },
+  'Work Permit (I-765) - Standalone': { i765: 410, total: 410 },
+};
+
 const comparisonData = [
   {
-    feature: 'Cost',
-    traditional: '$5,000+',
-    diy: '$599+',
-    greencard: '$999+',
+    feature: 'Cost (all-in)',
+    traditional: '$5,000 - $8,000',
+    diy: '$2,600 - $3,300',
+    greencard: '$3,064 - $4,564',
   },
   {
     feature: 'Attorney files for you?',
@@ -103,7 +109,7 @@ const faqs = [
   {
     question: 'How much are government filing fees?',
     answer:
-      'Government filing fees are separate and not included in our pricing. USCIS fees vary by case type but typically range from $200-$1,000. We will clearly communicate all government fees upfront.',
+      'Government fees are separate and paid directly to USCIS. Common fees: I-485 (Green Card) = $1,440, I-130 (Petition) = $625, I-765 (Work Permit) = $410, N-400 (Citizenship) = $710. We show total all-in costs on this page so you know exactly what to expect.',
   },
   {
     question: 'Can I switch tiers?',
@@ -118,12 +124,12 @@ const faqs = [
   {
     question: 'What is your 90-day money-back guarantee?',
     answer:
-      'If you are not satisfied with our Essential or Complete tier services within 90 days, we will refund your fees in full. Premium tier includes a 60-day guarantee. No questions asked.',
+      'If you are not satisfied with our Essential or Complete tier services within 14 days, we will refund your fees in full. No questions asked.',
   },
   {
     question: 'Do you offer payment plans?',
     answer:
-      'Yes! All tiers can be paid monthly. For example, Marriage GC Complete ($1,499) can be split into 12 payments of $124.92/month with no interest.',
+      'Yes! Payment plans are available for our legal service fees with no interest. For example, Marriage GC Complete ($1,499) can be split into 12 payments of $124.92/month. Government fees are paid separately when your case is filed.',
   },
   {
     question: 'Are you licensed attorneys?',
@@ -293,12 +299,126 @@ export default function PricingPage() {
           </table>
         </div>
 
+        {/* Government Fees Callout */}
+        <div className="mt-12 bg-green-500/10 border border-green-500/30 rounded-lg p-8">
+          <p className="text-center text-secondary mb-3">
+            All prices shown are our legal service fees. USCIS government filing fees are separate and paid directly to the government.
+          </p>
+          <p className="text-center text-primary font-semibold">
+            We show total all-in costs below so you know exactly what to expect.
+          </p>
+        </div>
+
+        {/* All-in Cost Breakdown */}
+        <div className="mt-12 grid md:grid-cols-3 gap-8">
+          {/* Marriage Green Card */}
+          <div className="bg-surface/30 border border-white/10 rounded-lg p-6">
+            <h3 className="text-xl font-bold text-primary mb-4">Marriage Green Card (AOS)</h3>
+            <div className="space-y-3 text-sm">
+              <div className="flex justify-between">
+                <span className="text-secondary">Essential (our fee)</span>
+                <span className="text-primary font-semibold">$999</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-secondary">+ Government (I-485 + I-130)</span>
+                <span className="text-primary font-semibold">$2,065</span>
+              </div>
+              <div className="border-t border-white/10 pt-3 flex justify-between font-bold">
+                <span className="text-primary">Essential Total</span>
+                <span className="text-green-500">$3,064</span>
+              </div>
+
+              <div className="border-t border-white/10 pt-3 flex justify-between">
+                <span className="text-secondary">Complete (our fee)</span>
+                <span className="text-primary font-semibold">$1,499</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-secondary">+ Government fees</span>
+                <span className="text-primary font-semibold">$2,065</span>
+              </div>
+              <div className="border-t border-white/10 pt-3 flex justify-between font-bold">
+                <span className="text-primary">Complete Total</span>
+                <span className="text-green-500">$3,564</span>
+              </div>
+
+              <div className="border-t border-white/10 pt-3 flex justify-between">
+                <span className="text-secondary">Premium (our fee)</span>
+                <span className="text-primary font-semibold">$2,499</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-secondary">+ Government fees</span>
+                <span className="text-primary font-semibold">$2,065</span>
+              </div>
+              <div className="border-t border-white/10 pt-3 flex justify-between font-bold">
+                <span className="text-primary">Premium Total</span>
+                <span className="text-green-500">$4,564</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Citizenship */}
+          <div className="bg-surface/30 border border-white/10 rounded-lg p-6">
+            <h3 className="text-xl font-bold text-primary mb-4">Citizenship (N-400)</h3>
+            <div className="space-y-3 text-sm">
+              <div className="flex justify-between">
+                <span className="text-secondary">Essential (our fee)</span>
+                <span className="text-primary font-semibold">$499</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-secondary">+ Government (N-400)</span>
+                <span className="text-primary font-semibold">$710</span>
+              </div>
+              <div className="border-t border-white/10 pt-3 flex justify-between font-bold">
+                <span className="text-primary">Essential Total</span>
+                <span className="text-green-500">$1,209</span>
+              </div>
+
+              <div className="border-t border-white/10 pt-3 flex justify-between">
+                <span className="text-secondary">Complete (our fee)</span>
+                <span className="text-primary font-semibold">$699</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-secondary">+ Government fees</span>
+                <span className="text-primary font-semibold">$710</span>
+              </div>
+              <div className="border-t border-white/10 pt-3 flex justify-between font-bold">
+                <span className="text-primary">Complete Total</span>
+                <span className="text-green-500">$1,409</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Work Permit */}
+          <div className="bg-surface/30 border border-white/10 rounded-lg p-6">
+            <h3 className="text-xl font-bold text-primary mb-4">Work Permit (I-765 Standalone)</h3>
+            <div className="space-y-3 text-sm">
+              <div className="flex justify-between">
+                <span className="text-secondary">Essential (our fee)</span>
+                <span className="text-primary font-semibold">$299</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-secondary">+ Government (I-765)</span>
+                <span className="text-primary font-semibold">$410</span>
+              </div>
+              <div className="border-t border-white/10 pt-3 flex justify-between font-bold">
+                <span className="text-primary">Essential Total</span>
+                <span className="text-green-500">$709</span>
+              </div>
+
+              <p className="text-secondary text-xs mt-4 italic">
+                Note: I-765 is FREE when filed with I-485. Work Permit fee only applies if filed standalone.
+              </p>
+            </div>
+          </div>
+        </div>
+
         {/* Monthly Payment Info */}
         <div className="mt-12 bg-surface/30 border border-white/10 rounded-lg p-8 text-center">
           <p className="text-secondary mb-2">All prices shown are one-time service fees.</p>
           <p className="text-primary font-semibold">
             Pay monthly with no interest. For example, Marriage GC Complete is just $124.92/month for 12 months.
           </p>
+          <p className="text-secondary text-sm mt-4">Payment plans cover our legal fees only. Government fees are paid separately when your case is filed.</p>
         </div>
       </section>
 
@@ -375,13 +495,28 @@ export default function PricingPage() {
             </tbody>
           </table>
         </div>
+
+        {/* Comparison Note */}
+        <div className="mt-8 bg-surface/30 border border-white/10 rounded-lg p-6 text-sm text-secondary">
+          <p className="mb-3">
+            <span className="font-semibold text-primary">All-in costs shown for Marriage Green Card via Adjustment of Status:</span>
+          </p>
+          <ul className="space-y-2 ml-4">
+            <li>Traditional Attorney: $5,000-$8,000 includes their legal fees and government filing</li>
+            <li>DIY Platforms: $2,600-$3,300 for forms + $2,065 government fees you pay yourself</li>
+            <li>GreenCard.ai: Includes attorney filing, document preparation, and case management</li>
+          </ul>
+        </div>
       </section>
 
       {/* Disclaimer Section */}
       <section className="px-4 sm:px-6 lg:px-8 py-12 max-w-3xl mx-auto">
         <div className="bg-surface/30 border border-white/10 rounded-lg p-6">
-          <p className="text-sm text-secondary text-center">
+          <p className="text-sm text-secondary text-center mb-4">
             Service fees shown are for attorney services only. Government filing fees (USCIS, DOS, etc.) are not included and will be billed separately. Fees vary by case type and complexity.
+          </p>
+          <p className="text-xs text-secondary text-center">
+            Legal services provided by Partner Immigration Law, PLLC, a Florida-licensed immigration law firm. Jeremy Knight, Esq., Florida Bar No. 1009132, Fort Lauderdale, Broward County, Florida. GreenCard.ai is the technology platform, not the law firm. This is attorney advertising.
           </p>
         </div>
       </section>

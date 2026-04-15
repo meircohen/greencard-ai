@@ -65,7 +65,7 @@ export default {
     suggestion2: "¿Cuánto tiempo tomará mi tarjeta de residencia?",
     suggestion3: "¿Cuál es el costo total?",
     suggestion4: "Practica una entrevista conmigo",
-    liveAI: "Asesor de IA en Directo",
+    liveAI: "Asesor en Directo",
     demoMode: "(Modo Demo)",
     disclaimer:
       "Este es un asesor de IA con fines educativos. Siempre consulta a un abogado de inmigración calificado para obtener asesoramiento legal.",
@@ -238,7 +238,7 @@ export default {
   interview: {
     title: "Preparación de Entrevista",
     subtitle: "Practica con IA para tu entrevista de inmigración",
-    practiceWithAI: "Practica con IA",
+    practiceWithAI: "Practica de Entrevista",
     marriageInterview: "Entrevista de Matrimonio",
     civicsTest: "Prueba de Civismo",
     questionOf: "Pregunta {current} de {total}",

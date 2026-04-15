@@ -149,7 +149,7 @@ export default function GuidesPage() {
             Not sure where to start?
           </h2>
           <p className="text-slate-600 mb-8 max-w-2xl mx-auto">
-            Our free AI-powered assessment will analyze your immigration situation and provide
+            Our free assessment will analyze your immigration situation and provide
             personalized recommendations on the best path for your green card or visa application.
           </p>
           <Link href="/assessment">

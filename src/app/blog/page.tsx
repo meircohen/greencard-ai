@@ -271,7 +271,7 @@ export default function BlogPage() {
           <div className="bg-gradient-to-r from-green-600/20 to-blue-600/20 border border-green-500/30 rounded-lg p-8 text-center">
             <h3 className="text-xl font-bold text-white mb-2">Get Your Free Case Assessment</h3>
             <p className="text-slate-400 mb-6">
-              Our AI advisor will provide personalized recommendations based on your specific immigration situation.
+              Our platform will provide personalized recommendations based on your specific immigration situation.
             </p>
             <Link href="/assessment">
               <Button className="bg-green-600 hover:bg-green-700 text-white">

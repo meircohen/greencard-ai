@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import { Analytics } from "@/components/Analytics";
+import { WhatsAppButton } from "@/components/WhatsAppButton";
 import "./globals.css";
 
 const inter = Inter({
@@ -13,12 +14,12 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://greencard.ai";
 
 export const metadata: Metadata = {
   title: {
-    default: "GreenCard.ai - AI-Powered Immigration Platform",
+    default: "GreenCard.ai - Modern Immigration Legal Services",
     template: "%s | GreenCard.ai",
   },
-  description: "Navigate your US immigration journey with AI assistance. Get visa assessments, timeline predictions, cost estimates, and personalized guidance.",
+  description: "Navigate your US immigration journey with advanced technology. Get visa assessments, timeline predictions, cost estimates, and personalized guidance.",
   keywords: [
-    "green card", "immigration", "visa", "AI", "immigration lawyer",
+    "green card", "immigration", "visa", "immigration lawyer",
     "I-485", "I-130", "EB-1A", "USCIS", "RFE", "adjustment of status",
     "immigration assessment", "visa bulletin", "processing times",
   ],
@@ -34,21 +35,21 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: SITE_URL,
     siteName: "GreenCard.ai",
-    title: "GreenCard.ai - AI-Powered Immigration Platform",
-    description: "Navigate your US immigration journey with AI. Visa assessments, cost estimates, and personalized guidance.",
+    title: "GreenCard.ai - Modern Immigration Legal Services",
+    description: "Navigate your US immigration journey with advanced technology. Visa assessments, cost estimates, and personalized guidance.",
     images: [
       {
         url: `${SITE_URL}/og-image.png`,
         width: 1200,
         height: 630,
-        alt: "GreenCard.ai - Your AI Immigration Guide",
+        alt: "GreenCard.ai - Modern Immigration Legal Services",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "GreenCard.ai - AI-Powered Immigration Platform",
-    description: "Navigate your US immigration journey with AI assistance.",
+    title: "GreenCard.ai - Modern Immigration Legal Services",
+    description: "Navigate your US immigration journey with advanced technology.",
     images: [`${SITE_URL}/og-image.png`],
   },
   robots: {
@@ -88,6 +89,7 @@ export default function RootLayout({
       <body className={`${inter.variable} bg-white text-slate-900 antialiased`}>
         {children}
         <Analytics />
+        <WhatsAppButton />
       </body>
     </html>
   );

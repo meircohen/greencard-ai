@@ -161,7 +161,7 @@ const blogPosts: Record<string, BlogPostData> = {
 
 <p>Remember: the Visa Bulletin is not a prediction—it's a monthly snapshot of where USCIS has processed cases. It can move faster or slower than expected based on pending workload, staffing, policy changes, and external factors.</p>
 
-<p>If you need help tracking your priority date, understanding where you stand, or planning your green card strategy, GreenCard.ai's AI advisor can provide personalized guidance based on your specific category, country, and timeline.</p>
+<p>If you need help tracking your priority date, understanding where you stand, or planning your green card strategy, GreenCard.ai can provide personalized guidance based on your specific category, country, and timeline.</p>
     `,
   },
   "marriage-interview-preparation": {
@@ -374,7 +374,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
               <div className="mt-12 bg-gradient-to-r from-green-600/20 to-blue-600/20 border border-green-500/30 rounded-lg p-8 text-center">
                 <h3 className="text-xl font-bold text-white mb-2">Get Your Free Case Assessment</h3>
                 <p className="text-slate-400 mb-6">
-                  Our AI advisor will provide personalized recommendations based on your immigration situation.
+                  Our platform will provide personalized recommendations based on your immigration situation.
                 </p>
                 <Link href="/assessment">
                   <Button className="bg-green-600 hover:bg-green-700 text-white">

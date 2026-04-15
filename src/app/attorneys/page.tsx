@@ -119,7 +119,7 @@ export default function AttorneysPage() {
             Why We Partnered
           </h2>
           <p className="text-lg text-secondary mb-12">
-            GreenCard.ai combines powerful AI assistance with expert legal
+            GreenCard.ai combines powerful technology with expert legal
             review. Instead of searching through dozens of attorneys, you get
             matched with our trusted partner who understands our process and is
             optimized for our clients.
@@ -129,10 +129,10 @@ export default function AttorneysPage() {
             <Card className="p-6 text-left">
               <div className="text-3xl mb-4">🤖</div>
               <h3 className="text-lg font-semibold text-primary mb-2">
-                AI Efficiency
+                Professional Efficiency
               </h3>
               <p className="text-secondary text-sm">
-                Our AI handles form filling, document preparation, and case
+                Our platform handles form filling, document preparation, and case
                 assessment—freeing your attorney to focus on strategy.
               </p>
             </Card>
@@ -173,15 +173,15 @@ export default function AttorneysPage() {
             {[
               {
                 number: 1,
-                title: "AI Assessment",
+                title: "Case Assessment",
                 description:
-                  "Start with our AI case assessment. Tell your story and get an analysis of your options, timeline, and success rate.",
+                  "Start with our case assessment. Tell your story and get an analysis of your options, timeline, and success rate.",
               },
               {
                 number: 2,
-                title: "AI Form Preparation",
+                title: "Form Preparation",
                 description:
-                  "Our AI assists with form filling, document gathering, and case preparation. Everything is organized and ready.",
+                  "Our platform assists with form filling, document gathering, and case preparation. Everything is organized and ready.",
               },
               {
                 number: 3,

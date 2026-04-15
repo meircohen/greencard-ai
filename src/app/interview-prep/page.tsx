@@ -560,7 +560,7 @@ export default function InterviewPrep() {
                 </p>
                 <Link href="/chat?mode=interview-prep&type=asylum">
                   <Button className="bg-green-600 hover:bg-green-700 text-white">
-                    Chat with AI Advisor
+                    Chat with Advisor
                   </Button>
                 </Link>
               </div>
@@ -577,7 +577,7 @@ export default function InterviewPrep() {
                 </p>
                 <Link href="/chat?mode=interview-prep&type=employment">
                   <Button className="bg-green-600 hover:bg-green-700 text-white">
-                    Chat with AI Advisor
+                    Chat with Advisor
                   </Button>
                 </Link>
               </div>

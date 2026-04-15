@@ -30,7 +30,7 @@ export default function PrivacyPage() {
             <div>
               <h2 className="text-2xl font-bold text-slate-900 mb-4">Introduction</h2>
               <p className="text-slate-600 leading-relaxed">
-                GreenCard.ai ("we," "us," "our," or "Company") is operated by Partner Immigration Law, PLLC, a licensed immigration law firm. We are committed to protecting your privacy and ensuring you have a positive experience on our website and services. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website, use our services, and interact with us.
+                GreenCard.ai is operated as the technology platform for Partner Immigration Law, PLLC (Jeremy Knight, Esq., Florida Bar No. 1009132, Fort Lauderdale, FL). Partner Immigration Law, PLLC is a Florida-licensed immigration law firm. We are committed to protecting your privacy and ensuring you have a positive experience on our website and services. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website, use our services, and interact with us.
               </p>
             </div>
 

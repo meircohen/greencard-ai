@@ -295,7 +295,7 @@ export default function Dashboard() {
           {/* Quick Actions */}
           <div className="flex flex-wrap gap-3 mt-6">
             <Link href="/chat" className="flex items-center gap-2 px-4 py-2 rounded-lg bg-green-500/10 border border-green-500/30 text-green-400 text-sm font-medium hover:bg-green-500/20 transition-colors">
-              <Zap className="w-4 h-4" /> AI Chat
+              <Zap className="w-4 h-4" /> Chat
             </Link>
             <Link href="/rfe-decoder" className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500/10 border border-blue-500/30 text-blue-400 text-sm font-medium hover:bg-blue-500/20 transition-colors">
               <FileSearch className="w-4 h-4" /> RFE Decoder
@@ -381,7 +381,7 @@ export default function Dashboard() {
                   <Zap className="w-5 h-5 text-green-400 flex-shrink-0 mt-1" />
                   <div>
                     <h3 className="font-semibold text-green-300">
-                      AI Case Analysis
+                      Case Analysis
                     </h3>
                     <p className="text-xs text-green-200/70 mt-2">
                       Based on your current progress and timeline:

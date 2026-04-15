@@ -198,7 +198,7 @@ const notes: Note[] = [
   },
   {
     id: "note2",
-    author: "AI Advisor",
+    author: "Case Advisor",
     date: "April 5, 2024",
     content:
       "RFE received requesting additional evidence of relationship. This is common for spouse petitions. Response should include joint statements, financial documents, and wedding photos.",

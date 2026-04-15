@@ -145,10 +145,13 @@ export default function ContactPage() {
                   Jeremy "Yirmi" Knight, Esq.
                 </h3>
                 <p className="text-sm text-slate-600">
-                  Partner, Immigration Law
+                  Florida Bar No. 1009132
                 </p>
                 <p className="text-sm text-slate-600">
                   Partner Immigration Law, PLLC
+                </p>
+                <p className="text-sm text-slate-600">
+                  Fort Lauderdale, Broward County, FL 33312
                 </p>
               </div>
             </div>
@@ -279,7 +282,7 @@ export default function ContactPage() {
                   Ready to get started?
                 </h3>
                 <p className="text-slate-600 mb-4">
-                  Take our free AI visa assessment to see which immigration pathways you may qualify for.
+                  Take our free visa assessment to see which immigration pathways you may qualify for.
                 </p>
                 <Link href="/assessment">
                   <Button variant="secondary" size="lg">
