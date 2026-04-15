@@ -13,7 +13,13 @@ type PageType =
   | "attorney-detail"
   | "login"
   | "signup"
-  | "not-found";
+  | "not-found"
+  | "assessment"
+  | "rfe-decoder"
+  | "interview-prep"
+  | "dashboard"
+  | "documents"
+  | "forms-i485";
 
 const pageMetadata: Record<PageType, Omit<Metadata, "openGraph">> = {
   home: {
@@ -62,6 +68,34 @@ const pageMetadata: Record<PageType, Omit<Metadata, "openGraph">> = {
   "not-found": {
     title: "Page Not Found - GreenCard.ai",
     description: "The page you are looking for does not exist.",
+  },
+  assessment: {
+    title: "Immigration Assessment - GreenCard.ai",
+    description:
+      "Get an AI-powered assessment of your immigration case. Evaluate eligibility, estimate costs, and discover your best path to a green card.",
+  },
+  "rfe-decoder": {
+    title: "RFE Decoder - GreenCard.ai",
+    description:
+      "Upload your USCIS Request for Evidence and get AI analysis with response strategies, evidence recommendations, and draft language.",
+  },
+  "interview-prep": {
+    title: "Immigration Interview Prep - GreenCard.ai",
+    description:
+      "Practice for your USCIS immigration interview with AI-generated questions and coaching based on your case type.",
+  },
+  dashboard: {
+    title: "Dashboard - GreenCard.ai",
+    description: "Track your immigration cases, deadlines, and documents in one place.",
+  },
+  documents: {
+    title: "Document Management - GreenCard.ai",
+    description: "Manage immigration forms, upload supporting documents, and track completion status.",
+  },
+  "forms-i485": {
+    title: "I-485 Form Assistant - GreenCard.ai",
+    description:
+      "Complete your I-485 Adjustment of Status application with AI guidance, RFE risk indicators, and auto-save.",
   },
 };
 
@@ -167,6 +201,36 @@ export function serviceSchema() {
 interface BreadcrumbItem {
   name: string;
   url: string;
+}
+
+export function webApplicationSchema() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    name: "GreenCard.ai",
+    url: baseUrl,
+    applicationCategory: "LegalService",
+    operatingSystem: "Any",
+    description:
+      "AI-powered immigration platform with visa assessments, form preparation, RFE analysis, and attorney matching.",
+    offers: {
+      "@type": "AggregateOffer",
+      priceCurrency: "USD",
+      lowPrice: "0",
+      highPrice: "199",
+      offerCount: "3",
+    },
+    featureList: [
+      "AI visa eligibility assessment",
+      "I-485 form preparation wizard",
+      "RFE decoder and response generator",
+      "USCIS processing time tracker",
+      "Immigration cost calculator",
+      "Document checklist manager",
+      "Interview preparation tool",
+      "Attorney marketplace",
+    ],
+  };
 }
 
 export function breadcrumbSchema(items: BreadcrumbItem[]) {
