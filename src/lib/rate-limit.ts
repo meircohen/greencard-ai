@@ -323,9 +323,9 @@ export const API_TIER = {
   window: 60, // 120 requests per minute
 };
 
-/** Auth endpoints: 5 attempts per 15 minutes (brute force protection) */
+/** Auth endpoints: 30 attempts per 15 minutes */
 export const AUTH_TIER = {
-  limit: 5,
+  limit: 30,
   window: 900, // 15 minutes
 };
 
