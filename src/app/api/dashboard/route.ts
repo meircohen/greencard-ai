@@ -8,6 +8,9 @@ import {
   subscriptions,
   payments,
   attorneyProfiles,
+  conversations,
+  messages,
+  users,
 } from "@/lib/db/schema";
 import { eq, desc, and } from "drizzle-orm";
 
@@ -24,7 +27,7 @@ interface Document {
   uploadedDate?: string;
 }
 
-interface Message {
+interface DashboardMessage {
   id: string;
   sender: string;
   senderRole: "team" | "attorney";
@@ -54,7 +57,7 @@ interface DashboardResponse {
   } | null;
   caseSteps: CaseStep[];
   documents: Record<string, Document[]>;
-  messages: Message[];
+  messages: DashboardMessage[];
   payment: PaymentInfo | null;
 }
 
@@ -180,19 +183,20 @@ function groupDocumentsByType(
 }
 
 /**
- * Format notification as a message
+ * Format message record for display
  */
-function formatNotificationAsMessage(
-  notification: typeof notifications.$inferSelect
-): Message {
-  const metadata = notification.metadata as Record<string, unknown> | null;
+function formatMessageForDisplay(
+  msg: typeof messages.$inferSelect,
+  senderName: string,
+  senderRole: "team" | "attorney"
+): DashboardMessage {
   return {
-    id: notification.id,
-    sender: (metadata?.senderName as string) || "Case Team",
-    senderRole: (metadata?.senderRole as "team" | "attorney") || "team",
-    content: notification.message,
-    timestamp: notification.createdAt
-      ? new Date(notification.createdAt).toLocaleDateString("en-US", {
+    id: msg.id,
+    sender: senderName || "Unknown",
+    senderRole,
+    content: msg.content,
+    timestamp: msg.createdAt
+      ? new Date(msg.createdAt).toLocaleDateString("en-US", {
           year: "numeric",
           month: "short",
           day: "numeric",
@@ -245,15 +249,80 @@ export async function GET(request: NextRequest) {
 
     const documents = groupDocumentsByType(caseDocsList);
 
-    // 3. Fetch recent notifications (max 10)
-    const notificationsList = await db
+    // 3. Fetch recent messages from conversations (max 10)
+    // First get conversations for this case
+    const conversationList = await db
       .select()
-      .from(notifications)
-      .where(eq(notifications.userId, userId))
-      .orderBy(desc(notifications.createdAt))
-      .limit(10);
+      .from(conversations)
+      .where(eq(conversations.caseId, userCase.id))
+      .orderBy(desc(conversations.updatedAt));
 
-    const messages = notificationsList.map(formatNotificationAsMessage);
+    // Get recent messages from all conversations for this case
+    const messagesList: DashboardMessage[] = [];
+    for (const conv of conversationList) {
+      const msgList = await db
+        .select()
+        .from(messages)
+        .where(eq(messages.conversationId, conv.id))
+        .orderBy(desc(messages.createdAt))
+        .limit(1);
+
+      if (msgList.length > 0) {
+        const msg = msgList[0];
+
+        // Determine sender info based on who created the conversation
+        let senderName = "Case Team";
+        let senderRole: "team" | "attorney" = "team";
+
+        if (conv.userId === userCase.attorneyId) {
+          senderRole = "attorney";
+          const [attorney] = await db
+            .select()
+            .from(users)
+            .where(eq(users.id, conv.userId));
+          if (attorney) {
+            senderName = attorney.fullName || attorney.email;
+          }
+        } else {
+          const [sender] = await db
+            .select()
+            .from(users)
+            .where(eq(users.id, conv.userId));
+          if (sender) {
+            senderName = sender.fullName || sender.email;
+          }
+        }
+
+        messagesList.push(
+          formatMessageForDisplay(msg, senderName, senderRole)
+        );
+      }
+    }
+
+    // If no direct messages, fall back to notifications for backward compatibility
+    const finalMessages = messagesList.length > 0 ? messagesList : (
+      await db
+        .select()
+        .from(notifications)
+        .where(eq(notifications.userId, userId))
+        .orderBy(desc(notifications.createdAt))
+        .limit(10)
+    ).map((notif) => {
+      const metadata = notif.metadata as Record<string, unknown> | null;
+      return {
+        id: notif.id,
+        sender: (metadata?.senderName as string) || "Case Team",
+        senderRole: (metadata?.senderRole as "team" | "attorney") || "team",
+        content: notif.message,
+        timestamp: notif.createdAt
+          ? new Date(notif.createdAt).toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+            })
+          : "Recently",
+      };
+    });
 
     // 4. Fetch subscription and payment info
     const [subscription] = await db
@@ -332,7 +401,7 @@ export async function GET(request: NextRequest) {
       },
       caseSteps: calculateCaseSteps(userCase.status),
       documents,
-      messages,
+      messages: finalMessages,
       payment: paymentInfo,
     } as DashboardResponse);
   } catch (error) {

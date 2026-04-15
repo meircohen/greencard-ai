@@ -103,6 +103,12 @@ export default function Dashboard() {
   const [uploadingDocument, setUploadingDocument] = useState<string | null>(null);
   const [uploadSuccess, setUploadSuccess] = useState<string | null>(null);
 
+  // Message modal states
+  const [showMessageModal, setShowMessageModal] = useState(false);
+  const [messageContent, setMessageContent] = useState("");
+  const [sendingMessage, setSendingMessage] = useState(false);
+  const [messageError, setMessageError] = useState<string | null>(null);
+
   const displayName = userInfo?.fullName?.split(" ")[0] || user?.name?.split(" ")[0] || "Client";
 
   // Fetch data on component mount
@@ -235,6 +241,77 @@ export default function Dashboard() {
 
   const triggerFileInput = () => {
     fileInputRef.current?.click();
+  };
+
+  const handleSendMessage = async () => {
+    if (!messageContent.trim()) {
+      setMessageError("Message cannot be empty");
+      return;
+    }
+
+    if (!hasCase) {
+      setMessageError("You need to create a case first");
+      return;
+    }
+
+    setSendingMessage(true);
+    setMessageError(null);
+
+    try {
+      // Step 1: Create or get conversation
+      const conversationRes = await fetch("/api/messages", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          caseId: cases[0]?.id,
+          subject: "Dashboard Message",
+        }),
+      });
+
+      if (!conversationRes.ok) {
+        throw new Error("Failed to create conversation");
+      }
+
+      const convData = await conversationRes.json();
+      const conversationId = convData.conversation.id;
+
+      // Step 2: Send message
+      const messageRes = await fetch(
+        `/api/messages/${conversationId}`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ content: messageContent }),
+        }
+      );
+
+      if (!messageRes.ok) {
+        throw new Error("Failed to send message");
+      }
+
+      // Success
+      setMessageContent("");
+      setShowMessageModal(false);
+      alert("Message sent successfully!");
+
+      // Optionally refresh messages
+      const dashboardRes = await fetch("/api/dashboard", {
+        credentials: "include",
+      });
+      if (dashboardRes.ok) {
+        const data = await dashboardRes.json();
+        setMessages(data.messages || []);
+      }
+    } catch (err) {
+      console.error("Error sending message:", err);
+      setMessageError(
+        err instanceof Error ? err.message : "Failed to send message"
+      );
+    } finally {
+      setSendingMessage(false);
+    }
   };
 
   if (loading) {
@@ -651,7 +728,10 @@ export default function Dashboard() {
               </div>
             )}
             {messages.length > 0 && (
-              <button className="mt-4 flex items-center gap-2 text-emerald-600 hover:text-emerald-700 font-medium">
+              <button
+                onClick={() => router.push("/messages")}
+                className="mt-4 flex items-center gap-2 text-emerald-600 hover:text-emerald-700 font-medium"
+              >
                 {t('dashboard.viewAllMessages')}
                 <ArrowRight className="w-4 h-4" />
               </button>
@@ -773,7 +853,10 @@ export default function Dashboard() {
                 <Upload className="w-5 h-5" />
                 {uploadingDocument ? t('common.uploading') : t('dashboard.uploadDocument')}
               </button>
-              <button className="p-6 bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-2xl hover:shadow-lg transition-all hover:scale-105 font-semibold flex items-center justify-center gap-2">
+              <button
+                onClick={() => setShowMessageModal(true)}
+                className="p-6 bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-2xl hover:shadow-lg transition-all hover:scale-105 font-semibold flex items-center justify-center gap-2"
+              >
                 <MessageSquare className="w-5 h-5" />
                 {t('dashboard.sendMessage')}
               </button>
@@ -785,6 +868,78 @@ export default function Dashboard() {
           </section>
         </div>
       </main>
+
+      {/* Message Modal */}
+      {showMessageModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          {/* Overlay */}
+          <div
+            className="absolute inset-0 bg-black/50"
+            onClick={() => {
+              setShowMessageModal(false);
+              setMessageError(null);
+            }}
+          />
+
+          {/* Modal */}
+          <div className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 p-6 z-10">
+            <h3 className="text-xl font-bold text-emerald-950 mb-4">
+              {t('dashboard.sendMessage')}
+            </h3>
+
+            {messageError && (
+              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                <p className="text-sm text-red-700">{messageError}</p>
+              </div>
+            )}
+
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-emerald-700 mb-2">
+                Message
+              </label>
+              <textarea
+                value={messageContent}
+                onChange={(e) => setMessageContent(e.target.value)}
+                placeholder="Type your message here..."
+                className="w-full px-4 py-3 border border-emerald-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none"
+                rows={4}
+              />
+              <p className="text-xs text-emerald-600 mt-1">
+                {messageContent.length} characters
+              </p>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  setShowMessageModal(false);
+                  setMessageError(null);
+                }}
+                className="flex-1 px-4 py-2 border border-emerald-200 text-emerald-700 font-medium rounded-lg hover:bg-emerald-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSendMessage}
+                disabled={sendingMessage || !messageContent.trim()}
+                className="flex-1 px-4 py-2 bg-emerald-500 text-white font-medium rounded-lg hover:bg-emerald-600 disabled:opacity-50 transition-colors flex items-center justify-center gap-2"
+              >
+                {sendingMessage ? (
+                  <>
+                    <Loader className="w-4 h-4 animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    <MessageSquare className="w-4 h-4" />
+                    Send
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Sidebar Overlay for Mobile */}
       {sidebarOpen && (
