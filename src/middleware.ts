@@ -31,6 +31,7 @@ const publicPageRoutes = [
   "/public-charge",
   "/referral",
   "/reset-password",
+  "/tracker",
 ];
 
 // Public API routes (no auth required)

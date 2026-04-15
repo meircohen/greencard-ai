@@ -11,6 +11,7 @@ const baseNavLinks = [
   { label: "Services", href: "/#services" },
   { label: "How It Works", href: "/#how-it-works" },
   { label: "Pricing", href: "/pricing" },
+  { label: "Tracker", href: "/tracker" },
   { label: "Resources", href: "/guides" },
   { label: "Contact", href: "/contact" },
 ];
