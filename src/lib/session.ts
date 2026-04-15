@@ -12,7 +12,7 @@
 const memDenylist = new Map<string, { revokedAt: number; expiresAt: number }>();
 const memUserRevocations = new Map<string, number>();
 
-function useDb(): boolean {
+function hasDb(): boolean {
   return !!process.env.DATABASE_URL;
 }
 
@@ -24,7 +24,7 @@ export function generateJti(): string {
  * Revoke a specific token by its jti.
  */
 export async function revokeToken(jti: string, tokenExpiresAt: Date): Promise<void> {
-  if (useDb()) {
+  if (hasDb()) {
     const { getDb } = await import("./db");
     const { revokedTokens } = await import("./db/schema");
     const db = getDb();
@@ -41,7 +41,7 @@ export async function revokeToken(jti: string, tokenExpiresAt: Date): Promise<vo
  * Revoke all tokens for a user issued before now.
  */
 export async function revokeAllUserTokens(userId: string): Promise<void> {
-  if (useDb()) {
+  if (hasDb()) {
     const { getDb } = await import("./db");
     const { userRevocations: userRevocationsTable } = await import("./db/schema");
     const { eq: _eq } = await import("drizzle-orm");
@@ -62,7 +62,7 @@ export async function revokeAllUserTokens(userId: string): Promise<void> {
  * Check if a specific token has been revoked.
  */
 export async function isTokenRevoked(jti: string): Promise<boolean> {
-  if (useDb()) {
+  if (hasDb()) {
     const { getDb } = await import("./db");
     const { revokedTokens } = await import("./db/schema");
     const { eq } = await import("drizzle-orm");
@@ -77,7 +77,7 @@ export async function isTokenRevoked(jti: string): Promise<boolean> {
  * Check if a token was issued before the user's last revocation.
  */
 export async function isUserTokenRevoked(userId: string, issuedAt: number): Promise<boolean> {
-  if (useDb()) {
+  if (hasDb()) {
     const { getDb } = await import("./db");
     const { userRevocations: userRevocationsTable } = await import("./db/schema");
     const { eq } = await import("drizzle-orm");

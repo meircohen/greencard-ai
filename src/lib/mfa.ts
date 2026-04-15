@@ -21,7 +21,7 @@ const APP_NAME = "GreenCard.ai";
 // In-memory fallback for environments without PII_ENCRYPTION_KEY (dev)
 const devStore = new Map<string, { secret: string; enabled: boolean; backupCodes: string[] }>();
 
-function useDb(): boolean {
+function hasDb(): boolean {
   return !!process.env.PII_ENCRYPTION_KEY && !!process.env.DATABASE_URL;
 }
 
@@ -39,7 +39,7 @@ export async function generateMfaSetup(
     backupCodes.push(crypto.randomBytes(4).toString("hex"));
   }
 
-  if (useDb()) {
+  if (hasDb()) {
     const encrypted = encryptField(secret);
     const db = getDb();
     await db
@@ -70,7 +70,7 @@ export async function generateMfaSetup(
 }
 
 async function getRecord(userId: string): Promise<{ secret: string; enabled: boolean; backupCodes: string[] } | null> {
-  if (useDb()) {
+  if (hasDb()) {
     const db = getDb();
     const [row] = await db.select().from(mfaSettings).where(eq(mfaSettings.userId, userId)).limit(1);
     if (!row) return null;
@@ -97,7 +97,7 @@ export async function verifyMfaCode(userId: string, code: string): Promise<boole
   const isValid = authenticator.verify({ token: code, secret: record.secret });
 
   if (isValid && !record.enabled) {
-    if (useDb()) {
+    if (hasDb()) {
       const db = getDb();
       await db.update(mfaSettings).set({ enabled: true, updatedAt: new Date() }).where(eq(mfaSettings.userId, userId));
     } else {
@@ -121,7 +121,7 @@ export async function verifyBackupCode(userId: string, code: string): Promise<bo
 
   record.backupCodes.splice(idx, 1);
 
-  if (useDb()) {
+  if (hasDb()) {
     const db = getDb();
     await db.update(mfaSettings).set({ backupCodes: record.backupCodes, updatedAt: new Date() }).where(eq(mfaSettings.userId, userId));
   }
@@ -141,7 +141,7 @@ export async function isMfaEnabled(userId: string): Promise<boolean> {
  * Disable MFA for a user.
  */
 export async function disableMfa(userId: string): Promise<void> {
-  if (useDb()) {
+  if (hasDb()) {
     const db = getDb();
     await db.delete(mfaSettings).where(eq(mfaSettings.userId, userId));
   } else {

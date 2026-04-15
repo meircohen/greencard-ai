@@ -12,14 +12,11 @@ const FLAG_EMOJIS: Record<SupportedLocale, string> = {
 
 export const LanguageSwitcher: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [currentLocale, setCurrentLocale] = useState<SupportedLocale | null>(null);
+  const [currentLocale, setCurrentLocale] = useState<SupportedLocale | null>(() => {
+    if (typeof window !== "undefined") return getLocaleFromCookie();
+    return null;
+  });
   const dropdownRef = useRef<HTMLDivElement>(null);
-
-  // Get initial locale on mount
-  useEffect(() => {
-    const locale = getLocaleFromCookie();
-    setCurrentLocale(locale);
-  }, []);
 
   // Close dropdown when clicking outside
   useEffect(() => {

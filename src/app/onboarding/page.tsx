@@ -72,22 +72,18 @@ const needs = [
 export default function Onboarding() {
   const router = useRouter();
   const [step, setStep] = useState<Step>(1);
-  const [data, setData] = useState<OnboardingData>({});
+  const [data, setData] = useState<OnboardingData>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const saved = localStorage.getItem("onboardingData");
+        if (saved) return JSON.parse(saved);
+      } catch { /* ignore */ }
+    }
+    return {};
+  });
   const [filteredCountries, setFilteredCountries] = useState<string[]>([]);
   const [showCountries, setShowCountries] = useState(false);
   const [countrySearch, setCountrySearch] = useState("");
-
-  // Load from localStorage on mount
-  useEffect(() => {
-    const saved = localStorage.getItem("onboardingData");
-    if (saved) {
-      try {
-        setData(JSON.parse(saved));
-      } catch (e) {
-        console.error("Failed to parse saved onboarding data");
-      }
-    }
-  }, []);
 
   // Save to localStorage whenever data changes
   useEffect(() => {
