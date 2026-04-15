@@ -122,7 +122,7 @@ const faqs = [
       'Contact us for a custom quote. We handle employment visas, investor visas, and other complex cases. Our immigration attorneys can provide a personalized pricing estimate.',
   },
   {
-    question: 'What is your 90-day money-back guarantee?',
+    question: 'What is your money-back guarantee?',
     answer:
       'If you are not satisfied with our Essential or Complete tier services within 14 days, we will refund your fees in full. No questions asked.',
   },
