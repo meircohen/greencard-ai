@@ -1,365 +1,234 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import {
-  CheckCircle2,
-  BarChart3,
+  ArrowRight,
+  Play,
+  Shield,
   FileText,
+  MessageSquare,
+  Clock,
   Calculator,
   Users,
-  Clock,
-  ArrowRight,
-  Sparkles,
-  Shield,
-  MessageSquare,
-  Zap,
-  Globe,
+  CheckCircle2,
   Lock,
   Award,
+  Globe,
+  Zap,
   ChevronRight,
+  X,
 } from 'lucide-react';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 
-const features = [
-  {
-    icon: MessageSquare,
-    title: 'AI Immigration Advisor',
-    description: 'Chat with an AI trained on real USCIS data. Get instant answers about visa options, timelines, and eligibility.',
-    bgColor: 'bg-emerald-100',
-    iconColor: 'text-emerald-700',
-  },
-  {
-    icon: Clock,
-    title: 'Live Visa Bulletin',
-    description: 'Real-time priority date tracking with historical trends and wait time predictions for every category.',
-    bgColor: 'bg-blue-100',
-    iconColor: 'text-blue-700',
-  },
-  {
-    icon: FileText,
-    title: 'Smart Form Filling',
-    description: 'AI pre-fills your I-485, I-130, and more. Built-in validation catches errors before USCIS does.',
-    bgColor: 'bg-violet-100',
-    iconColor: 'text-violet-700',
-  },
-  {
-    icon: Shield,
-    title: 'RFE Decoder',
-    description: 'Paste any Request for Evidence and get a plain-English breakdown with a response strategy.',
-    bgColor: 'bg-amber-100',
-    iconColor: 'text-amber-700',
-  },
-  {
-    icon: Calculator,
-    title: 'Cost Calculator',
-    description: 'Transparent fee breakdowns for every visa type, including attorney costs and premium processing.',
-    bgColor: 'bg-rose-100',
-    iconColor: 'text-rose-700',
-  },
-  {
-    icon: Users,
-    title: 'Attorney Network',
-    description: 'When you need a lawyer, connect with vetted immigration attorneys who can review your AI-prepared case.',
-    bgColor: 'bg-cyan-100',
-    iconColor: 'text-cyan-700',
-  },
-];
-
-const steps = [
-  {
-    number: '01',
-    title: 'Tell Your Story',
-    description: 'Answer a few questions about your immigration background, goals, and timeline.',
-    icon: MessageSquare,
-  },
-  {
-    number: '02',
-    title: 'Get Your Assessment',
-    description: 'Receive a detailed analysis with eligible pathways, success factors, and estimated timelines.',
-    icon: BarChart3,
-  },
-  {
-    number: '03',
-    title: 'Prepare Your Forms',
-    description: 'AI assists you in completing all required USCIS forms with real-time validation.',
-    icon: FileText,
-  },
-  {
-    number: '04',
-    title: 'Track & File',
-    description: 'Monitor deadlines, get reminders, and connect with an attorney when you are ready to file.',
-    icon: Zap,
-  },
-];
-
-const trustSignals = [
-  {
-    icon: CheckCircle2,
-    title: 'Built on Real USCIS Data',
-    description: 'Our assessments are based on actual USCIS processing data and historical approval patterns.',
-  },
-  {
-    icon: Award,
-    title: 'Attorney-Reviewed',
-    description: 'All tools and guidance reviewed by licensed immigration attorneys.',
-  },
-  {
-    icon: Lock,
-    title: 'Bank-Level Security',
-    description: 'Your information is encrypted and protected with enterprise-grade security.',
-  },
-  {
-    icon: Globe,
-    title: 'English & Spanish',
-    description: 'Full support in both English and Spanish for accessibility.',
-  },
-];
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 30 },
-  visible: {
+/* ─── animation helpers ─── */
+const fadeIn = {
+  hidden: { opacity: 0, y: 24 },
+  visible: (i: number) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.6 },
-  },
-};
-
-const stagger = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.1, delayChildren: 0.1 },
-  },
+    transition: { duration: 0.5, delay: i * 0.08, ease: "easeOut" as const },
+  }),
 };
 
 export default function Home() {
+  const [videoOpen, setVideoOpen] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  const openVideo = () => {
+    setVideoOpen(true);
+    setTimeout(() => videoRef.current?.play(), 100);
+  };
+  const closeVideo = () => {
+    setVideoOpen(false);
+    videoRef.current?.pause();
+  };
+
   return (
     <div className="min-h-screen bg-white flex flex-col overflow-x-hidden">
       <Navbar />
 
       {/* ═══════════════ HERO ═══════════════ */}
-      <section className="relative pt-28 sm:pt-36 pb-24 sm:pb-32 px-4 sm:px-6 lg:px-8">
-        <div className="relative max-w-5xl mx-auto text-center">
-          <motion.div initial="hidden" animate="visible" variants={stagger} className="space-y-8">
-            {/* Pill badge */}
-            <motion.div variants={fadeUp} className="flex justify-center">
-              <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-600 opacity-75" />
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-600" />
+      <section className="relative pt-28 sm:pt-36 pb-20 sm:pb-28 overflow-hidden">
+        {/* Subtle gradient blob background */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute -top-40 -right-40 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-emerald-100/60 to-teal-50/40 blur-3xl" />
+          <div className="absolute -bottom-20 -left-20 w-[400px] h-[400px] rounded-full bg-gradient-to-tr from-blue-100/50 to-indigo-50/30 blur-3xl" />
+        </div>
+
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+            {/* Left: Copy */}
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              className="space-y-8"
+            >
+              <motion.div variants={fadeIn} custom={0}>
+                <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide uppercase bg-emerald-50 text-emerald-700 border border-emerald-200/80">
+                  <span className="relative flex h-1.5 w-1.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
+                    <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
+                  </span>
+                  Trusted by families across the US
                 </span>
-                Built on Real USCIS Data
-              </span>
-            </motion.div>
+              </motion.div>
 
-            {/* Headline */}
-            <motion.h1
-              variants={fadeUp}
-              className="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.1]"
-            >
-              <span className="text-blue-900">Get Your Green Card Approved</span>
-            </motion.h1>
-
-            {/* Subheading */}
-            <motion.p
-              variants={fadeUp}
-              className="text-xl sm:text-2xl text-slate-700 font-semibold"
-            >
-              Attorney-Reviewed. Step by Step.
-            </motion.p>
-
-            {/* Subtitle */}
-            <motion.p
-              variants={fadeUp}
-              className="text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed"
-            >
-              Expert guidance to avoid mistakes. Real USCIS data. Peace of mind from start to approval.
-            </motion.p>
-
-            {/* CTA */}
-            <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-4 justify-center pt-2">
-              <Link href="/chat" className="group">
-                <button className="w-full sm:w-auto px-8 py-4 rounded-lg text-base font-semibold text-white bg-emerald-600 hover:bg-emerald-700 transition-colors duration-300 flex items-center justify-center gap-2 shadow-sm">
-                  Check Your Eligibility Free
-                  <ArrowRight className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" />
-                </button>
-              </Link>
-              <Link href="/attorneys">
-                <button className="w-full sm:w-auto px-8 py-4 rounded-lg text-base font-semibold text-blue-900 bg-white border-2 border-blue-900 hover:bg-blue-50 transition-colors duration-300">
-                  Talk to an Attorney
-                </button>
-              </Link>
-            </motion.div>
-
-            {/* Trust bar */}
-            <motion.div variants={fadeUp} className="pt-12">
-              <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 text-sm text-slate-700">
-                <span className="flex items-center gap-2">
-                  <Lock className="w-4 h-4 text-emerald-600" />
-                  Bank-level encryption
+              <motion.h1
+                variants={fadeIn}
+                custom={1}
+                className="text-4xl sm:text-5xl lg:text-[3.5rem] font-extrabold tracking-tight leading-[1.1] text-slate-900"
+              >
+                Your green card,{' '}
+                <span className="bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">
+                  without the guesswork
                 </span>
-                <span className="flex items-center gap-2">
-                  <Award className="w-4 h-4 text-emerald-600" />
+              </motion.h1>
+
+              <motion.p
+                variants={fadeIn}
+                custom={2}
+                className="text-lg sm:text-xl text-slate-600 leading-relaxed max-w-lg"
+              >
+                AI-powered document preparation reviewed by licensed immigration attorneys.
+                From first question to filed application, in one place.
+              </motion.p>
+
+              <motion.div variants={fadeIn} custom={3} className="flex flex-col sm:flex-row gap-3">
+                <Link href="/assessment">
+                  <button className="w-full sm:w-auto px-7 py-3.5 rounded-xl text-[15px] font-semibold text-white bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-700 hover:to-emerald-600 transition-all duration-200 shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/30 flex items-center justify-center gap-2">
+                    Start Free Assessment
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </Link>
+                <Link href="/pricing">
+                  <button className="w-full sm:w-auto px-7 py-3.5 rounded-xl text-[15px] font-semibold text-slate-700 bg-white border border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-all duration-200 shadow-sm">
+                    View Pricing
+                  </button>
+                </Link>
+              </motion.div>
+
+              {/* Trust bar */}
+              <motion.div variants={fadeIn} custom={4} className="flex flex-wrap gap-x-6 gap-y-2 text-[13px] text-slate-500 pt-2">
+                <span className="flex items-center gap-1.5">
+                  <Lock className="w-3.5 h-3.5 text-slate-400" />
+                  256-bit encryption
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <Shield className="w-3.5 h-3.5 text-slate-400" />
                   Attorney-reviewed
                 </span>
-                <span className="flex items-center gap-2">
-                  <Globe className="w-4 h-4 text-emerald-600" />
-                  English & Spanish
+                <span className="flex items-center gap-1.5">
+                  <Globe className="w-3.5 h-3.5 text-slate-400" />
+                  English &amp; Espa&ntilde;ol
                 </span>
-                <span className="flex items-center gap-2">
-                  <Zap className="w-4 h-4 text-emerald-600" />
-                  No hidden fees
-                </span>
-              </div>
+              </motion.div>
             </motion.div>
-          </motion.div>
-        </div>
-      </section>
 
-      {/* ═══════════════ FEATURES ═══════════════ */}
-      <section className="relative py-24 sm:py-32 px-4 sm:px-6 lg:px-8 bg-gray-50">
-        <div className="relative max-w-7xl mx-auto">
-          <motion.div
-            className="text-center mb-16 sm:mb-20"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            <span className="text-emerald-700 font-semibold text-sm uppercase tracking-wider">Features</span>
-            <h2 className="mt-3 text-3xl sm:text-4xl lg:text-5xl font-bold text-blue-900">
-              Everything you need,{' '}
-              <span className="text-emerald-600">nothing you don&apos;t</span>
-            </h2>
-            <p className="mt-4 text-lg text-slate-600 max-w-2xl mx-auto">
-              From your first question to your green card approval, we cover every step of the journey.
-            </p>
-          </motion.div>
-
-          <motion.div
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={stagger}
-          >
-            {features.map((feature, i) => {
-              const Icon = feature.icon;
-              return (
-                <motion.div
-                  key={i}
-                  variants={fadeUp}
-                  className="group relative rounded-lg bg-white border border-gray-200 p-7 hover:shadow-md transition-all duration-300"
-                >
-                  <div>
-                    <div className={`inline-flex p-3 rounded-lg ${feature.bgColor} mb-5`}>
-                      <Icon className={`w-6 h-6 ${feature.iconColor}`} />
-                    </div>
-                    <h3 className="text-lg font-semibold text-slate-900 mb-2">{feature.title}</h3>
-                    <p className="text-slate-600 text-sm leading-relaxed">{feature.description}</p>
+            {/* Right: Video Player */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" as const }}
+              className="relative"
+            >
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-slate-900/10 border border-slate-200/60 bg-slate-900 aspect-video cursor-pointer group" onClick={openVideo}>
+                {/* Video thumbnail / poster */}
+                <video
+                  className="w-full h-full object-cover opacity-90"
+                  src="/demo.mp4"
+                  muted
+                  playsInline
+                  preload="metadata"
+                />
+                {/* Play overlay */}
+                <div className="absolute inset-0 flex items-center justify-center bg-slate-900/20 group-hover:bg-slate-900/30 transition-colors duration-300">
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white/95 backdrop-blur-sm flex items-center justify-center shadow-xl group-hover:scale-105 transition-transform duration-300">
+                    <Play className="w-7 h-7 sm:w-8 sm:h-8 text-emerald-600 ml-1" />
                   </div>
-                </motion.div>
-              );
-            })}
-          </motion.div>
-        </div>
-      </section>
+                </div>
+                {/* Label */}
+                <div className="absolute bottom-4 left-4 flex items-center gap-2">
+                  <span className="px-3 py-1 rounded-lg bg-black/60 backdrop-blur-sm text-white text-xs font-medium">
+                    Watch 2-min demo
+                  </span>
+                </div>
+              </div>
 
-      {/* ═══════════════ HOW IT WORKS ═══════════════ */}
-      <section className="relative py-24 sm:py-32 px-4 sm:px-6 lg:px-8">
-        <div className="relative max-w-6xl mx-auto">
-          <motion.div
-            className="text-center mb-16 sm:mb-20"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            <span className="text-emerald-700 font-semibold text-sm uppercase tracking-wider">How It Works</span>
-            <h2 className="mt-3 text-3xl sm:text-4xl lg:text-5xl font-bold text-blue-900">
-              Four simple steps to clarity
-            </h2>
-            <p className="mt-4 text-lg text-slate-600 max-w-xl mx-auto">
-              Go from confused to confident in minutes, not months.
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {steps.map((step, i) => {
-              const Icon = step.icon;
-              return (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: i * 0.12 }}
-                  className="relative group"
-                >
-                  <div className="relative rounded-lg bg-white border border-gray-200 p-7 h-full hover:shadow-md transition-all duration-300">
-                    {/* Step number */}
-                    <span className="text-4xl font-black text-gray-100 absolute top-4 right-6 select-none">
-                      {step.number}
-                    </span>
-
-                    <div className="relative">
-                      <div className="w-12 h-12 rounded-lg bg-emerald-100 flex items-center justify-center mb-5">
-                        <Icon className="w-6 h-6 text-emerald-700" />
-                      </div>
-                      <h3 className="text-lg font-semibold text-slate-900 mb-2">{step.title}</h3>
-                      <p className="text-slate-600 text-sm leading-relaxed">{step.description}</p>
-                    </div>
-                  </div>
-
-                  {/* Connector arrow for lg */}
-                  {i < steps.length - 1 && (
-                    <div className="hidden lg:flex absolute top-1/2 -right-3 z-10 -translate-y-1/2">
-                      <ChevronRight className="w-6 h-6 text-gray-300" />
-                    </div>
-                  )}
-                </motion.div>
-              );
-            })}
+              {/* Decorative glow */}
+              <div className="absolute -inset-4 bg-gradient-to-r from-emerald-500/10 via-teal-500/5 to-blue-500/10 rounded-3xl blur-2xl -z-10" />
+            </motion.div>
           </div>
         </div>
       </section>
 
-      {/* ═══════════════ TRUST SIGNALS ═══════════════ */}
-      <section className="relative py-24 sm:py-32 px-4 sm:px-6 lg:px-8 bg-gray-50">
-        <div className="relative max-w-6xl mx-auto">
+      {/* ═══════════════ SOCIAL PROOF BAR ═══════════════ */}
+      <section className="border-y border-slate-100 bg-slate-50/50 py-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-4">
+            {[
+              { value: '5+', label: 'USCIS Forms' },
+              { value: '93%', label: 'Approval Rate (IR1)' },
+              { value: '24/7', label: 'AI Assistance' },
+              { value: '<5 min', label: 'To First Assessment' },
+              { value: '2', label: 'Languages' },
+            ].map((stat, i) => (
+              <div key={i} className="flex items-center gap-3 text-sm">
+                <span className="text-xl sm:text-2xl font-bold text-slate-900">{stat.value}</span>
+                <span className="text-slate-500">{stat.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════ HOW IT WORKS ═══════════════ */}
+      <section id="how-it-works" className="py-24 sm:py-32 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto">
           <motion.div
             className="text-center mb-16"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.5 }}
           >
-            <span className="text-emerald-700 font-semibold text-sm uppercase tracking-wider">Why Choose Us</span>
-            <h2 className="mt-3 text-3xl sm:text-4xl font-bold text-blue-900">
-              Built on trust and expertise
+            <p className="text-emerald-600 font-semibold text-sm tracking-wide uppercase mb-3">How it works</p>
+            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900">
+              From first question to filed application
             </h2>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {trustSignals.map((signal, i) => {
-              const Icon = signal.icon;
+          <div className="grid md:grid-cols-4 gap-0">
+            {[
+              { step: '01', title: 'Free Assessment', desc: 'Answer a few questions. Get your eligibility analysis and personalized pathway.', icon: MessageSquare },
+              { step: '02', title: 'AI-Guided Forms', desc: 'Our AI pre-fills your forms with built-in validation. No field left blank.', icon: FileText },
+              { step: '03', title: 'Attorney Review', desc: 'A licensed immigration attorney reviews every form before filing.', icon: Shield },
+              { step: '04', title: 'Track Progress', desc: 'Monitor your case status, deadlines, and next steps in real time.', icon: Zap },
+            ].map((item, i) => {
+              const Icon = item.icon;
               return (
                 <motion.div
                   key={i}
-                  initial={{ opacity: 0, y: 30 }}
+                  initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: i * 0.1 }}
-                  className="rounded-lg bg-white border border-gray-200 p-7 hover:shadow-md transition-all duration-300"
+                  transition={{ duration: 0.4, delay: i * 0.1 }}
+                  className="relative px-6 py-8"
                 >
-                  <div className="w-12 h-12 rounded-lg bg-emerald-100 flex items-center justify-center mb-4">
-                    <Icon className="w-6 h-6 text-emerald-700" />
+                  {/* Connector line */}
+                  {i < 3 && (
+                    <div className="hidden md:block absolute top-[4.5rem] right-0 w-full h-px bg-gradient-to-r from-slate-200 to-slate-100 translate-x-1/2" />
+                  )}
+                  <div className="relative">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-100 flex items-center justify-center mb-4">
+                      <Icon className="w-5 h-5 text-emerald-600" />
+                    </div>
+                    <span className="text-xs font-bold text-emerald-600 tracking-wider uppercase">Step {item.step}</span>
+                    <h3 className="text-lg font-semibold text-slate-900 mt-1 mb-2">{item.title}</h3>
+                    <p className="text-sm text-slate-500 leading-relaxed">{item.desc}</p>
                   </div>
-                  <h3 className="text-lg font-semibold text-slate-900 mb-2">{signal.title}</h3>
-                  <p className="text-slate-600 text-sm leading-relaxed">{signal.description}</p>
                 </motion.div>
               );
             })}
@@ -367,74 +236,281 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ═══════════════ STATS BAR ═══════════════ */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8">
+      {/* ═══════════════ FEATURES ═══════════════ */}
+      <section className="py-24 sm:py-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-slate-50 to-white">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            <p className="text-emerald-600 font-semibold text-sm tracking-wide uppercase mb-3">Platform</p>
+            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900">
+              Everything you need, nothing you don&apos;t
+            </h2>
+            <p className="mt-4 text-lg text-slate-500 max-w-2xl mx-auto">
+              Purpose-built for family-based immigration. Every feature designed to reduce errors and save time.
+            </p>
+          </motion.div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {[
+              {
+                icon: MessageSquare,
+                title: 'Document Assistant',
+                desc: 'AI trained on real USCIS data answers your questions instantly, in English or Spanish.',
+                gradient: 'from-emerald-500 to-teal-500',
+                bg: 'bg-emerald-50',
+              },
+              {
+                icon: Clock,
+                title: 'Live Visa Bulletin',
+                desc: 'Real-time priority dates with historical trends and wait time predictions for every category.',
+                gradient: 'from-blue-500 to-indigo-500',
+                bg: 'bg-blue-50',
+              },
+              {
+                icon: FileText,
+                title: 'Smart Form Filling',
+                desc: 'AI pre-fills I-485, I-130, I-765 and more. Built-in validation catches errors before USCIS does.',
+                gradient: 'from-violet-500 to-purple-500',
+                bg: 'bg-violet-50',
+              },
+              {
+                icon: Shield,
+                title: 'RFE Decoder',
+                desc: 'Paste any Request for Evidence. Get a plain-English breakdown with a response strategy.',
+                gradient: 'from-amber-500 to-orange-500',
+                bg: 'bg-amber-50',
+              },
+              {
+                icon: Calculator,
+                title: 'Cost Calculator',
+                desc: 'Transparent fee breakdowns for every form type, including filing fees and premium processing.',
+                gradient: 'from-rose-500 to-pink-500',
+                bg: 'bg-rose-50',
+              },
+              {
+                icon: Users,
+                title: 'Attorney Network',
+                desc: 'Licensed immigration attorneys review your AI-prepared forms and file on your behalf.',
+                gradient: 'from-cyan-500 to-sky-500',
+                bg: 'bg-cyan-50',
+              },
+            ].map((feature, i) => {
+              const Icon = feature.icon;
+              return (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: i * 0.06 }}
+                  className="group relative rounded-2xl bg-white border border-slate-200/80 p-7 hover:border-slate-300 hover:shadow-lg hover:shadow-slate-100 transition-all duration-300"
+                >
+                  <div className={`inline-flex p-2.5 rounded-xl ${feature.bg} mb-5`}>
+                    <Icon className={`w-5 h-5 bg-gradient-to-br ${feature.gradient} bg-clip-text`} style={{ color: `var(--tw-gradient-from)` }} />
+                  </div>
+                  <h3 className="text-[17px] font-semibold text-slate-900 mb-2">{feature.title}</h3>
+                  <p className="text-sm text-slate-500 leading-relaxed">{feature.desc}</p>
+                  <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-emerald-500 group-hover:translate-x-1 transition-all duration-200 absolute top-7 right-6" />
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════ VIDEO SECTION ═══════════════ */}
+      <section className="py-24 sm:py-32 px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto">
+          <motion.div
+            className="text-center mb-12"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            <p className="text-emerald-600 font-semibold text-sm tracking-wide uppercase mb-3">See it in action</p>
+            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900">
+              Watch how it works
+            </h2>
+          </motion.div>
+
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="rounded-lg bg-gradient-to-r from-blue-50 to-emerald-50 border border-blue-200 p-8 sm:p-12"
+            transition={{ duration: 0.5 }}
+            className="relative rounded-2xl overflow-hidden shadow-2xl shadow-slate-900/10 border border-slate-200/60 bg-slate-900"
           >
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
-              {[
-                { value: '5+', label: 'USCIS Forms Supported', icon: FileText },
-                { value: '24/7', label: 'AI Assistance Available', icon: Sparkles },
-                { value: '2', label: 'Languages Supported', icon: Globe },
-                { value: '<5 min', label: 'Average Assessment Time', icon: Zap },
-              ].map((stat, i) => {
-                const Icon = stat.icon;
-                return (
-                  <div key={i} className="space-y-2">
-                    <Icon className="w-5 h-5 text-emerald-600 mx-auto mb-2" />
-                    <div className="text-3xl sm:text-4xl font-bold text-blue-900">{stat.value}</div>
-                    <div className="text-sm text-slate-600">{stat.label}</div>
+            <video
+              className="w-full"
+              src="/demo.mp4"
+              controls
+              playsInline
+              preload="metadata"
+              poster=""
+            />
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ═══════════════ TRUST / WHY US ═══════════════ */}
+      <section className="py-24 sm:py-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-slate-50 to-white">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            <p className="text-emerald-600 font-semibold text-sm tracking-wide uppercase mb-3">Why GreenCard.ai</p>
+            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900">
+              Built for trust. Designed for clarity.
+            </h2>
+          </motion.div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {[
+              {
+                icon: CheckCircle2,
+                title: 'Real USCIS Data',
+                desc: 'Assessments based on actual processing data and historical approval patterns.',
+              },
+              {
+                icon: Award,
+                title: 'Attorney-Reviewed',
+                desc: 'Every form reviewed by a licensed immigration attorney before filing.',
+              },
+              {
+                icon: Lock,
+                title: 'Bank-Level Security',
+                desc: 'AES-256 encryption. Your personal information never leaves our secure servers.',
+              },
+              {
+                icon: Globe,
+                title: 'Bilingual Support',
+                desc: 'Full platform in English and Spanish. Forms filed in English with Spanish guidance.',
+              },
+            ].map((item, i) => {
+              const Icon = item.icon;
+              return (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: i * 0.08 }}
+                  className="text-center px-4 py-8"
+                >
+                  <div className="w-12 h-12 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center mx-auto mb-4">
+                    <Icon className="w-5 h-5 text-emerald-600" />
                   </div>
-                );
-              })}
+                  <h3 className="text-base font-semibold text-slate-900 mb-2">{item.title}</h3>
+                  <p className="text-sm text-slate-500 leading-relaxed">{item.desc}</p>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════ PRICING TEASER ═══════════════ */}
+      <section className="py-24 sm:py-32 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="relative rounded-3xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-10 sm:p-14 text-center overflow-hidden"
+          >
+            {/* Gradient orbs */}
+            <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl" />
+            <div className="absolute bottom-0 left-0 w-60 h-60 bg-blue-500/10 rounded-full blur-3xl" />
+
+            <div className="relative">
+              <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
+                Start free. Upgrade when ready.
+              </h2>
+              <p className="text-lg text-slate-400 max-w-xl mx-auto mb-8">
+                Free eligibility assessment. AI document preparation from $29/mo. Attorney review from $149/mo. Save 60% vs. traditional attorneys.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <Link href="/assessment">
+                  <button className="w-full sm:w-auto px-8 py-3.5 rounded-xl text-[15px] font-semibold text-white bg-gradient-to-r from-emerald-500 to-emerald-400 hover:from-emerald-600 hover:to-emerald-500 transition-all duration-200 shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-2">
+                    Start Free Assessment
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </Link>
+                <Link href="/pricing">
+                  <button className="w-full sm:w-auto px-8 py-3.5 rounded-xl text-[15px] font-semibold text-white border border-white/20 hover:bg-white/10 transition-all duration-200">
+                    Compare Plans
+                  </button>
+                </Link>
+              </div>
             </div>
           </motion.div>
         </div>
       </section>
 
       {/* ═══════════════ BOTTOM CTA ═══════════════ */}
-      <section className="relative py-24 sm:py-32 px-4 sm:px-6 lg:px-8">
-        <div className="relative max-w-3xl mx-auto text-center">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 border-t border-slate-100">
+        <div className="max-w-3xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="space-y-8"
+            transition={{ duration: 0.5 }}
           >
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-blue-900 leading-tight">
-              Ready to start your immigration journey?
+            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-4">
+              Ready to take the first step?
             </h2>
-            <p className="text-lg text-slate-600 max-w-xl mx-auto">
-              Get your personalized assessment in under 5 minutes. Free, confidential, and no strings attached.
+            <p className="text-base text-slate-500 max-w-lg mx-auto mb-6">
+              Get your personalized immigration assessment in under 5 minutes. Free, confidential, no credit card required.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-2">
-              <Link href="/chat" className="group">
-                <button className="w-full sm:w-auto px-10 py-4 rounded-lg text-base font-semibold text-white bg-emerald-600 hover:bg-emerald-700 transition-colors duration-300 flex items-center justify-center gap-2 shadow-sm">
-                  Start Your Application Today
-                  <ArrowRight className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" />
-                </button>
-              </Link>
-              <Link href="/pricing">
-                <button className="w-full sm:w-auto px-10 py-4 rounded-lg text-base font-semibold text-blue-900 bg-white border-2 border-blue-900 hover:bg-blue-50 transition-colors duration-300">
-                  View Pricing
-                </button>
-              </Link>
-            </div>
-            <p className="text-xs text-slate-600 max-w-xl mx-auto">
-              <strong>Legal Disclaimer:</strong> GreenCard.ai is not a law firm and does not provide legal advice. All guidance is AI-assisted only. Legal services are provided by Partner Immigration Law, PLLC, a licensed immigration law firm.
+            <Link href="/assessment" className="group inline-flex">
+              <button className="px-8 py-3.5 rounded-xl text-[15px] font-semibold text-white bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-700 hover:to-emerald-600 transition-all duration-200 shadow-lg shadow-emerald-500/20 flex items-center gap-2">
+                Check Your Eligibility
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+              </button>
+            </Link>
+            <p className="mt-8 text-xs text-slate-400 max-w-lg mx-auto">
+              GreenCard.ai is not a law firm and does not provide legal advice. Legal services are provided by Partner Immigration Law, PLLC. All AI-generated content is for informational purposes only.
             </p>
           </motion.div>
         </div>
       </section>
 
       <Footer />
+
+      {/* ═══════════════ VIDEO MODAL ═══════════════ */}
+      {videoOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" onClick={closeVideo}>
+          <div className="relative w-full max-w-5xl" onClick={(e) => e.stopPropagation()}>
+            <button
+              onClick={closeVideo}
+              className="absolute -top-12 right-0 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
+            >
+              <X className="w-5 h-5 text-white" />
+            </button>
+            <div className="rounded-2xl overflow-hidden shadow-2xl">
+              <video
+                ref={videoRef}
+                className="w-full"
+                src="/demo.mp4"
+                controls
+                playsInline
+                autoPlay
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
