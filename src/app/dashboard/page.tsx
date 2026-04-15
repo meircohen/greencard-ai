@@ -116,6 +116,12 @@ export default function Dashboard() {
         const meData = await meResponse.json();
         setUserInfo(meData.user);
 
+        // Redirect attorneys to attorney dashboard
+        if (meData.user?.role === "attorney" || meData.user?.role === "admin") {
+          router.replace("/attorney/dashboard");
+          return;
+        }
+
         // Fetch cases
         let fetchedCases: CaseData[] = [];
         const casesResponse = await fetch("/api/cases?page=1&limit=10", {
