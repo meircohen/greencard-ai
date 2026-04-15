@@ -198,8 +198,8 @@ export async function GET(request: NextRequest) {
         role: newUser.role as "client" | "attorney" | "admin",
       });
 
-      // Create response - redirect to onboarding or dashboard
-      const response = NextResponse.redirect(`${baseUrl}/dashboard`);
+      // Create response - redirect to onboarding for new users
+      const response = NextResponse.redirect(`${baseUrl}/onboarding`);
 
       // Set httpOnly cookie with secure defaults
       response.cookies.set(COOKIE_NAME, token, {

@@ -9,6 +9,7 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { OnboardingProgress } from "@/components/OnboardingProgress";
 import { ChevronRight, ChevronLeft, MapPin, Briefcase, CheckCircle, Users, FileText } from "lucide-react";
+import { useTranslation } from "@/i18n";
 
 type Step = 1 | 2 | 3 | 4 | 5;
 
@@ -16,11 +17,11 @@ interface OnboardingData {
   purpose?: string;
   countryOfBirth?: string;
   immigrationStatus?: string;
-  inUS?: boolean;
+  currentLocation?: string;
   needs?: string[];
   caseDescription?: string;
-  budgetRange?: string;
-  familyService?: string;
+  budget?: string;
+  familyServiceType?: string;
 }
 
 const stepLabels = ["Welcome", "About You", "Your Goal", "Your Case", "Get Started"];
@@ -72,25 +73,15 @@ const needs = [
 ];
 
 export default function Onboarding() {
+  const { t } = useTranslation();
   const router = useRouter();
   const [step, setStep] = useState<Step>(1);
-  const [data, setData] = useState<OnboardingData>(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const saved = localStorage.getItem("onboardingData");
-        if (saved) return JSON.parse(saved);
-      } catch { /* ignore */ }
-    }
-    return {};
-  });
+  const [data, setData] = useState<OnboardingData>({});
   const [filteredCountries, setFilteredCountries] = useState<string[]>([]);
   const [showCountries, setShowCountries] = useState(false);
   const [countrySearch, setCountrySearch] = useState("");
-
-  // Save to localStorage whenever data changes
-  useEffect(() => {
-    localStorage.setItem("onboardingData", JSON.stringify(data));
-  }, [data]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleCountrySearch = (value: string) => {
     setCountrySearch(value);
@@ -125,13 +116,43 @@ export default function Onboarding() {
     }
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (step < 5) {
       setStep((step + 1) as Step);
       window.scrollTo({ top: 0, behavior: "smooth" });
     } else {
-      // Complete onboarding
-      router.push("/chat");
+      // Submit onboarding data to API
+      setIsSubmitting(true);
+      setError(null);
+
+      try {
+        const res = await fetch("/api/onboarding", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({
+            purpose: data.purpose,
+            countryOfBirth: data.countryOfBirth,
+            immigrationStatus: data.immigrationStatus,
+            currentLocation: data.currentLocation,
+            needs: data.needs,
+            caseDescription: data.caseDescription,
+            budget: data.budget,
+            familyServiceType: data.familyServiceType,
+          }),
+        });
+
+        if (!res.ok) {
+          const errorData = await res.json();
+          throw new Error(errorData.error || "Failed to complete onboarding");
+        }
+
+        // Success - redirect to dashboard
+        router.push("/dashboard");
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "An error occurred");
+        setIsSubmitting(false);
+      }
     }
   };
 
@@ -147,7 +168,7 @@ export default function Onboarding() {
       case 1:
         return !!data.purpose;
       case 2:
-        return !!data.countryOfBirth && !!data.immigrationStatus && data.inUS !== undefined;
+        return !!data.countryOfBirth && !!data.immigrationStatus && !!data.currentLocation;
       case 3:
         return data.needs && data.needs.length > 0;
       case 4:
@@ -293,19 +314,19 @@ export default function Onboarding() {
                   </div>
                 </div>
 
-                {/* In US */}
+                {/* Current Location */}
                 <div>
-                  <label className="block text-white font-semibold mb-3">Are you currently in the US?</label>
+                  <label className="block text-white font-semibold mb-3">Current Location</label>
                   <div className="grid grid-cols-2 gap-3">
                     {[
-                      { value: true, label: "Yes" },
-                      { value: false, label: "No" },
+                      { value: "US", label: "In the US" },
+                      { value: "Outside US", label: "Outside the US" },
                     ].map((option) => (
                       <button
-                        key={String(option.value)}
-                        onClick={() => setData({ ...data, inUS: option.value })}
+                        key={option.value}
+                        onClick={() => setData({ ...data, currentLocation: option.value })}
                         className={`p-3 rounded-lg border transition-all font-medium ${
-                          data.inUS === option.value
+                          data.currentLocation === option.value
                             ? "bg-green-500/20 border-green-500 text-green-400"
                             : "bg-surface-2 border-white/[0.06] text-slate-300 hover:border-green-500/50"
                         }`}
@@ -390,9 +411,9 @@ export default function Onboarding() {
                       ].map((option) => (
                         <button
                           key={option.value}
-                          onClick={() => setData({ ...data, budgetRange: option.value })}
+                          onClick={() => setData({ ...data, budget: option.value })}
                           className={`p-3 rounded-lg border transition-all text-sm font-medium ${
-                            data.budgetRange === option.value
+                            data.budget === option.value
                               ? "bg-green-500/20 border-green-500 text-green-400"
                               : "bg-surface-2 border-white/[0.06] text-slate-300 hover:border-green-500/50"
                           }`}
@@ -416,9 +437,9 @@ export default function Onboarding() {
                       ].map((service) => (
                         <button
                           key={service}
-                          onClick={() => setData({ ...data, familyService: service })}
+                          onClick={() => setData({ ...data, familyServiceType: service })}
                           className={`w-full p-3 rounded-lg border text-left transition-all ${
-                            data.familyService === service
+                            data.familyServiceType === service
                               ? "bg-green-500/20 border-green-500 text-green-400"
                               : "bg-surface-2 border-white/[0.06] text-slate-300 hover:border-green-500/50"
                           }`}
@@ -447,6 +468,12 @@ export default function Onboarding() {
           <div className="space-y-6 animate-in fade-in duration-300">
             <Card className="bg-surface/50 border-white/[0.06]">
               <div className="p-8">
+                {error && (
+                  <div className="mb-6 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-200 text-sm">
+                    {error}
+                  </div>
+                )}
+
                 <div className="text-center mb-8">
                   <CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-4" />
                   <h2 className="text-2xl font-bold text-white mb-2">You're All Set!</h2>
@@ -470,6 +497,13 @@ export default function Onboarding() {
                     <div className="p-4 bg-surface-2 rounded-lg border border-white/[0.06]">
                       <p className="text-sm text-slate-400">Immigration Status</p>
                       <p className="text-white font-semibold">{data.immigrationStatus}</p>
+                    </div>
+                  )}
+
+                  {data.currentLocation && (
+                    <div className="p-4 bg-surface-2 rounded-lg border border-white/[0.06]">
+                      <p className="text-sm text-slate-400">Current Location</p>
+                      <p className="text-white font-semibold">{data.currentLocation}</p>
                     </div>
                   )}
 
@@ -528,9 +562,10 @@ export default function Onboarding() {
           {step === 5 && (
             <Button
               onClick={handleNext}
-              className="flex-1 bg-green-600 hover:bg-green-700"
+              disabled={isSubmitting}
+              className="flex-1 bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Start Free Assessment
+              {isSubmitting ? "Creating your case..." : "Start Free Assessment"}
             </Button>
           )}
         </div>

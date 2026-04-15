@@ -116,6 +116,12 @@ export default function Dashboard() {
         const meData = await meResponse.json();
         setUserInfo(meData.user);
 
+        // Redirect to onboarding if not completed
+        if (!meData.user?.onboardingCompleted) {
+          router.replace("/onboarding");
+          return;
+        }
+
         // Redirect attorneys to attorney dashboard
         if (meData.user?.role === "attorney" || meData.user?.role === "admin") {
           router.replace("/attorney/dashboard");

@@ -106,8 +106,8 @@ function SignupPageInner() {
         return;
       }
 
-      // Redirect to dashboard
-      router.push("/dashboard");
+      // Redirect to onboarding
+      router.push("/onboarding");
     } catch (err) {
       setError(t('auth.errorOccurred'));
       setIsLoading(false);
