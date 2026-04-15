@@ -84,8 +84,30 @@ export function audit(entry: AuditEntry): void {
     auditStore.splice(0, auditStore.length - MAX_AUDIT_STORE);
   }
 
-  // TODO: Write to audit_events DB table for persistent history
-  // await db.insert(auditEvents).values({ ... });
+  // Write to audit_events DB table if available
+  if (process.env.DATABASE_URL) {
+    writeAuditToDb(entry).catch((err) => {
+      auditLogger.error({ err }, "Failed to write audit event to database");
+    });
+  }
+}
+
+async function writeAuditToDb(entry: AuditEntry): Promise<void> {
+  try {
+    const { getDb } = await import("@/lib/db/index");
+    const { auditEvents } = await import("@/lib/db/schema");
+    const db = getDb();
+    await db.insert(auditEvents).values({
+      action: entry.action,
+      userId: entry.userId || null,
+      targetId: entry.targetId || null,
+      ip: entry.ip || null,
+      userAgent: entry.userAgent || null,
+      metadata: entry.metadata || null,
+    });
+  } catch {
+    // Silently fail; in-memory store is the fallback
+  }
 }
 
 // In-memory audit store for development queries

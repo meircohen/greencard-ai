@@ -1,6 +1,7 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
 import {
   FileText,
   CheckCircle,
@@ -9,7 +10,11 @@ import {
   Calendar,
   Zap,
   Clock,
+  FileSearch,
+  BookOpen,
+  Shield,
 } from "lucide-react";
+import { useAuthStore } from "@/lib/store";
 
 interface StatCard {
   icon: React.ReactNode;
@@ -186,56 +191,94 @@ const DeadlineCard: React.FC<DeadlineItem> = ({
   );
 };
 
-export default function Dashboard() {
-  const cases: CaseItem[] = [
-    {
-      id: "1",
-      title: "I-130 Spouse Petition",
-      description: "Family-based immigration petition",
-      progress: 65,
-      status: "processing",
-      icon: <FileText className="w-6 h-6" />,
-      filedDate: "Filed Feb 2026",
-      location: "Nebraska Service Center",
-    },
-    {
-      id: "2",
-      title: "I-485 Adjustment of Status",
-      description: "Concurrent filing with biometrics completed",
-      progress: 40,
-      status: "under-review",
-      icon: <FileText className="w-6 h-6" />,
-    },
-    {
-      id: "3",
-      title: "I-765 EAD",
-      description: "Work authorization pending initial review",
-      progress: 20,
-      status: "pending",
-      icon: <FileText className="w-6 h-6" />,
-    },
-  ];
+// Default mock data (used when API unavailable)
+const defaultCases: CaseItem[] = [
+  {
+    id: "case-001",
+    title: "I-130 Spouse Petition",
+    description: "Family-based immigration petition",
+    progress: 65,
+    status: "processing",
+    icon: <FileText className="w-6 h-6" />,
+    filedDate: "Filed Feb 2026",
+    location: "Nebraska Service Center",
+  },
+  {
+    id: "case-003",
+    title: "I-485 Adjustment of Status",
+    description: "Concurrent filing with biometrics completed",
+    progress: 40,
+    status: "under-review",
+    icon: <FileText className="w-6 h-6" />,
+  },
+  {
+    id: "case-004",
+    title: "I-765 EAD",
+    description: "Work authorization pending initial review",
+    progress: 20,
+    status: "pending",
+    icon: <FileText className="w-6 h-6" />,
+  },
+];
 
-  const deadlines: DeadlineItem[] = [
-    {
-      date: "April 28, 2026",
-      title: "RFE Response Due",
-      description: "Submit response to Request for Evidence",
-      urgency: "urgent",
-    },
-    {
-      date: "May 15, 2026",
-      title: "Medical Exam Expires",
-      description: "Schedule renewal medical examination",
-      urgency: "warning",
-    },
-    {
-      date: "June 01, 2026",
-      title: "Interview",
-      description: "Biometric appointment at local USCIS office",
-      urgency: "normal",
-    },
-  ];
+const defaultDeadlines: DeadlineItem[] = [
+  {
+    date: "April 28, 2026",
+    title: "RFE Response Due",
+    description: "Submit response to Request for Evidence",
+    urgency: "urgent",
+  },
+  {
+    date: "May 15, 2026",
+    title: "Medical Exam Expires",
+    description: "Schedule renewal medical examination",
+    urgency: "warning",
+  },
+  {
+    date: "June 01, 2026",
+    title: "Interview",
+    description: "Biometric appointment at local USCIS office",
+    urgency: "normal",
+  },
+];
+
+export default function Dashboard() {
+  const { user } = useAuthStore();
+  const [cases, setCases] = useState<CaseItem[]>(defaultCases);
+  const [deadlines] = useState<DeadlineItem[]>(defaultDeadlines);
+
+  // Try to fetch real cases from API
+  useEffect(() => {
+    async function fetchCases() {
+      try {
+        const res = await fetch("/api/cases", {
+          headers: user?.id ? { "x-user-id": user.id } : {},
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.cases?.length > 0) {
+            setCases(
+              data.cases.map((c: { id: string; caseType: string; category: string; status: string; score?: string; serviceCenter?: string; createdAt?: string }) => ({
+                id: c.id,
+                title: c.caseType,
+                description: c.category,
+                progress: c.score ? Math.round(parseFloat(c.score)) : 30,
+                status: c.status === "approved" ? "completed" : c.status === "processing" ? "processing" : "pending",
+                icon: <FileText className="w-6 h-6" />,
+                filedDate: c.createdAt ? `Filed ${new Date(c.createdAt).toLocaleDateString()}` : undefined,
+                location: c.serviceCenter || undefined,
+              }))
+            );
+          }
+        }
+      } catch {
+        // Use default mock data
+      }
+    }
+    fetchCases();
+  }, [user?.id]);
+
+  const displayName = user?.fullName?.split(" ")[0] || "there";
 
   return (
     <div className="min-h-screen bg-midnight text-primary">
@@ -243,11 +286,27 @@ export default function Dashboard() {
       <div className="pt-32 pb-8 px-4 sm:px-6 lg:px-8 border-b border-white/10">
         <div className="max-w-7xl mx-auto">
           <h1 className="text-4xl md:text-5xl font-bold mb-2">
-            Welcome back, <span className="text-green-400">Meir</span>
+            Welcome back, <span className="text-green-400">{displayName}</span>
           </h1>
           <p className="text-secondary">
             Here's an overview of your immigration cases and upcoming deadlines
           </p>
+
+          {/* Quick Actions */}
+          <div className="flex flex-wrap gap-3 mt-6">
+            <Link href="/chat" className="flex items-center gap-2 px-4 py-2 rounded-lg bg-green-500/10 border border-green-500/30 text-green-400 text-sm font-medium hover:bg-green-500/20 transition-colors">
+              <Zap className="w-4 h-4" /> AI Chat
+            </Link>
+            <Link href="/rfe-decoder" className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500/10 border border-blue-500/30 text-blue-400 text-sm font-medium hover:bg-blue-500/20 transition-colors">
+              <FileSearch className="w-4 h-4" /> RFE Decoder
+            </Link>
+            <Link href="/forms/i-485" className="flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/10 border border-purple-500/30 text-purple-400 text-sm font-medium hover:bg-purple-500/20 transition-colors">
+              <BookOpen className="w-4 h-4" /> I-485 Form
+            </Link>
+            <Link href="/documents" className="flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 text-sm font-medium hover:bg-amber-500/20 transition-colors">
+              <Shield className="w-4 h-4" /> Documents
+            </Link>
+          </div>
         </div>
       </div>
 
@@ -296,7 +355,9 @@ export default function Dashboard() {
                 <h2 className="text-2xl font-bold mb-6">Your Cases</h2>
                 <div className="space-y-4">
                   {cases.map((caseItem) => (
-                    <CaseCard key={caseItem.id} {...caseItem} />
+                    <Link key={caseItem.id} href={`/cases/${caseItem.id}`}>
+                      <CaseCard {...caseItem} />
+                    </Link>
                   ))}
                 </div>
               </div>

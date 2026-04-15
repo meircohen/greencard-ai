@@ -6,6 +6,8 @@ import * as uscisData from "@/lib/uscis-data";
 import { safeErrorResponse } from "@/lib/errors";
 import { getModelForMode } from "@/lib/ai/models";
 import { withRetry } from "@/lib/ai/retry";
+import { InMemoryRateLimiter, CHAT_TIER } from "@/lib/rate-limit";
+import { audit, getClientInfo } from "@/lib/audit";
 
 const messageSchema = z.object({
   role: z.enum(["user", "assistant"]),
@@ -43,25 +45,8 @@ function containsInjection(content: string): boolean {
   return INJECTION_PATTERNS.some((pattern) => pattern.test(content));
 }
 
-// Rate limit placeholder - implement with Redis in production
-const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
-
-function checkRateLimit(clientId: string): boolean {
-  const now = Date.now();
-  const limit = rateLimitMap.get(clientId);
-
-  if (!limit || now > limit.resetTime) {
-    rateLimitMap.set(clientId, { count: 1, resetTime: now + 60000 });
-    return true;
-  }
-
-  if (limit.count < 30) {
-    limit.count++;
-    return true;
-  }
-
-  return false;
-}
+// Token bucket rate limiter (shared instance)
+const chatLimiter = new InMemoryRateLimiter(CHAT_TIER);
 
 function buildContextualSystemPrompt(
   mode: string = "intake",
@@ -141,15 +126,22 @@ export async function POST(request: NextRequest): Promise<Response> {
     // Log injection attempts (don't block, the system prompt handles it)
     const lastUserMsg = sanitizedMessages.filter((m) => m.role === "user").pop();
     if (lastUserMsg && containsInjection(lastUserMsg.content)) {
-      console.warn(
-        `[prompt-injection] Potential injection detected from ${clientId}: ${lastUserMsg.content.slice(0, 100)}`
-      );
+      const { ip, userAgent } = getClientInfo(request.headers);
+      audit({
+        action: "ai.prompt_injection_attempt",
+        userId: clientId,
+        ip,
+        userAgent,
+        metadata: { snippet: lastUserMsg.content.slice(0, 100) },
+      });
     }
 
     // Rate limiting check
-    if (!checkRateLimit(clientId)) {
+    const rateResult = chatLimiter.consume(clientId);
+    if (!rateResult.allowed) {
+      audit({ action: "rate_limit.exceeded", userId: clientId, metadata: { endpoint: "chat" } });
       return NextResponse.json(
-        { error: "Rate limit exceeded. Maximum 30 requests per minute." },
+        { error: "Rate limit exceeded. Please wait before sending more messages.", retryAfterMs: rateResult.retryAfterMs },
         { status: 429 }
       );
     }

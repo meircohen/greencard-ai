@@ -11,8 +11,9 @@ const baseNavLinks = [
   { label: "Home", href: "/" },
   { label: "Chat", href: "/chat" },
   { label: "Assessment", href: "/assessment" },
+  { label: "RFE Decoder", href: "/rfe-decoder" },
   { label: "Visa Bulletin", href: "/visa-bulletin" },
-  { label: "Cost Calculator", href: "/cost-calculator" },
+  { label: "Pricing", href: "/pricing" },
   { label: "Dashboard", href: "/dashboard" },
 ];
 
