@@ -46,6 +46,8 @@ const publicApiRoutes = [
   "/api/auth/login",
   "/api/auth/signup",
   "/api/auth/logout",
+  "/api/auth/google",          // Google OAuth initiation
+  "/api/auth/google/callback", // Google OAuth callback
   "/api/data/visa-bulletin",
   "/api/data/processing-times",
   "/api/data/fees",
