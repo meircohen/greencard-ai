@@ -15,30 +15,15 @@ const publicPageRoutes = [
   "/signup",
   "/chat",
   "/assessment",
-  "/visa-bulletin",
-  "/cost-calculator",
   "/pricing",
   "/attorneys",
   "/about",
   "/contact",
   "/privacy",
   "/terms",
-  "/blog",
-  "/rfe-decoder",
-  "/forms/i-485",
-  "/interview-prep",
   "/guides",
-  "/public-charge",
-  "/referral",
   "/reset-password",
-  "/tracker",
-  "/whatsapp-portal",
-  "/guarantee",
   "/verify",
-  "/emergency",
-  "/familia",
-  "/attorney-os",
-  "/rescue",
 ];
 
 // Public API routes (no auth required)
@@ -48,16 +33,11 @@ const publicApiRoutes = [
   "/api/auth/logout",
   "/api/auth/google",          // Google OAuth initiation
   "/api/auth/google/callback", // Google OAuth callback
-  "/api/data/visa-bulletin",
-  "/api/data/processing-times",
-  "/api/data/fees",
-  "/api/data/cost-calculator",
   "/api/contact",
   "/api/billing/webhook", // Stripe webhooks verify their own signature
   "/api/chat",            // Chat OPTIONS endpoint for health check
   "/api/health",          // Health check endpoint
   "/api/assess",          // Assessment endpoint (public)
-  "/api/rfe-decoder",     // RFE decoder endpoint (public)
 ];
 
 /**

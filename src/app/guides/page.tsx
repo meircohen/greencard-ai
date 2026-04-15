@@ -15,48 +15,6 @@ interface GuideCard {
 
 const guides: GuideCard[] = [
   {
-    slug: "i-130-guide",
-    title: "I-130 Petition for Alien Relative",
-    description:
-      "Complete guide to filing Form I-130 to sponsor a family member for a U.S. green card. Learn about eligibility, documentation requirements, filing process, fees ($535), and processing times (12-24 weeks).",
-    category: "Family-Based Immigration",
-  },
-  {
-    slug: "i-485-guide",
-    title: "I-485 Adjustment of Status",
-    description:
-      "Step-by-step guide to filing Form I-485 to adjust status to permanent resident. Covers eligibility, required documents, the 7-step filing process, cost breakdown ($1,440), and what to expect during processing (18-36 months).",
-    category: "Green Card Application",
-  },
-  {
-    slug: "i-765-guide",
-    title: "I-765 Employment Authorization (Work Permit)",
-    description:
-      "Learn how to apply for work authorization while your green card application is pending. Covers eligibility categories, filing requirements, cost ($470 or free depending on category), and processing timeline (2-5 weeks).",
-    category: "Work Authorization",
-  },
-  {
-    slug: "i-864-guide",
-    title: "I-864 Affidavit of Support (Financial Requirements)",
-    description:
-      "Understand the financial sponsorship requirements for green card applicants. Includes 2026 poverty guidelines, sponsor obligations, income verification, co-sponsor options, and how to prove financial capacity.",
-    category: "Financial Requirements",
-  },
-  {
-    slug: "n-400-guide",
-    title: "N-400 Naturalization (Path to U.S. Citizenship)",
-    description:
-      "Complete guide to applying for U.S. citizenship through naturalization. Covers eligibility (5 years permanent resident status), the civics test, English requirements, 7-step process, and benefits of citizenship.",
-    category: "Citizenship",
-  },
-  {
-    slug: "green-card-timeline",
-    title: "Green Card Processing Times 2026",
-    description:
-      "Understand how long it takes to get a green card. Detailed breakdown of processing times for family-based (6-10 months), employment-based (varies by category), visa bulletin waits, and factors affecting processing speed.",
-    category: "Processing Times",
-  },
-  {
     slug: "marriage-green-card",
     title: "Green Card Through Marriage: Complete Checklist",
     description:
@@ -64,11 +22,11 @@ const guides: GuideCard[] = [
     category: "Marriage-Based Immigration",
   },
   {
-    slug: "immigration-costs",
-    title: "Immigration Cost Breakdown 2026: Every Fee Explained",
+    slug: "i-485-guide",
+    title: "I-485 Adjustment of Status",
     description:
-      "Complete breakdown of all immigration-related costs and fees. Includes USCIS filing fees for all major forms, cost scenarios for different cases, additional expenses, ways to reduce costs, and fee waiver information.",
-    category: "Costs & Fees",
+      "Step-by-step guide to filing Form I-485 to adjust status to permanent resident. Covers eligibility, required documents, the 7-step filing process, cost breakdown ($1,440), and what to expect during processing (18-36 months).",
+    category: "Green Card Application",
   },
 ];
 

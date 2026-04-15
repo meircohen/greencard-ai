@@ -3,30 +3,14 @@ import Link from "next/link";
 
 const servicesLinks = [
   { label: "Marriage Green Cards", href: "/guides/marriage-green-card" },
-  { label: "Family Sponsorship", href: "/guides/i-130-guide" },
   { label: "Adjustment of Status", href: "/guides/i-485-guide" },
-  { label: "Work Permits", href: "/guides/i-765-guide" },
-  { label: "Citizenship", href: "/guides/n-400-guide" },
-  { label: "Consular Processing", href: "/guides/green-card-timeline" },
-];
-
-const resourceLinks = [
-  { label: "Visa Bulletin", href: "/visa-bulletin" },
-  { label: "Cost Calculator", href: "/cost-calculator" },
-  { label: "Case Tracker", href: "/tracker" },
   { label: "Immigration Guides", href: "/guides" },
-  { label: "Scam Verification", href: "/verify" },
-  { label: "Blog", href: "/blog" },
 ];
 
-const programLinks = [
-  { label: "Filing Guarantee", href: "/guarantee" },
-  { label: "WhatsApp Portal", href: "/whatsapp-portal" },
-  { label: "Familia Plan", href: "/familia" },
-  { label: "Case Rescue", href: "/rescue" },
-  { label: "Emergency Help", href: "/emergency" },
-  { label: "Refer a Friend", href: "/referral" },
-  { label: "For Attorneys", href: "/attorney-os" },
+const companyNavLinks = [
+  { label: "Pricing", href: "/pricing" },
+  { label: "Contact", href: "/contact" },
+  { label: "Find an Attorney", href: "/attorneys" },
 ];
 
 const contactLinks = [
@@ -39,8 +23,7 @@ const contactLinks = [
 const legalLinks = [
   { label: "Privacy Policy", href: "/privacy" },
   { label: "Terms of Service", href: "/terms" },
-  { label: "Attorney Advertising Disclaimer", href: "/terms" },
-  { label: "Accessibility", href: "/terms" },
+
 ];
 
 export const Footer: React.FC = () => {
@@ -78,28 +61,11 @@ export const Footer: React.FC = () => {
             </ul>
           </div>
 
-          {/* Programs links */}
+          {/* Company links */}
           <div>
-            <h3 className="font-semibold text-white mb-4">Programs</h3>
+            <h3 className="font-semibold text-white mb-4">Company</h3>
             <ul className="space-y-2.5">
-              {programLinks.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-blue-200 hover:text-white transition-colors duration-200 text-sm"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Resources links */}
-          <div>
-            <h3 className="font-semibold text-white mb-4">Resources</h3>
-            <ul className="space-y-2.5">
-              {resourceLinks.map((link) => (
+              {companyNavLinks.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}

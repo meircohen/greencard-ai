@@ -139,7 +139,7 @@ export async function POST(request: NextRequest) {
     }
 
     const successPath = planId.startsWith("guardian")
-      ? "/familia?success=true"
+      ? "/pricing?success=true"
       : "/pricing?success=true";
 
     const checkoutSession = await stripe.checkout.sessions.create({
@@ -154,7 +154,7 @@ export async function POST(request: NextRequest) {
       customer_email: session.user.email,
       client_reference_id: session.user.id,
       success_url: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}${successPath}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}${planId.startsWith("guardian") ? "/familia" : "/pricing"}?cancelled=true`,
+      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/pricing?cancelled=true`,
       metadata: {
         userId: session.user.id,
         planId,

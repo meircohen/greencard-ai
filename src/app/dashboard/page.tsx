@@ -195,7 +195,6 @@ export default function Dashboard() {
     { labelKey: "dashboard.documents", icon: FileCheck, href: "#" },
     { labelKey: "dashboard.messages", icon: Mail, href: "#" },
     { labelKey: "dashboard.payments", icon: CreditCard, href: "#" },
-    { labelKey: "dashboard.interviewPrep", icon: BookOpen, href: "#" },
     { labelKey: "dashboard.settings", icon: Settings, href: "#" },
   ];
 

@@ -169,13 +169,6 @@ export default function Home() {
                 href: '/guides/marriage-green-card',
               },
               {
-                icon: Users,
-                title: t('home.familySponsorship'),
-                description: t('home.familyDesc'),
-                color: 'text-blue-600',
-                href: '/guides/i-130-guide',
-              },
-              {
                 icon: CheckCircle2,
                 title: t('home.adjustmentStatus'),
                 description: t('home.adjustmentDesc'),
@@ -183,25 +176,11 @@ export default function Home() {
                 href: '/guides/i-485-guide',
               },
               {
-                icon: Briefcase,
-                title: t('home.workPermits'),
-                description: t('home.workDesc'),
-                color: 'text-amber-600',
-                href: '/guides/i-765-guide',
-              },
-              {
-                icon: Award,
-                title: t('home.citizenship'),
-                description: t('home.citizenshipDesc'),
-                color: 'text-purple-600',
-                href: '/guides/n-400-guide',
-              },
-              {
-                icon: Globe,
-                title: t('home.consularProcessing'),
-                description: t('home.consularDesc'),
-                color: 'text-cyan-600',
-                href: '/guides/green-card-timeline',
+                icon: Users,
+                title: t('home.familySponsorship'),
+                description: t('home.familyDesc'),
+                color: 'text-blue-600',
+                href: '/assessment',
               },
             ].map((service, i) => {
               const Icon = service.icon;

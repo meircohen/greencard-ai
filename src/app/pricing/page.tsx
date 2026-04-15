@@ -7,7 +7,7 @@ import { Footer } from '@/components/Footer';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { CheckoutButton } from '@/components/CheckoutButton';
-import { Check, X, ChevronDown, AlertCircle } from 'lucide-react';
+import { Check, ChevronDown } from 'lucide-react';
 import { useTranslation } from '@/i18n';
 
 const pricingTierKeys = [
@@ -57,62 +57,16 @@ const pricingTierKeys = [
 
 const caseTypesData = [
   { nameKey: 'pricingPage.caseTypeMarriage', essential: 999, complete: 1499, premium: 2499 },
-  { nameKey: 'pricingPage.caseTypeK1', essential: 799, complete: 1199, premium: null },
   { nameKey: 'pricingPage.caseTypeCitizenship', essential: 499, complete: 699, premium: null },
   { nameKey: 'pricingPage.caseTypeWorkPermit', essential: 299, complete: 399, premium: null },
-  { nameKey: 'pricingPage.caseTypeFamilySponsorship', essential: 599, complete: 899, premium: null },
 ];
 
-const governmentFees = {
-  'Marriage Green Card (AOS)': { i485: 1440, i130: 625, total: 2065 },
-  'Citizenship (N-400)': { n400: 710, total: 710 },
-  'Work Permit (I-765) - Standalone': { i765: 410, total: 410 },
-};
 
-const comparisonData = [
-  {
-    feature: 'Cost (all-in)',
-    traditional: '$5,000 - $8,000',
-    diy: '$2,600 - $3,300',
-    greencard: '$3,064 - $4,564',
-  },
-  {
-    feature: 'Attorney files for you?',
-    traditional: true,
-    diy: false,
-    greencard: true,
-  },
-  {
-    feature: 'Case tracking?',
-    traditional: false,
-    diy: false,
-    greencard: true,
-  },
-  {
-    feature: 'RFE support?',
-    traditional: true,
-    diy: false,
-    greencard: true,
-  },
-  {
-    feature: 'Bilingual support?',
-    traditional: false,
-    diy: false,
-    greencard: true,
-  },
-  {
-    feature: 'Money-back guarantee?',
-    traditional: false,
-    diy: false,
-    greencard: true,
-  },
-];
+
+
 
 const faqs = [
   { key: 'pricingPage.pricingFaqGovFees' },
-  { key: 'pricingPage.pricingFaqSwitchTiers' },
-  { key: 'pricingPage.pricingFaqCustomCase' },
-  { key: 'pricingPage.pricingFaqGuarantee' },
   { key: 'pricingPage.pricingFaqPaymentPlan' },
   { key: 'pricingPage.pricingFaqLicensed' },
   { key: 'pricingPage.pricingFaqAfterFile' },
@@ -145,7 +99,6 @@ function FAQItem({ faqKey }: { faqKey: string }) {
 
 function PricingPageInner() {
   const { t } = useTranslation();
-  const [selectedCaseType, setSelectedCaseType] = useState(0);
   const searchParams = useSearchParams();
   const [showSuccess, setShowSuccess] = useState(false);
 
@@ -308,211 +261,9 @@ function PricingPageInner() {
 
         {/* Government Fees Callout */}
         <div className="mt-12 bg-emerald-50 border border-emerald-200 rounded-lg p-8">
-          <p className="text-center text-slate-600 mb-3">
+          <p className="text-center text-slate-600">
             {t('pricing.governmentFeesNote')}
           </p>
-          <p className="text-center text-blue-900 font-semibold">
-            We show total all-in costs below so you know exactly what to expect.
-          </p>
-        </div>
-
-        {/* All-in Cost Breakdown */}
-        <div className="mt-12 grid md:grid-cols-3 gap-8">
-          {/* Marriage Green Card */}
-          <div className="bg-white border border-slate-200 rounded-lg p-6">
-            <h3 className="text-xl font-bold text-blue-900 mb-4">Marriage Green Card (AOS)</h3>
-            <div className="space-y-3 text-sm">
-              <div className="flex justify-between">
-                <span className="text-slate-600">Essential (our fee)</span>
-                <span className="text-blue-900 font-semibold">$999</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-600">+ Government (I-485 + I-130)</span>
-                <span className="text-blue-900 font-semibold">$2,065</span>
-              </div>
-              <div className="border-t border-slate-200 pt-3 flex justify-between font-bold">
-                <span className="text-blue-900">Essential Total</span>
-                <span className="text-emerald-600">$3,064</span>
-              </div>
-
-              <div className="border-t border-slate-200 pt-3 flex justify-between">
-                <span className="text-slate-600">Complete (our fee)</span>
-                <span className="text-blue-900 font-semibold">$1,499</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-600">+ Government fees</span>
-                <span className="text-blue-900 font-semibold">$2,065</span>
-              </div>
-              <div className="border-t border-slate-200 pt-3 flex justify-between font-bold">
-                <span className="text-blue-900">Complete Total</span>
-                <span className="text-emerald-600">$3,564</span>
-              </div>
-
-              <div className="border-t border-slate-200 pt-3 flex justify-between">
-                <span className="text-slate-600">Premium (our fee)</span>
-                <span className="text-blue-900 font-semibold">$2,499</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-600">+ Government fees</span>
-                <span className="text-blue-900 font-semibold">$2,065</span>
-              </div>
-              <div className="border-t border-slate-200 pt-3 flex justify-between font-bold">
-                <span className="text-blue-900">Premium Total</span>
-                <span className="text-emerald-600">$4,564</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Citizenship */}
-          <div className="bg-white border border-slate-200 rounded-lg p-6">
-            <h3 className="text-xl font-bold text-blue-900 mb-4">Citizenship (N-400)</h3>
-            <div className="space-y-3 text-sm">
-              <div className="flex justify-between">
-                <span className="text-slate-600">Essential (our fee)</span>
-                <span className="text-blue-900 font-semibold">$499</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-600">+ Government (N-400)</span>
-                <span className="text-blue-900 font-semibold">$710</span>
-              </div>
-              <div className="border-t border-slate-200 pt-3 flex justify-between font-bold">
-                <span className="text-blue-900">Essential Total</span>
-                <span className="text-emerald-600">$1,209</span>
-              </div>
-
-              <div className="border-t border-slate-200 pt-3 flex justify-between">
-                <span className="text-slate-600">Complete (our fee)</span>
-                <span className="text-blue-900 font-semibold">$699</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-600">+ Government fees</span>
-                <span className="text-blue-900 font-semibold">$710</span>
-              </div>
-              <div className="border-t border-slate-200 pt-3 flex justify-between font-bold">
-                <span className="text-blue-900">Complete Total</span>
-                <span className="text-emerald-600">$1,409</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Work Permit */}
-          <div className="bg-white border border-slate-200 rounded-lg p-6">
-            <h3 className="text-xl font-bold text-blue-900 mb-4">Work Permit (I-765 Standalone)</h3>
-            <div className="space-y-3 text-sm">
-              <div className="flex justify-between">
-                <span className="text-slate-600">Essential (our fee)</span>
-                <span className="text-blue-900 font-semibold">$299</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-600">+ Government (I-765)</span>
-                <span className="text-blue-900 font-semibold">$410</span>
-              </div>
-              <div className="border-t border-slate-200 pt-3 flex justify-between font-bold">
-                <span className="text-blue-900">Essential Total</span>
-                <span className="text-emerald-600">$709</span>
-              </div>
-
-              <p className="text-slate-600 text-xs mt-4 italic">
-                Note: I-765 is FREE when filed with I-485. Work Permit fee only applies if filed standalone.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Monthly Payment Info */}
-        <div className="mt-12 bg-slate-50 border border-slate-200 rounded-lg p-8 text-center">
-          <p className="text-slate-600 mb-2">All prices shown are one-time service fees.</p>
-          <p className="text-blue-900 font-semibold">
-            Pay monthly with no interest. For example, Marriage GC Complete is just $124.92/month for 12 months.
-          </p>
-          <p className="text-slate-600 text-sm mt-4">Payment plans cover our legal fees only. Government fees are paid separately when your case is filed.</p>
-        </div>
-      </section>
-
-      {/* Comparison Section */}
-      <section className="px-4 sm:px-6 lg:px-8 py-16 max-w-5xl mx-auto bg-slate-50">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-blue-900 mb-4">
-            {t('pricing.costComparison')}
-          </h2>
-          <p className="text-slate-600">
-            {t('pricing.subtitle')}
-          </p>
-        </div>
-
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse min-w-full bg-white">
-            <thead>
-              <tr className="border-b border-slate-200">
-                <th className="text-left py-4 px-4 font-semibold text-blue-900">
-                  {t('pricing.factor')}
-                </th>
-                <th className="text-center py-4 px-4 font-semibold text-blue-900">
-                  {t('pricing.traditional')}
-                </th>
-                <th className="text-center py-4 px-4 font-semibold text-blue-900">
-                  {t('pricing.diy')}
-                </th>
-                <th className="text-center py-4 px-4 font-semibold text-blue-900">
-                  {t('pricing.greencard')}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {comparisonData.map((row, idx) => (
-                <tr key={idx} className="border-b border-slate-200 hover:bg-slate-50">
-                  <td className="py-4 px-4 font-medium text-slate-700">
-                    {row.feature}
-                  </td>
-                  <td className="text-center py-4 px-4">
-                    {typeof row.traditional === 'boolean' ? (
-                      row.traditional ? (
-                        <Check className="w-5 h-5 text-emerald-600 mx-auto" />
-                      ) : (
-                        <X className="w-5 h-5 text-red-500 mx-auto" />
-                      )
-                    ) : (
-                      <span className="text-slate-700">{row.traditional}</span>
-                    )}
-                  </td>
-                  <td className="text-center py-4 px-4">
-                    {typeof row.diy === 'boolean' ? (
-                      row.diy ? (
-                        <Check className="w-5 h-5 text-emerald-600 mx-auto" />
-                      ) : (
-                        <X className="w-5 h-5 text-red-500 mx-auto" />
-                      )
-                    ) : (
-                      <span className="text-slate-700">{row.diy}</span>
-                    )}
-                  </td>
-                  <td className="text-center py-4 px-4">
-                    {typeof row.greencard === 'boolean' ? (
-                      row.greencard ? (
-                        <Check className="w-5 h-5 text-emerald-600 mx-auto" />
-                      ) : (
-                        <X className="w-5 h-5 text-red-500 mx-auto" />
-                      )
-                    ) : (
-                      <span className="text-slate-700">{row.greencard}</span>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Comparison Note */}
-        <div className="mt-8 bg-white border border-slate-200 rounded-lg p-6 text-sm text-slate-700">
-          <p className="mb-3">
-            <span className="font-semibold text-blue-900">All-in costs shown for Marriage Green Card via Adjustment of Status:</span>
-          </p>
-          <ul className="space-y-2 ml-4">
-            <li>{t('pricing.traditional')}: $5,000-$8,000 includes their legal fees and government filing</li>
-            <li>DIY Platforms: $2,600-$3,300 for forms + $2,065 government fees you pay yourself</li>
-            <li>{t('pricing.greencard')}: Includes attorney filing, document preparation, and case management</li>
-          </ul>
         </div>
       </section>
 

@@ -318,7 +318,7 @@ export default function VerifyPage() {
                   Most cases can be recovered or filed correctly before
                   deadlines are missed.
                 </p>
-                <Link href="/emergency">
+                <Link href="/contact">
                   <Button className="bg-green-600 hover:bg-green-700 text-white">
                     Get Emergency Help
                     <ArrowRight className="w-4 h-4 ml-2" />
