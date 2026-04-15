@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
 import { notifications, notificationTypeEnum } from "@/lib/db/schema";
-import { eq, and, desc, asc } from "drizzle-orm";
+import { eq, and, desc, asc, inArray } from "drizzle-orm";
 
 export async function GET(request: NextRequest) {
   try {
@@ -129,27 +129,39 @@ export async function PATCH(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { notificationId, read } = body;
+    const { ids, markAllRead } = body;
 
-    if (!notificationId || typeof read !== "boolean") {
+    // Handle mark all as read
+    if (markAllRead === true) {
+      const updated = await getDb()
+        .update(notifications)
+        .set({
+          read: true,
+          readAt: new Date(),
+        })
+        .where(eq(notifications.userId, actorId))
+        .returning();
+
+      return NextResponse.json({
+        success: true,
+        data: updated,
+      });
+    }
+
+    // Handle mark specific ids as read
+    if (!ids || !Array.isArray(ids) || ids.length === 0) {
       return NextResponse.json(
-        { error: "Missing required fields: notificationId, read" },
+        { error: "Missing required fields: ids array or markAllRead boolean" },
         { status: 400 }
       );
     }
 
-    const notification = await getDb().query.notifications.findFirst({
-      where: eq(notifications.id, notificationId),
+    // Verify all notifications belong to the user before updating
+    const existingNotifications = await getDb().query.notifications.findMany({
+      where: inArray(notifications.id, ids),
     });
 
-    if (!notification) {
-      return NextResponse.json(
-        { error: "Notification not found" },
-        { status: 404 }
-      );
-    }
-
-    if (notification.userId !== actorId) {
+    if (existingNotifications.some((n) => n.userId !== actorId)) {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 403 }
@@ -159,15 +171,15 @@ export async function PATCH(request: NextRequest) {
     const updated = await getDb()
       .update(notifications)
       .set({
-        read,
-        readAt: read ? new Date() : null,
+        read: true,
+        readAt: new Date(),
       })
-      .where(eq(notifications.id, notificationId))
+      .where(inArray(notifications.id, ids))
       .returning();
 
     return NextResponse.json({
       success: true,
-      data: updated[0],
+      data: updated,
     });
   } catch (error) {
     console.error("Error updating notification:", error);

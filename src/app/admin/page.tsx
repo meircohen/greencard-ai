@@ -4,7 +4,8 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { useAuthStore } from "@/lib/store";
 import { BarChart3, Users, FileText, DollarSign, TrendingUp, AlertCircle, RefreshCw, Mail, Activity } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 interface MetricCard {
   label: string;
@@ -17,124 +18,80 @@ interface AdminUser {
   id: string;
   name: string;
   email: string;
-  plan: string;
-  cases: number;
-  joined: string;
-  status: "active" | "inactive" | "suspended";
-}
-
-interface Attorney {
-  id: string;
-  name: string;
-  barNumber: string;
-  state: string;
+  caseCount: number;
+  joinedDate: string;
 }
 
 interface ActivityItem {
   id: string;
-  type: string;
-  description: string;
+  action: string;
+  userName: string;
+  userEmail: string;
   timestamp: string;
 }
 
-const mockUsers: AdminUser[] = [
-  {
-    id: "1",
-    name: "Sarah Chen",
-    email: "sarah.chen@email.com",
-    plan: "Pro",
-    cases: 3,
-    joined: "2024-01-15",
-    status: "active",
-  },
-  {
-    id: "2",
-    name: "James Wilson",
-    email: "james.w@email.com",
-    plan: "Basic",
-    cases: 1,
-    joined: "2024-03-20",
-    status: "active",
-  },
-  {
-    id: "3",
-    name: "Maria Garcia",
-    email: "maria.garcia@email.com",
-    plan: "Enterprise",
-    cases: 12,
-    joined: "2023-06-10",
-    status: "active",
-  },
-  {
-    id: "4",
-    name: "David Kim",
-    email: "d.kim@email.com",
-    plan: "Pro",
-    cases: 5,
-    joined: "2024-02-05",
-    status: "active",
-  },
-  {
-    id: "5",
-    name: "Lisa Johnson",
-    email: "lisa.j@email.com",
-    plan: "Basic",
-    cases: 0,
-    joined: "2024-04-01",
-    status: "inactive",
-  },
-  {
-    id: "6",
-    name: "Ahmed Hassan",
-    email: "ahmed.h@email.com",
-    plan: "Pro",
-    cases: 7,
-    joined: "2023-11-30",
-    status: "active",
-  },
-  {
-    id: "7",
-    name: "Emma Thompson",
-    email: "emma.t@email.com",
-    plan: "Enterprise",
-    cases: 15,
-    joined: "2023-05-12",
-    status: "active",
-  },
-  {
-    id: "8",
-    name: "Michael Brown",
-    email: "m.brown@email.com",
-    plan: "Basic",
-    cases: 2,
-    joined: "2024-03-25",
-    status: "suspended",
-  },
-];
+interface AdminStatsData {
+  totalUsers: number;
+  totalCases: number;
+  totalAttorneys: number;
+  mrr: string;
+  recentActivity: ActivityItem[];
+  recentUsers: AdminUser[];
+  casesByStatus: Record<string, number>;
+  monthlyGrowth: number;
+}
 
-const mockAttorneys: Attorney[] = [
-  { id: "1", name: "Robert Martinez", barNumber: "CA123456", state: "California" },
-  { id: "2", name: "Jessica Lee", barNumber: "NY654321", state: "New York" },
-  { id: "3", name: "Thomas Anderson", barNumber: "TX789012", state: "Texas" },
-];
-
-const mockActivity: ActivityItem[] = [
-  { id: "1", type: "User Signup", description: "New user registered for Pro plan", timestamp: "2 hours ago" },
-  { id: "2", type: "Case Filed", description: "User filed I-140 petition", timestamp: "4 hours ago" },
-  { id: "3", type: "Payment", description: "Monthly subscription processed", timestamp: "6 hours ago" },
-  { id: "4", type: "Attorney Joined", description: "New attorney registered for verification", timestamp: "1 day ago" },
-  { id: "5", type: "Case Approved", description: "I-485 application approved", timestamp: "1 day ago" },
-  { id: "6", type: "RFE Received", description: "User received RFE notice", timestamp: "2 days ago" },
-  { id: "7", type: "Payment", description: "Monthly subscription processed", timestamp: "2 days ago" },
-  { id: "8", type: "User Signup", description: "New user registered for Basic plan", timestamp: "3 days ago" },
-  { id: "9", type: "Support Ticket", description: "User submitted support request", timestamp: "3 days ago" },
-  { id: "10", type: "Data Export", description: "User exported case documents", timestamp: "4 days ago" },
-];
 
 export default function AdminPage() {
   const { user } = useAuthStore();
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedFilter, setSelectedFilter] = useState<"all" | "active" | "inactive">("all");
+  const [stats, setStats] = useState<AdminStatsData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Check if user is admin on mount
+  useEffect(() => {
+    if (!user) {
+      return;
+    }
+
+    if (user.role !== "admin") {
+      router.push("/");
+      return;
+    }
+
+    // Fetch admin stats
+    const fetchStats = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const response = await fetch("/api/admin/stats", {
+          method: "GET",
+          credentials: "include",
+        });
+
+        if (!response.ok) {
+          if (response.status === 401) {
+            router.push("/");
+            return;
+          }
+          throw new Error(`Failed to fetch stats: ${response.statusText}`);
+        }
+
+        const data: AdminStatsData = await response.json();
+        setStats(data);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : "Failed to load admin stats";
+        setError(message);
+        console.error("Admin stats error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStats();
+  }, [user, router]);
 
   // Check if user is admin
   if (!user || user.role !== "admin") {
@@ -153,38 +110,74 @@ export default function AdminPage() {
     );
   }
 
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col bg-white">
+        <Navbar />
+        <main className="flex-1 pt-20 flex items-center justify-center">
+          <div className="text-center">
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
+            <p className="mt-4 text-slate-600">Loading admin dashboard...</p>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (error || !stats) {
+    return (
+      <div className="min-h-screen flex flex-col bg-white">
+        <Navbar />
+        <main className="flex-1 pt-20">
+          <div className="max-w-4xl mx-auto px-4 py-8">
+            <div className="flex items-center gap-4 p-8 bg-red-50 border border-red-200 rounded-lg">
+              <AlertCircle className="w-8 h-8 text-red-600 flex-shrink-0" />
+              <div>
+                <h2 className="text-lg font-semibold text-red-600">Error Loading Dashboard</h2>
+                <p className="text-red-700 text-sm mt-1">
+                  {error || "Failed to load admin statistics. Please try refreshing the page."}
+                </p>
+              </div>
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
   const metrics: MetricCard[] = [
     {
       label: "Monthly Recurring Revenue",
-      value: "$12,450",
-      icon: <DollarSign className="w-6 h-6 text-green-500" />,
-      trend: 12,
+      value: `$${parseFloat(stats.mrr).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      icon: <DollarSign className="w-6 h-6 text-emerald-600" />,
+      trend: Math.min(stats.monthlyGrowth, 25),
     },
     {
       label: "Total Users",
-      value: "2,847",
-      icon: <Users className="w-6 h-6 text-blue-500" />,
-      trend: 8,
+      value: stats.totalUsers.toLocaleString(),
+      icon: <Users className="w-6 h-6 text-blue-600" />,
+      trend: Math.min(stats.monthlyGrowth, 25),
     },
     {
       label: "Active Cases",
-      value: "1,203",
-      icon: <FileText className="w-6 h-6 text-amber-400" />,
-      trend: 15,
+      value: stats.totalCases.toLocaleString(),
+      icon: <FileText className="w-6 h-6 text-amber-600" />,
+      trend: Math.min((Object.values(stats.casesByStatus).reduce((a, b) => a + b, 0) / stats.totalCases * 100) || 0, 25),
     },
     {
       label: "Attorney Partners",
-      value: "45",
-      icon: <BarChart3 className="w-6 h-6 text-green-500" />,
+      value: stats.totalAttorneys.toLocaleString(),
+      icon: <BarChart3 className="w-6 h-6 text-emerald-600" />,
       trend: 3,
     },
   ];
 
-  const filteredUsers = mockUsers.filter((u) => {
-    const matchesSearch = u.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  const filteredUsers = stats.recentUsers.filter((u) => {
+    const matchesSearch = (u.name && u.name.toLowerCase().includes(searchQuery.toLowerCase())) ||
       u.email.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesFilter = selectedFilter === "all" || u.status === selectedFilter;
-    return matchesSearch && matchesFilter;
+    return matchesSearch;
   });
 
   return (
@@ -238,7 +231,7 @@ export default function AdminPage() {
           <div className="p-4 sm:p-6 bg-slate-50 border border-slate-200 rounded-lg">
             <h2 className="text-base sm:text-lg font-semibold text-slate-900 mb-4">Users</h2>
 
-            {/* Search and Filter */}
+            {/* Search */}
             <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mb-4">
               <input
                 type="text"
@@ -247,21 +240,6 @@ export default function AdminPage() {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="flex-1 px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-emerald-500/50"
               />
-              <div className="flex gap-1 sm:gap-2 overflow-x-auto">
-                {["all", "active", "inactive"].map((status) => (
-                  <button
-                    key={status}
-                    onClick={() => setSelectedFilter(status as any)}
-                    className={`px-2 sm:px-3 py-2 text-xs font-medium rounded-lg transition-colors whitespace-nowrap ${
-                      selectedFilter === status
-                        ? "bg-emerald-50 text-emerald-600 border border-emerald-500/40"
-                        : "text-slate-600 hover:text-slate-700"
-                    }`}
-                  >
-                    {status.charAt(0).toUpperCase() + status.slice(1)}
-                  </button>
-                ))}
-              </div>
             </div>
 
             {/* Users Table */}
@@ -271,37 +249,17 @@ export default function AdminPage() {
                   <tr className="border-b border-slate-200">
                     <th className="px-4 py-3 text-left text-slate-600">Name</th>
                     <th className="px-4 py-3 text-left text-slate-600">Email</th>
-                    <th className="px-4 py-3 text-left text-slate-600">Plan</th>
                     <th className="px-4 py-3 text-left text-slate-600">Cases</th>
                     <th className="px-4 py-3 text-left text-slate-600">Joined</th>
-                    <th className="px-4 py-3 text-left text-slate-600">Status</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredUsers.map((user) => (
-                    <tr key={user.id} className="border-b border-slate-100 hover:bg-slate-100 transition-colors">
-                      <td className="px-4 py-3 text-slate-900 font-medium">{user.name}</td>
+                    <tr key={user.id} className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+                      <td className="px-4 py-3 text-slate-900 font-medium">{user.name || "Unknown"}</td>
                       <td className="px-4 py-3 text-slate-600 text-xs">{user.email}</td>
-                      <td className="px-4 py-3">
-                        <span className="px-2 py-1 text-xs font-medium rounded bg-blue-50 text-blue-600">
-                          {user.plan}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 text-slate-700">{user.cases}</td>
-                      <td className="px-4 py-3 text-slate-600 text-xs">{user.joined}</td>
-                      <td className="px-4 py-3">
-                        <span
-                          className={`px-2 py-1 text-xs font-medium rounded ${
-                            user.status === "active"
-                              ? "bg-emerald-50 text-emerald-600"
-                              : user.status === "inactive"
-                              ? "bg-slate-100 text-slate-600"
-                              : "bg-red-50 text-red-600"
-                          }`}
-                        >
-                          {user.status.charAt(0).toUpperCase() + user.status.slice(1)}
-                        </span>
-                      </td>
+                      <td className="px-4 py-3 text-slate-700">{user.caseCount}</td>
+                      <td className="px-4 py-3 text-slate-600 text-xs">{user.joinedDate}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -312,24 +270,20 @@ export default function AdminPage() {
 
         {/* System Health */}
         <div className="space-y-4">
-          {/* Attorneys Verification */}
+          {/* Cases Summary */}
           <div className="p-4 sm:p-6 bg-slate-50 border border-slate-200 rounded-lg">
-            <h3 className="text-base sm:text-lg font-semibold text-slate-900 mb-4">Attorneys Pending Verification</h3>
+            <h3 className="text-base sm:text-lg font-semibold text-slate-900 mb-4">Cases by Status</h3>
             <div className="space-y-3">
-              {mockAttorneys.map((attorney) => (
-                <div key={attorney.id} className="p-3 bg-white border border-slate-200 rounded">
-                  <p className="text-sm font-medium text-slate-900">{attorney.name}</p>
-                  <p className="text-xs text-slate-600 mt-1">{attorney.barNumber} • {attorney.state}</p>
-                  <div className="flex gap-2 mt-3">
-                    <button className="flex-1 px-2 py-1 bg-emerald-50 text-emerald-600 text-xs font-medium rounded hover:bg-emerald-100 transition-colors">
-                      Verify
-                    </button>
-                    <button className="flex-1 px-2 py-1 bg-red-50 text-red-600 text-xs font-medium rounded hover:bg-red-100 transition-colors">
-                      Reject
-                    </button>
+              {Object.entries(stats.casesByStatus).length > 0 ? (
+                Object.entries(stats.casesByStatus).map(([status, count]) => (
+                  <div key={status} className="flex justify-between items-center py-2 border-b border-slate-200 last:border-b-0">
+                    <p className="text-sm font-medium text-slate-700 capitalize">{status}</p>
+                    <p className="text-sm font-semibold text-slate-900">{count}</p>
                   </div>
-                </div>
-              ))}
+                ))
+              ) : (
+                <p className="text-sm text-slate-600">No cases found</p>
+              )}
             </div>
           </div>
 
@@ -381,16 +335,34 @@ export default function AdminPage() {
       <div className="mt-6 sm:mt-8 p-4 sm:p-6 bg-slate-50 border border-slate-200 rounded-lg">
         <h2 className="text-base sm:text-lg font-semibold text-slate-900 mb-4">Recent Activity</h2>
         <div className="space-y-3">
-          {mockActivity.map((item, idx) => (
-            <div key={item.id} className="flex gap-4 py-3 border-b border-slate-100 last:border-b-0">
-              <div className="w-2 h-2 rounded-full bg-green-500 flex-shrink-0 mt-2" />
-              <div className="flex-1">
-                <p className="text-sm font-medium text-slate-900">{item.type}</p>
-                <p className="text-xs text-slate-600 mt-1">{item.description}</p>
-              </div>
-              <p className="text-xs text-slate-400 flex-shrink-0">{item.timestamp}</p>
-            </div>
-          ))}
+          {stats.recentActivity.length > 0 ? (
+            stats.recentActivity.map((item) => {
+              const activityTime = new Date(item.timestamp);
+              const now = new Date();
+              const diffMs = now.getTime() - activityTime.getTime();
+              const diffMins = Math.floor(diffMs / 60000);
+              const diffHours = Math.floor(diffMs / 3600000);
+              const diffDays = Math.floor(diffMs / 86400000);
+
+              let timeStr = "just now";
+              if (diffMins > 0 && diffMins < 60) timeStr = `${diffMins}m ago`;
+              else if (diffHours > 0 && diffHours < 24) timeStr = `${diffHours}h ago`;
+              else if (diffDays > 0) timeStr = `${diffDays}d ago`;
+
+              return (
+                <div key={item.id} className="flex gap-4 py-3 border-b border-slate-200 last:border-b-0">
+                  <div className="w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0 mt-2" />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-slate-900">{item.action}</p>
+                    <p className="text-xs text-slate-600 mt-1">{item.userName} ({item.userEmail})</p>
+                  </div>
+                  <p className="text-xs text-slate-400 flex-shrink-0">{timeStr}</p>
+                </div>
+              );
+            })
+          ) : (
+            <p className="text-sm text-slate-600">No recent activity</p>
+          )}
         </div>
       </div>
       </div>

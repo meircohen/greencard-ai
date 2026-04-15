@@ -2,86 +2,69 @@
 
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { useState } from "react";
-import { useNotificationStore, Notification } from "@/lib/store";
+import { useState, useEffect } from "react";
 import { Bell, Check, CheckCheck, Trash2, AlertCircle, FileText, CreditCard, Info, TrendingUp } from "lucide-react";
 import Link from "next/link";
 
-const mockNotifications: Notification[] = [
-  {
-    id: "1",
-    type: "deadline",
-    title: "RFE Response Due Soon",
-    description: "Your RFE response for EB-2 case is due in 5 days. Please prepare all required documentation and submit before the deadline.",
-    timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
-    read: false,
-    actionUrl: "/cases/123",
-  },
-  {
-    id: "2",
-    type: "case_update",
-    title: "Case Status Updated",
-    description: "Your I-140 petition has been approved. You can now proceed to the next stage of your application.",
-    timestamp: new Date(Date.now() - 6 * 60 * 60 * 1000),
-    read: false,
-    actionUrl: "/cases/456",
-  },
-  {
-    id: "3",
-    type: "document",
-    title: "New Document Required",
-    description: "Medical examination results needed for your application. Please schedule your appointment at a USCIS-designated civil surgeon.",
-    timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000),
-    read: true,
-    actionUrl: "/cases/789",
-  },
-  {
-    id: "4",
-    type: "billing",
-    title: "Payment Received",
-    description: "Your subscription payment of $99.99 has been processed successfully. Your next billing date is May 14, 2025.",
-    timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
-    read: true,
-  },
-  {
-    id: "5",
-    type: "system",
-    title: "Visa Bulletin Updated",
-    description: "June 2025 visa bulletin is now available. Check the latest visa number availability and priority dates.",
-    timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
-    read: true,
-  },
-  {
-    id: "6",
-    type: "case_update",
-    title: "Interview Scheduled",
-    description: "Your consular interview has been scheduled for June 15, 2025 at 9:00 AM at the US Consulate.",
-    timestamp: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
-    read: true,
-    actionUrl: "/cases/123",
-  },
-  {
-    id: "7",
-    type: "deadline",
-    title: "Form I-485 Expires Soon",
-    description: "Your Form I-485 approval is valid for 1 year. You must use your visa before the expiration date.",
-    timestamp: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-    read: true,
-  },
-  {
-    id: "8",
-    type: "document",
-    title: "Tax Documents Needed",
-    description: "Please upload your last 2 years of tax returns for income verification.",
-    timestamp: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
-    read: true,
-    actionUrl: "/cases/456",
-  },
-];
+// Map DB notification types to UI types
+function mapDbTypeToUiType(dbType: string): string {
+  switch (dbType) {
+    case "case_status_update":
+    case "case_approved":
+      return "case_update";
+    case "deadline_reminder":
+    case "rfe_alert":
+      return "deadline";
+    case "document_received":
+      return "document";
+    case "payment_receipt":
+      return "billing";
+    case "welcome":
+    case "system_alert":
+      return "system";
+    default:
+      return "system";
+  }
+}
+
+interface DBNotification {
+  id: string;
+  userId: string;
+  caseId: string | null;
+  type: string;
+  title: string;
+  message: string;
+  metadata: any;
+  read: boolean;
+  readAt: string | null;
+  createdAt: string;
+}
+
+interface UINotification {
+  id: string;
+  type: string;
+  title: string;
+  description: string;
+  timestamp: Date;
+  read: boolean;
+  actionUrl?: string;
+}
+
+function convertDbToUiNotification(dbNotif: DBNotification): UINotification {
+  return {
+    id: dbNotif.id,
+    type: mapDbTypeToUiType(dbNotif.type),
+    title: dbNotif.title,
+    description: dbNotif.message,
+    timestamp: new Date(dbNotif.createdAt),
+    read: dbNotif.read,
+    actionUrl: dbNotif.caseId ? `/cases/${dbNotif.caseId}` : undefined,
+  };
+}
 
 type NotificationType = "all" | "case_update" | "deadline" | "document" | "billing";
 
-function getIcon(type: Notification["type"]) {
+function getIcon(type: string) {
   switch (type) {
     case "case_update":
       return <TrendingUp className="w-5 h-5 text-blue-500" />;
@@ -116,14 +99,77 @@ function formatFullDate(date: Date) {
 
 export default function NotificationsPage() {
   const [activeFilter, setActiveFilter] = useState<NotificationType>("all");
-  const { notifications, markRead, markAllRead } = useNotificationStore();
+  const [notifications, setNotifications] = useState<UINotification[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
 
-  const displayNotifications = notifications.length === 0 ? mockNotifications : notifications;
+  // Fetch notifications on mount
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch("/api/notifications?limit=100");
+        if (!response.ok) throw new Error("Failed to fetch notifications");
+
+        const result = await response.json();
+        const uiNotifications = (result.data || []).map(convertDbToUiNotification);
+        setNotifications(uiNotifications);
+      } catch (error) {
+        console.error("Error fetching notifications:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNotifications();
+  }, []);
+
+  const displayNotifications = notifications;
 
   const filteredNotifications =
     activeFilter === "all"
       ? displayNotifications
       : displayNotifications.filter((n) => n.type === activeFilter);
+
+  const markAsRead = async (id: string) => {
+    try {
+      setSubmitting(true);
+      const response = await fetch("/api/notifications", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids: [id] }),
+      });
+
+      if (!response.ok) throw new Error("Failed to mark as read");
+
+      setNotifications((prev) =>
+        prev.map((n) => (n.id === id ? { ...n, read: true } : n))
+      );
+    } catch (error) {
+      console.error("Error marking as read:", error);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const markAllAsRead = async () => {
+    try {
+      setSubmitting(true);
+      const response = await fetch("/api/notifications", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ markAllRead: true }),
+      });
+
+      if (!response.ok) throw new Error("Failed to mark all as read");
+
+      setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+    } catch (error) {
+      console.error("Error marking all as read:", error);
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   const tabs: { label: string; value: NotificationType; count: number }[] = [
     {
@@ -193,15 +239,26 @@ export default function NotificationsPage() {
       {unreadCount > 0 && (
         <div className="flex gap-2 sm:gap-3 mb-4 sm:mb-6">
           <button
-            onClick={markAllRead}
-            className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-500/20 transition-colors text-xs sm:text-sm font-medium whitespace-nowrap"
+            onClick={markAllAsRead}
+            disabled={submitting}
+            className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-500/20 transition-colors text-xs sm:text-sm font-medium whitespace-nowrap disabled:opacity-50"
           >
             <CheckCheck className="w-4 h-4 flex-shrink-0" />
-            Mark all as read
+            {submitting ? "Marking..." : "Mark all as read"}
           </button>
         </div>
       )}
 
+      {/* Loading State */}
+      {loading ? (
+        <div className="text-center py-8 sm:py-12">
+          <div className="inline-block animate-spin">
+            <Bell className="w-8 sm:w-12 h-8 sm:h-12 text-slate-600" />
+          </div>
+          <p className="text-xs sm:text-sm text-slate-600 mt-4">Loading notifications...</p>
+        </div>
+      ) : (
+        <>
       {/* Notifications List */}
       <div className="space-y-2 sm:space-y-3">
         {filteredNotifications.length === 0 ? (
@@ -253,8 +310,9 @@ export default function NotificationsPage() {
 
               {!notification.read && (
                 <button
-                  onClick={() => markRead(notification.id)}
-                  className="flex-shrink-0 p-1 text-slate-400 hover:text-green-500 transition-colors"
+                  onClick={() => markAsRead(notification.id)}
+                  disabled={submitting}
+                  className="flex-shrink-0 p-1 text-slate-400 hover:text-green-500 transition-colors disabled:opacity-50"
                   aria-label="Mark as read"
                 >
                   <Check className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -264,6 +322,8 @@ export default function NotificationsPage() {
           ))
         )}
       </div>
+      </>
+      )}
       </div>
       </main>
       <Footer />

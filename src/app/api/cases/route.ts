@@ -1,130 +1,108 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getSession } from "@/lib/auth";
 import { getDb } from "@/lib/db";
-import { cases, caseDeadlines } from "@/lib/db/schema";
-import { eq, or, desc } from "drizzle-orm";
-import { z } from "zod";
-import crypto from "crypto";
-import { generateDeadlines } from "@/lib/deadline-monitor";
-import { logger } from "@/lib/logger";
+import { cases, caseDocuments, caseForms, caseDeadlines } from "@/lib/db/schema";
+import { eq, and, count, gt, SQL } from "drizzle-orm";
 
-const createCaseSchema = z.object({
-  caseType: z.string().min(1, "caseType is required"),
-  category: z.string().min(1, "category is required"),
-});
-
+/**
+ * GET /api/cases
+ * Returns all cases for the authenticated user with aggregated data
+ */
 export async function GET(request: NextRequest) {
   try {
-    const actorId = request.headers.get("x-user-id");
-    const actorRole = request.headers.get("x-user-role");
+    const session = await getSession(request);
 
-    if (!actorId) {
+    if (!session) {
       return NextResponse.json(
-        { error: "Authentication required" },
+        { error: "Not authenticated" },
         { status: 401 }
       );
     }
 
     const db = getDb();
-    const searchParams = request.nextUrl.searchParams;
-    const page = Math.max(1, parseInt(searchParams.get("page") || "1"));
-    const limit = Math.min(50, Math.max(1, parseInt(searchParams.get("limit") || "10")));
-    const offset = (page - 1) * limit;
+    const userId = session.user.id;
+    const userRole = session.user.role;
 
-    // Users see only their own cases; attorneys see cases assigned to them; admins see all
-    let userCases;
-    if (actorRole === "admin") {
-      userCases = await db
-        .select()
-        .from(cases)
-        .orderBy(desc(cases.updatedAt))
-        .limit(limit)
-        .offset(offset);
-    } else {
-      userCases = await db
-        .select()
-        .from(cases)
-        .where(
-          or(
-            eq(cases.userId, actorId),
-            eq(cases.attorneyId, actorId)
-          )
-        )
-        .orderBy(desc(cases.updatedAt))
-        .limit(limit)
-        .offset(offset);
+    // Build where condition based on role
+    let whereCondition: SQL | undefined;
+    if (userRole === "client") {
+      whereCondition = eq(cases.userId, userId);
+    } else if (userRole === "attorney") {
+      whereCondition = eq(cases.attorneyId, userId);
     }
+    // admins see all (undefined = no filter)
+
+    const userCases = await db
+      .select({
+        id: cases.id,
+        userId: cases.userId,
+        attorneyId: cases.attorneyId,
+        caseType: cases.caseType,
+        category: cases.category,
+        status: cases.status,
+        priorityDate: cases.priorityDate,
+        receiptNumber: cases.receiptNumber,
+        serviceCenter: cases.serviceCenter,
+        score: cases.score,
+        createdAt: cases.createdAt,
+        updatedAt: cases.updatedAt,
+        documentCount: count(caseDocuments.id),
+        formCount: count(caseForms.id),
+      })
+      .from(cases)
+      .leftJoin(caseDocuments, eq(caseDocuments.caseId, cases.id))
+      .leftJoin(caseForms, eq(caseForms.caseId, cases.id))
+      .where(whereCondition)
+      .groupBy(
+        cases.id,
+        cases.userId,
+        cases.attorneyId,
+        cases.caseType,
+        cases.category,
+        cases.status,
+        cases.priorityDate,
+        cases.receiptNumber,
+        cases.serviceCenter,
+        cases.score,
+        cases.createdAt,
+        cases.updatedAt
+      );
+
+    // Get next upcoming deadline for each case
+    const casesWithDeadlines = await Promise.all(
+      userCases.map(async (caseItem) => {
+        const [nextDeadline] = await db
+          .select({
+            deadlineDate: caseDeadlines.deadlineDate,
+            deadlineType: caseDeadlines.deadlineType,
+            description: caseDeadlines.description,
+          })
+          .from(caseDeadlines)
+          .where(
+            and(
+              eq(caseDeadlines.caseId, caseItem.id),
+              eq(caseDeadlines.completed, false),
+              gt(caseDeadlines.deadlineDate, new Date())
+            )
+          )
+          .orderBy(caseDeadlines.deadlineDate)
+          .limit(1);
+
+        return {
+          ...caseItem,
+          nextDeadline: nextDeadline || null,
+        };
+      })
+    );
 
     return NextResponse.json({
-      cases: userCases,
-      page,
-      limit,
+      cases: casesWithDeadlines,
+      total: casesWithDeadlines.length,
     });
   } catch (error) {
-    console.error("Failed to fetch cases:", error);
+    console.error("Error fetching cases:", error);
     return NextResponse.json(
-      { error: "Failed to fetch cases" },
-      { status: 500 }
-    );
-  }
-}
-
-export async function POST(request: NextRequest) {
-  try {
-    const actorId = request.headers.get("x-user-id");
-
-    if (!actorId) {
-      return NextResponse.json(
-        { error: "Authentication required" },
-        { status: 401 }
-      );
-    }
-
-    const body = await request.json();
-    const parsed = createCaseSchema.parse(body);
-
-    const db = getDb();
-    const caseId = crypto.randomUUID();
-
-    const [newCase] = await db
-      .insert(cases)
-      .values({
-        id: caseId,
-        userId: actorId,
-        caseType: parsed.caseType,
-        category: parsed.category,
-        status: "draft",
-      })
-      .returning();
-
-    // Auto-generate deadlines if case has approval date (for cases being created after approval)
-    try {
-      const deadlines = generateDeadlines(caseId, parsed.caseType);
-      if (deadlines.length > 0) {
-        await db.insert(caseDeadlines).values(deadlines);
-        logger.info(
-          { caseId, count: deadlines.length },
-          'Auto-generated deadlines on case creation'
-        );
-      }
-    } catch (deadlineError) {
-      logger.error(
-        { caseId, error: deadlineError },
-        'Failed to auto-generate deadlines on case creation'
-      );
-      // Non-critical: continue returning case even if deadline generation fails
-    }
-
-    return NextResponse.json(newCase, { status: 201 });
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: error.issues[0]?.message || "Validation error" },
-        { status: 400 }
-      );
-    }
-    console.error("Failed to create case:", error);
-    return NextResponse.json(
-      { error: "Failed to create case" },
+      { error: "Internal server error" },
       { status: 500 }
     );
   }
