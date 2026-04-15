@@ -55,14 +55,14 @@ export const Navbar: React.FC = () => {
       className={`
         fixed top-0 left-0 right-0 z-40
         transition-all duration-300
-        ${hasScroll ? "glass" : "bg-transparent"}
+        ${hasScroll ? "bg-white border-b border-gray-200 shadow-sm" : "bg-white border-b border-gray-200"}
       `}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
-            <div className="text-2xl font-bold gradient-text">
+            <div className="text-2xl font-bold text-blue-900">
               GreenCard.ai
             </div>
           </Link>
@@ -73,7 +73,7 @@ export const Navbar: React.FC = () => {
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-secondary hover:text-primary transition-colors duration-200"
+                className="text-slate-600 hover:text-slate-900 transition-colors duration-200 font-medium"
               >
                 {link.label}
               </Link>
@@ -91,26 +91,26 @@ export const Navbar: React.FC = () => {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden p-2 hover:bg-white/10 rounded-lg transition-colors"
+            className="md:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
             aria-label="Toggle menu"
           >
             {isMenuOpen ? (
-              <X className="w-6 h-6" />
+              <X className="w-6 h-6 text-slate-900" />
             ) : (
-              <Menu className="w-6 h-6" />
+              <Menu className="w-6 h-6 text-slate-900" />
             )}
           </button>
         </div>
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="md:hidden py-4 space-y-2 border-t border-white/10">
+          <div className="md:hidden py-4 space-y-2 border-t border-gray-200">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 onClick={() => setIsMenuOpen(false)}
-                className="block px-4 py-2 text-secondary hover:text-primary hover:bg-white/5 rounded-lg transition-colors duration-200"
+                className="block px-4 py-2 text-slate-600 hover:text-slate-900 hover:bg-gray-50 rounded-lg transition-colors duration-200"
               >
                 {link.label}
               </Link>

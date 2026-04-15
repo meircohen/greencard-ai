@@ -11,12 +11,12 @@ interface BadgeProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const variantStyles: Record<BadgeVariant, string> = {
-  green: "bg-green-primary/15 text-green-light border border-green-brand/30",
-  blue: "bg-blue-primary/15 text-blue-light border border-blue-accent/30",
-  amber: "bg-amber-500/15 text-amber-300 border border-amber-500/30",
-  red: "bg-red-600/15 text-red-400 border border-red-600/30",
-  gray: "bg-gray-500/15 text-secondary border border-secondary/30",
-  secondary: "bg-white/5 text-secondary border border-white/10",
+  green: "bg-emerald-100 text-emerald-800 border border-emerald-300",
+  blue: "bg-blue-100 text-blue-800 border border-blue-300",
+  amber: "bg-amber-100 text-amber-800 border border-amber-300",
+  red: "bg-red-100 text-red-800 border border-red-300",
+  gray: "bg-gray-100 text-gray-800 border border-gray-300",
+  secondary: "bg-gray-100 text-gray-700 border border-gray-300",
 };
 
 const sizeStyles: Record<BadgeSize, string> = {
@@ -25,12 +25,12 @@ const sizeStyles: Record<BadgeSize, string> = {
 };
 
 const pulseColors: Record<BadgeVariant, string> = {
-  green: "bg-green-brand",
-  blue: "bg-blue-accent",
-  amber: "bg-amber-500",
+  green: "bg-emerald-600",
+  blue: "bg-blue-600",
+  amber: "bg-amber-600",
   red: "bg-red-600",
-  gray: "bg-gray-500",
-  secondary: "bg-white",
+  gray: "bg-gray-600",
+  secondary: "bg-gray-400",
 };
 
 export const Badge: React.FC<BadgeProps> = ({

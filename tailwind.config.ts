@@ -51,15 +51,23 @@ const config: Config = {
         deep: "#111827",
         surface: "#1a2035",
         card: "#1f2937",
+        "light-primary": "#FFFFFF",
+        "light-secondary": "#F8FAFC",
+        "light-tertiary": "#F1F5F9",
       },
       textColor: {
         primary: "#f1f5f9",
         secondary: "#94a3b8",
         muted: "#64748b",
+        "light-primary": "#1E293B",
+        "light-secondary": "#475569",
+        "light-muted": "#64748B",
       },
       borderColor: {
         dark: "rgba(203, 213, 225, 0.1)",
         "dark-light": "rgba(203, 213, 225, 0.2)",
+        "light": "rgba(15, 23, 42, 0.08)",
+        "light-light": "rgba(15, 23, 42, 0.12)",
       },
       borderRadius: {
         xs: "0.25rem",
