@@ -3,7 +3,11 @@ import {
   loginSchema,
   signupSchema,
   chatMessageSchema,
+  formFillSchema,
+  caseCreateSchema,
+  caseUpdateSchema,
   contactSchema,
+  billingSchema,
   validate,
 } from "@/lib/validation";
 
@@ -381,6 +385,94 @@ describe("Validation Schemas", () => {
       });
 
       expect(result.success).toBe(true);
+    });
+  });
+
+  describe("formFillSchema", () => {
+    it("should accept valid form fill request", () => {
+      const result = validate(formFillSchema, {
+        action: "fill",
+        formNumber: "I-130",
+      });
+      expect(result.success).toBe(true);
+    });
+
+    it("should reject invalid form number format", () => {
+      const invalid = ["130", "I130", "I-1", "I-12345", "X-130"];
+      for (const formNumber of invalid) {
+        const result = validate(formFillSchema, { action: "fill", formNumber });
+        expect(result.success).toBe(false);
+      }
+    });
+
+    it("should reject invalid action", () => {
+      const result = validate(formFillSchema, {
+        action: "delete",
+        formNumber: "I-130",
+      });
+      expect(result.success).toBe(false);
+    });
+  });
+
+  describe("caseCreateSchema", () => {
+    it("should accept valid employment case", () => {
+      const result = validate(caseCreateSchema, {
+        caseType: "EB1A",
+        category: "employment",
+      });
+      expect(result.success).toBe(true);
+    });
+
+    it("should accept valid family case with description", () => {
+      const result = validate(caseCreateSchema, {
+        caseType: "CR1",
+        category: "family",
+        description: "Spouse petition",
+      });
+      expect(result.success).toBe(true);
+    });
+
+    it("should reject invalid case type", () => {
+      const result = validate(caseCreateSchema, {
+        caseType: "INVALID",
+        category: "employment",
+      });
+      expect(result.success).toBe(false);
+    });
+  });
+
+  describe("caseUpdateSchema", () => {
+    it("should accept valid status update", () => {
+      const result = validate(caseUpdateSchema, { status: "approved" });
+      expect(result.success).toBe(true);
+    });
+
+    it("should accept RFE status", () => {
+      const result = validate(caseUpdateSchema, { status: "rfe" });
+      expect(result.success).toBe(true);
+    });
+
+    it("should reject invalid status", () => {
+      const result = validate(caseUpdateSchema, { status: "deleted" });
+      expect(result.success).toBe(false);
+    });
+  });
+
+  describe("billingSchema", () => {
+    it("should accept valid billing input", () => {
+      const result = validate(billingSchema, {
+        planId: "pro",
+        userId: "550e8400-e29b-41d4-a716-446655440000",
+      });
+      expect(result.success).toBe(true);
+    });
+
+    it("should reject non-UUID userId", () => {
+      const result = validate(billingSchema, {
+        planId: "free",
+        userId: "not-a-uuid",
+      });
+      expect(result.success).toBe(false);
     });
   });
 
