@@ -142,7 +142,7 @@ export default function AssessmentPage() {
             <p className="text-slate-600">
               {t('assessment.subtitle')}
             </p>
-            <Link href="/chat">
+            <Link href="/pricing">
               <Button variant="primary" size="lg">
                 {t('common.learnMore')} <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
@@ -362,7 +362,7 @@ export default function AssessmentPage() {
                       </div>
                     </div>
 
-                    <Link href="/chat">
+                    <Link href="/pricing">
                       <button className="w-full text-center px-4 py-2 rounded-lg border border-green-brand text-green-brand bg-white hover:bg-green-50 transition-all text-sm font-semibold h-10">
                         Learn More
                       </button>

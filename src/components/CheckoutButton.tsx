@@ -42,6 +42,10 @@ export function CheckoutButton({
 
       if (!response.ok) {
         const data = await response.json();
+        if (response.status === 401) {
+          window.location.href = `/signup?redirect=/pricing&plan=${planId}`;
+          return;
+        }
         throw new Error(data.error || 'Failed to create checkout session');
       }
 

@@ -15,6 +15,7 @@ const pricingTierKeys = [
     nameKey: 'pricing.essential',
     descKey: 'pricing.essentialDesc',
     popular: false,
+    planId: 'essential_marriage',
     featureKeys: [
       'pricingPage.feature1',
       'pricingPage.feature2',
@@ -29,6 +30,7 @@ const pricingTierKeys = [
     nameKey: 'pricing.complete',
     descKey: 'pricing.completeDesc',
     popular: true,
+    planId: 'complete_marriage',
     featureKeys: [
       'pricingPage.feature8',
       'pricingPage.feature9',
@@ -43,6 +45,7 @@ const pricingTierKeys = [
     nameKey: 'pricing.premium',
     descKey: 'pricing.premiumDesc',
     popular: false,
+    planId: 'premium_marriage',
     featureKeys: [
       'pricingPage.feature15',
       'pricingPage.feature16',
@@ -184,7 +187,7 @@ function PricingPageInner() {
                 {/* CTA */}
                 <div className="space-y-3">
                   <CheckoutButton
-                    planId={t(tier.nameKey) === 'Essential' ? 'essential_marriage' : t(tier.nameKey) === 'Complete' ? 'complete_marriage' : 'premium_marriage'}
+                    planId={tier.planId}
                     label={t('pricing.getStartedFree')}
                     variant="primary"
                     size="lg"

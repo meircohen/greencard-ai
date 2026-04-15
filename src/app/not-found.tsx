@@ -38,9 +38,9 @@ export default function NotFound() {
                 Go Home
               </Button>
             </Link>
-            <Link href="/chat">
+            <Link href="/assessment">
               <Button variant="secondary" size="lg">
-                Chat with AI
+                Check Eligibility
               </Button>
             </Link>
           </div>

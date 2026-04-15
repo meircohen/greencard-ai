@@ -8,17 +8,14 @@ import {
   FileText,
   Users,
   CheckCircle2,
-  Lock,
   Award,
   Globe,
-  Zap,
   ChevronRight,
   X,
   Heart,
   Briefcase,
   DollarSign,
-  Clock,
-  Shield,
+
 } from 'lucide-react';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
@@ -489,59 +486,15 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ═══════════════ SOCIAL PROOF / STATS ═══════════════ */}
-      <section className="py-24 sm:py-32 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto">
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              { value: 'Thousands', label: 'Cases Filed' },
-              { value: 'High', label: 'Approval Rate' },
-              { value: 'Significant', label: 'Average Savings' },
-            ].map((stat, i) => (
-              <div key={i} className="text-center">
-                <p className="text-4xl sm:text-5xl font-bold text-emerald-600 mb-2">
-                  {stat.value}
-                </p>
-                <p className="text-slate-600 font-medium">{stat.label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════════════ VIDEO SECTION ═══════════════ */}
-      <section className="py-24 sm:py-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-slate-50 to-white">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900">
-              {t('home.howItWorks')}
-            </h2>
-            <p className="mt-4 text-lg text-slate-600">
-              {t('home.threeSteps')}
-            </p>
-          </div>
-
-          <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-slate-900/10 border border-slate-200/60 bg-slate-900">
-            <video
-              className="w-full"
-              src="/demo.mp4"
-              controls
-              playsInline
-              preload="metadata"
-            />
-          </div>
-        </div>
-      </section>
-
       {/* ═══════════════ FAQ SECTION ═══════════════ */}
       <section id="faq" className="py-24 sm:py-32 px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900">
-              {t('home.howItWorks')}
+              Frequently Asked Questions
             </h2>
             <p className="mt-4 text-lg text-slate-600">
-              {t('home.threeSteps')}
+              Everything you need to know before getting started.
             </p>
           </div>
 
@@ -586,10 +539,10 @@ export default function Home() {
       <section className="py-24 sm:py-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-emerald-50 to-teal-50">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">
-            {t('home.howItWorks')}
+            Ready to Start Your Case?
           </h2>
           <p className="text-lg text-slate-600 max-w-xl mx-auto mb-8">
-            {t('home.consultationFree')}
+            Free confidential consultation. We review your case, answer your questions, and create your personalized strategy.
           </p>
           <Link href="/assessment">
             <button className="px-8 py-4 rounded-xl text-base font-semibold text-white bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-700 hover:to-emerald-600 transition-all duration-200 shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 mx-auto mb-6">
