@@ -68,6 +68,16 @@ interface CaseData {
   updatedAt: string;
 }
 
+interface PaymentInfoData {
+  plan: string;
+  total: number;
+  paid: number;
+  payments: number;
+  totalPayments: number;
+  nextPayment?: number;
+  nextPaymentDate?: string;
+}
+
 export default function Dashboard() {
   const { t } = useTranslation();
   const { user } = useAuthStore();
@@ -82,8 +92,10 @@ export default function Dashboard() {
   const [error, setError] = useState<string | null>(null);
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [cases, setCases] = useState<CaseData[]>([]);
-  const [notifications, setNotifications] = useState([]);
-  const [isDemo, setIsDemo] = useState(false);
+  const [caseSteps, setCaseSteps] = useState<CaseStep[]>([]);
+  const [documents, setDocuments] = useState<Record<string, Document[]>>({});
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [paymentInfo, setPaymentInfo] = useState<PaymentInfoData | null>(null);
 
   // Upload states
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -128,39 +140,25 @@ export default function Dashboard() {
           return;
         }
 
-        // Fetch cases
-        let fetchedCases: CaseData[] = [];
-        const casesResponse = await fetch("/api/cases?page=1&limit=10", {
+        // Fetch dashboard data from unified endpoint
+        const dashboardResponse = await fetch("/api/dashboard", {
           credentials: "include",
         });
 
-        if (!casesResponse.ok) {
-          console.error("Failed to fetch cases");
-        } else {
-          const casesData = await casesResponse.json();
-          fetchedCases = casesData.cases || [];
-          setCases(fetchedCases);
+        if (!dashboardResponse.ok) {
+          throw new Error("Failed to fetch dashboard data");
         }
 
-        // Fetch notifications
-        const notificationsResponse = await fetch(
-          "/api/notifications?page=1&limit=10",
-          {
-            credentials: "include",
-          }
-        );
+        const dashboardData = await dashboardResponse.json();
 
-        if (!notificationsResponse.ok) {
-          console.error("Failed to fetch notifications");
-        } else {
-          const notificationsData = await notificationsResponse.json();
-          setNotifications(notificationsData.data || []);
+        // Update state with dashboard data
+        if (dashboardData.case) {
+          setCases([dashboardData.case]);
         }
-
-        // If no cases returned, show demo mode
-        if (fetchedCases.length === 0) {
-          setIsDemo(true);
-        }
+        setCaseSteps(dashboardData.caseSteps || []);
+        setDocuments(dashboardData.documents || {});
+        setMessages(dashboardData.messages || []);
+        setPaymentInfo(dashboardData.payment || null);
       } catch (err) {
         console.error("Error fetching data:", err);
         setError(err instanceof Error ? err.message : "Failed to load data");
@@ -172,103 +170,8 @@ export default function Dashboard() {
     fetchData();
   }, [router]);
 
-  // Mock data - Marriage-based green card case (used as fallback)
-  const mockCaseSteps: CaseStep[] = [
-    { step: 1, label: "Intake", completed: true, current: false },
-    { step: 2, label: "Documents", completed: true, current: false },
-    { step: 3, label: "Attorney Review", completed: true, current: true },
-    { step: 4, label: "Filed", completed: false, current: false },
-    { step: 5, label: "Processing", completed: false, current: false },
-    { step: 6, label: "Approved", completed: false, current: false },
-  ];
-
-  const mockDocuments: Record<string, Document[]> = {
-    marriage: [
-      {
-        name: "Marriage Certificate",
-        status: "uploaded",
-        uploadedDate: "April 10, 2026",
-      },
-      { name: "Photos Together", status: "uploaded", uploadedDate: "April 10" },
-      {
-        name: "Wedding Invitations",
-        status: "pending",
-      },
-      {
-        name: "Joint Bank Statements",
-        status: "pending",
-      },
-    ],
-    immigration: [
-      {
-        name: "Birth Certificate",
-        status: "uploaded",
-        uploadedDate: "April 2, 2026",
-      },
-      {
-        name: "Passport Copy",
-        status: "uploaded",
-        uploadedDate: "April 2, 2026",
-      },
-      { name: "I-94", status: "uploaded", uploadedDate: "April 5, 2026" },
-      { name: "Medical Exam (I-693)", status: "pending" },
-    ],
-    financial: [
-      { name: "Tax Returns (2024)", status: "uploaded", uploadedDate: "April 8" },
-      { name: "Tax Returns (2023)", status: "pending" },
-      {
-        name: "Affidavit of Support (I-864)",
-        status: "pending",
-      },
-      { name: "W-2 Forms", status: "uploaded", uploadedDate: "April 8" },
-    ],
-  };
-
-  const mockMessages: Message[] = [
-    {
-      id: "1",
-      sender: "Case Team",
-      senderRole: "team",
-      content:
-        "We've reviewed your initial documents. The marriage evidence looks strong. Next, we need your spouse's tax returns and medical exam results.",
-      timestamp: "Today, 10:30 AM",
-      avatar: "CT",
-    },
-    {
-      id: "2",
-      sender: "Jeremy Knight, Esq.",
-      senderRole: "attorney",
-      content:
-        "I've completed my review of your case. Everything looks good. We're on track to file your I-485 next week.",
-      timestamp: "Yesterday, 2:15 PM",
-      avatar: "JK",
-    },
-    {
-      id: "3",
-      sender: "Case Team",
-      senderRole: "team",
-      content:
-        "Welcome to GreenCard.ai! We've started preparing your I-485. Please upload your marriage certificate and recent photos.",
-      timestamp: "April 2, 2026",
-      avatar: "CT",
-    },
-  ];
-
-  const mockPaymentInfo = {
-    plan: "Complete - Marriage Green Card",
-    total: 1499,
-    paid: 374.75,
-    payments: 3,
-    totalPayments: 12,
-    nextPayment: 124.92,
-    nextPaymentDate: "May 15, 2026",
-  };
-
-  // Use mock data when in demo mode or data is empty
-  const caseSteps = mockCaseSteps;
-  const documents = mockDocuments;
-  const messages = mockMessages;
-  const paymentInfo = mockPaymentInfo;
+  // Determine if we have a case
+  const hasCase = cases.length > 0 && cases[0]?.id;
 
   const documentStatuses = {
     uploaded: Object.values(documents)
@@ -346,11 +249,11 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Demo Banner */}
-      {isDemo && (
+      {/* No Case Banner */}
+      {!hasCase && !loading && (
         <div className="bg-blue-50 border-b border-blue-200 px-6 py-3">
           <p className="text-sm text-blue-900">
-            {t('dashboard.demoBanner')}
+            {t('dashboard.noCaseBanner')}
           </p>
         </div>
       )}
@@ -462,38 +365,44 @@ export default function Dashboard() {
                   {t('dashboard.yourCase')}
                 </h2>
                 <h3 className="text-3xl font-bold text-emerald-950 mb-1">
-                  {t('dashboard.marriageBasedGreenCard')}
+                  {hasCase ? cases[0].caseType : t('dashboard.noCaseTitle')}
                 </h3>
                 <p className="text-emerald-700 mb-6">
-                  {t('dashboard.formI485')}
+                  {hasCase ? cases[0].category : t('dashboard.noCaseDescription')}
                 </p>
 
-                <div className="space-y-4 mb-6">
-                  <div className="flex items-center justify-between p-4 bg-white rounded-lg border border-emerald-100">
-                    <span className="text-emerald-700 font-medium">
-                      {t('dashboard.filedDate')}
-                    </span>
-                    <span className="text-emerald-950 font-semibold">
-                      {t('dashboard.notYetFiled')}
-                    </span>
+                {hasCase && (
+                  <div className="space-y-4 mb-6">
+                    <div className="flex items-center justify-between p-4 bg-white rounded-lg border border-emerald-100">
+                      <span className="text-emerald-700 font-medium">
+                        {t('dashboard.status')}
+                      </span>
+                      <span className="text-emerald-950 font-semibold capitalize">
+                        {cases[0].status}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between p-4 bg-white rounded-lg border border-emerald-100">
+                      <span className="text-emerald-700 font-medium">
+                        {t('dashboard.createdDate')}
+                      </span>
+                      <span className="text-emerald-950 font-semibold">
+                        {new Date(cases[0].createdAt).toLocaleDateString("en-US", {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        })}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between p-4 bg-white rounded-lg border border-emerald-100">
+                      <span className="text-emerald-700 font-medium">
+                        {t('dashboard.category')}
+                      </span>
+                      <span className="text-emerald-950 font-semibold">
+                        {cases[0].category}
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex items-center justify-between p-4 bg-white rounded-lg border border-emerald-100">
-                    <span className="text-emerald-700 font-medium">
-                      {t('dashboard.estimatedTimeline')}
-                    </span>
-                    <span className="text-emerald-950 font-semibold">
-                      {t('dashboard.processingMonths')}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between p-4 bg-white rounded-lg border border-emerald-100">
-                    <span className="text-emerald-700 font-medium">
-                      {t('dashboard.attorney')}
-                    </span>
-                    <span className="text-emerald-950 font-semibold">
-                      {t('dashboard.attorneyName')}
-                    </span>
-                  </div>
-                </div>
+                )}
 
                 {/* Next Action */}
                 <div className="bg-white border-2 border-amber-200 rounded-lg p-4">
@@ -566,6 +475,7 @@ export default function Dashboard() {
           </section>
 
           {/* 2. Document Checklist */}
+          {hasCase && (
           <section>
             <h2 className="text-xl sm:text-2xl font-bold text-emerald-950 mb-4 sm:mb-6">
               {t('dashboard.documentChecklist')}
@@ -661,49 +571,61 @@ export default function Dashboard() {
               </div>
             </div>
           </section>
+          )}
 
           {/* 3. Recent Messages */}
           <section>
             <h2 className="text-xl sm:text-2xl font-bold text-emerald-950 mb-4 sm:mb-6">
               {t('dashboard.recentMessages')}
             </h2>
-            <div className="space-y-4">
-              {messages.map((msg) => (
-                <div
-                  key={msg.id}
-                  className="bg-white border border-emerald-200 rounded-2xl p-6 hover:shadow-md transition-shadow"
-                >
-                  <div className="flex gap-4">
-                    <div
-                      className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-white flex-shrink-0 ${
-                        msg.senderRole === "attorney"
-                          ? "bg-blue-500"
-                          : "bg-emerald-500"
-                      }`}
-                    >
-                      {msg.avatar}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between mb-1">
-                        <p className="font-semibold text-emerald-950">
-                          {msg.sender}
-                        </p>
-                        <span className="text-xs text-emerald-600">
-                          {msg.timestamp}
-                        </span>
+            {messages.length === 0 ? (
+              <div className="bg-white border border-emerald-200 rounded-2xl p-8 text-center">
+                <MessageSquare className="w-12 h-12 text-emerald-300 mx-auto mb-3" />
+                <p className="text-emerald-700">
+                  {t('dashboard.noMessages')}
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {messages.map((msg) => (
+                  <div
+                    key={msg.id}
+                    className="bg-white border border-emerald-200 rounded-2xl p-6 hover:shadow-md transition-shadow"
+                  >
+                    <div className="flex gap-4">
+                      <div
+                        className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-white flex-shrink-0 ${
+                          msg.senderRole === "attorney"
+                            ? "bg-blue-500"
+                            : "bg-emerald-500"
+                        }`}
+                      >
+                        {msg.sender.substring(0, 2).toUpperCase()}
                       </div>
-                      <p className="text-emerald-800 leading-relaxed">
-                        {msg.content}
-                      </p>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between mb-1">
+                          <p className="font-semibold text-emerald-950">
+                            {msg.sender}
+                          </p>
+                          <span className="text-xs text-emerald-600">
+                            {msg.timestamp}
+                          </span>
+                        </div>
+                        <p className="text-emerald-800 leading-relaxed">
+                          {msg.content}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
-            <button className="mt-4 flex items-center gap-2 text-emerald-600 hover:text-emerald-700 font-medium">
-              {t('dashboard.viewAllMessages')}
-              <ArrowRight className="w-4 h-4" />
-            </button>
+                ))}
+              </div>
+            )}
+            {messages.length > 0 && (
+              <button className="mt-4 flex items-center gap-2 text-emerald-600 hover:text-emerald-700 font-medium">
+                {t('dashboard.viewAllMessages')}
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            )}
           </section>
 
           {/* 4. Payment Summary */}
@@ -712,78 +634,98 @@ export default function Dashboard() {
               {t('dashboard.paymentSummary')}
             </h2>
             <div className="bg-white border border-emerald-200 rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-                <div>
-                  <h3 className="text-lg font-bold text-emerald-950 mb-4">
-                    {paymentInfo.plan}
-                  </h3>
-                  <div className="space-y-3">
-                    <div className="flex justify-between">
-                      <span className="text-emerald-700">{t('dashboard.totalServiceFee')}</span>
-                      <span className="font-bold text-emerald-950">
-                        ${paymentInfo.total.toFixed(2)}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-emerald-700">{t('dashboard.amountPaid')}</span>
-                      <span className="font-bold text-emerald-950">
-                        ${paymentInfo.paid.toFixed(2)}
-                      </span>
-                    </div>
-                    <div className="h-px bg-emerald-200" />
-                    <div className="flex justify-between">
-                      <span className="text-emerald-700">
-                        {t('dashboard.remainingBalance')}
-                      </span>
-                      <span className="font-bold text-emerald-950">
-                        ${(paymentInfo.total - paymentInfo.paid).toFixed(2)}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <h4 className="font-semibold text-emerald-950 mb-4">
-                    {t('dashboard.paymentProgress')}
-                  </h4>
-                  <div className="bg-emerald-50 rounded-lg p-4 mb-4">
-                    <div className="flex items-end justify-between mb-2">
-                      <span className="text-sm text-emerald-700">
-                        {paymentInfo.payments} of {paymentInfo.totalPayments}{" "}
-                        {t('dashboard.payments')}
-                      </span>
-                      <span className="text-sm font-bold text-emerald-950">
-                        {Math.round(
-                          (paymentInfo.paid / paymentInfo.total) * 100
-                        )}
-                        %
-                      </span>
-                    </div>
-                    <div className="w-full h-3 bg-emerald-100 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-gradient-to-r from-emerald-500 to-emerald-600 transition-all"
-                        style={{
-                          width: `${(paymentInfo.paid / paymentInfo.total) * 100}%`,
-                        }}
-                      />
+              {paymentInfo ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+                  <div>
+                    <h3 className="text-lg font-bold text-emerald-950 mb-4">
+                      {paymentInfo.plan}
+                    </h3>
+                    <div className="space-y-3">
+                      <div className="flex justify-between">
+                        <span className="text-emerald-700">{t('dashboard.totalServiceFee')}</span>
+                        <span className="font-bold text-emerald-950">
+                          ${paymentInfo.total.toFixed(2)}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-emerald-700">{t('dashboard.amountPaid')}</span>
+                        <span className="font-bold text-emerald-950">
+                          ${paymentInfo.paid.toFixed(2)}
+                        </span>
+                      </div>
+                      <div className="h-px bg-emerald-200" />
+                      <div className="flex justify-between">
+                        <span className="text-emerald-700">
+                          {t('dashboard.remainingBalance')}
+                        </span>
+                        <span className="font-bold text-emerald-950">
+                          ${(paymentInfo.total - paymentInfo.paid).toFixed(2)}
+                        </span>
+                      </div>
                     </div>
                   </div>
 
-                  <div className="p-4 bg-blue-25 border border-blue-200 rounded-lg">
-                    <p className="text-sm font-semibold text-blue-900 mb-1">
-                      {t('dashboard.nextPaymentDue')}
-                    </p>
-                    <p className="text-sm text-blue-800">
-                      ${paymentInfo.nextPayment.toFixed(2)} {t('common.on')}{' '}
-                      {paymentInfo.nextPaymentDate}
-                    </p>
+                  <div>
+                    <h4 className="font-semibold text-emerald-950 mb-4">
+                      {t('dashboard.paymentProgress')}
+                    </h4>
+                    <div className="bg-emerald-50 rounded-lg p-4 mb-4">
+                      <div className="flex items-end justify-between mb-2">
+                        <span className="text-sm text-emerald-700">
+                          {paymentInfo.payments} of {paymentInfo.totalPayments}{" "}
+                          {t('dashboard.payments')}
+                        </span>
+                        <span className="text-sm font-bold text-emerald-950">
+                          {Math.round(
+                            (paymentInfo.paid / paymentInfo.total) * 100
+                          )}
+                          %
+                        </span>
+                      </div>
+                      <div className="w-full h-3 bg-emerald-100 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-gradient-to-r from-emerald-500 to-emerald-600 transition-all"
+                          style={{
+                            width: `${(paymentInfo.paid / paymentInfo.total) * 100}%`,
+                          }}
+                        />
+                      </div>
+                    </div>
+
+                    {paymentInfo.nextPayment && (
+                      <div className="p-4 bg-blue-25 border border-blue-200 rounded-lg">
+                        <p className="text-sm font-semibold text-blue-900 mb-1">
+                          {t('dashboard.nextPaymentDue')}
+                        </p>
+                        <p className="text-sm text-blue-800">
+                          ${paymentInfo.nextPayment.toFixed(2)} {t('common.on')}{' '}
+                          {paymentInfo.nextPaymentDate}
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>
-              </div>
-              <button className="mt-6 text-emerald-600 hover:text-emerald-700 font-medium flex items-center gap-2">
-                {t('dashboard.viewPaymentHistory')}
-                <ArrowRight className="w-4 h-4" />
-              </button>
+              ) : (
+                <div className="text-center py-8">
+                  <CreditCard className="w-12 h-12 text-emerald-300 mx-auto mb-3" />
+                  <p className="text-emerald-700 mb-4">
+                    {t('dashboard.noPaymentPlan')}
+                  </p>
+                  <Link
+                    href="/pricing"
+                    className="inline-flex items-center gap-2 text-emerald-600 hover:text-emerald-700 font-medium"
+                  >
+                    {t('dashboard.choosePlan')}
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </div>
+              )}
+              {paymentInfo && (
+                <button className="mt-6 text-emerald-600 hover:text-emerald-700 font-medium flex items-center gap-2">
+                  {t('dashboard.viewPaymentHistory')}
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              )}
             </div>
           </section>
 
