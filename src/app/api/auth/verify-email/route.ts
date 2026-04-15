@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
+import { getDb } from "@/lib/db";
+import { users } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
 import { safeErrorResponse } from "@/lib/errors";
 
 /**
@@ -62,8 +65,12 @@ export async function GET(request: NextRequest): Promise<Response> {
       );
     }
 
-    // TODO: Mark user as verified in DB
-    // await db.update(users).set({ emailVerified: true }).where(eq(users.id, entry.userId));
+    // Mark user as verified in DB
+    await getDb()
+      .update(users)
+      .set({ emailVerified: true })
+      .where(eq(users.id, entry.userId));
+
     console.log(`[email-verify] User ${entry.userId} (${entry.email}) verified.`);
 
     // Delete used token

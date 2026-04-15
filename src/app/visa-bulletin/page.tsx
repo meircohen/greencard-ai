@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { Calendar } from "lucide-react";
+import { useTranslation } from "@/i18n";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 
@@ -11,8 +12,8 @@ interface DateInfo {
 }
 
 const getDateColor = (waitYears: number | null): string => {
-  if (waitYears === null) return "bg-green-500/20 text-green-300 border-green-500/30";
-  if (waitYears < 2) return "bg-green-500/20 text-green-300 border-green-500/30";
+  if (waitYears === null) return "bg-emerald-50 text-green-300 border-green-500/30";
+  if (waitYears < 2) return "bg-emerald-50 text-green-300 border-green-500/30";
   if (waitYears < 5) return "bg-amber-400/20 text-amber-300 border-amber-400/30";
   if (waitYears < 10) return "bg-orange-500/20 text-orange-300 border-orange-500/30";
   return "bg-red-500/20 text-red-300 border-red-500/30";
@@ -179,82 +180,83 @@ const employmentDataFinal = [
 ];
 
 export default function VisaBulletin() {
+  const { t } = useTranslation();
   const [visaType, setVisaType] = useState<"family" | "employment">("family");
   const [actionType, setActionType] = useState<"final" | "filing">("final");
 
   const data = visaType === "family" ? familyDataFinal : employmentDataFinal;
 
   return (
-    <div className="min-h-screen bg-midnight text-primary">
+    <div className="min-h-screen bg-white text-slate-900">
       <Navbar />
       {/* Page Header */}
-      <div className="pt-32 pb-12 px-4 sm:px-6 lg:px-8 border-b border-white/10">
+      <div className="pt-32 pb-12 px-4 sm:px-6 lg:px-8 border-b border-slate-200">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center gap-2 mb-4">
             <Calendar className="w-5 h-5 text-green-500" />
-            <span className="text-sm font-medium text-green-400">Immigration Data</span>
+            <span className="text-sm font-medium text-emerald-600">{t('bulletin.title')}</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-2">April 2026 Priority Dates</h1>
-          <p className="text-secondary text-lg">
-            Current visa bulletin showing priority dates and processing timelines for family and employment-based categories
+          <h1 className="text-4xl md:text-5xl font-bold mb-2">{t('bulletin.title')}</h1>
+          <p className="text-slate-600 text-lg">
+            {t('bulletin.subtitle')}
           </p>
         </div>
       </div>
 
       {/* Controls Section */}
-      <div className="px-4 sm:px-6 lg:px-8 py-8 border-b border-white/10">
+      <div className="px-4 sm:px-6 lg:px-8 py-8 border-b border-slate-200">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Visa Type Toggle */}
             <div className="space-y-3">
-              <label className="block text-sm font-medium text-secondary">Visa Category</label>
+              <label className="block text-sm font-medium text-slate-600">{t('bulletin.category')}</label>
               <div className="flex gap-3">
                 <button
                   onClick={() => setVisaType("family")}
                   className={`px-6 py-3 rounded-lg font-medium transition-all duration-200 ${
                     visaType === "family"
-                      ? "bg-green-500/20 text-green-300 border border-green-500/50"
-                      : "bg-white/5 text-secondary border border-white/10 hover:bg-white/10"
+                      ? "bg-emerald-50 text-green-300 border border-green-500/50"
+                      : "bg-white/5 text-slate-600 border border-slate-200 hover:bg-white/10"
                   }`}
                 >
-                  Family-Based
+                  {t('bulletin.familyBased')}
                 </button>
                 <button
                   onClick={() => setVisaType("employment")}
                   className={`px-6 py-3 rounded-lg font-medium transition-all duration-200 ${
                     visaType === "employment"
-                      ? "bg-green-500/20 text-green-300 border border-green-500/50"
-                      : "bg-white/5 text-secondary border border-white/10 hover:bg-white/10"
+                      ? "bg-emerald-50 text-green-300 border border-green-500/50"
+                      : "bg-white/5 text-slate-600 border border-slate-200 hover:bg-white/10"
                   }`}
                 >
-                  Employment-Based
+                  {t('bulletin.employmentBased')}
                 </button>
               </div>
             </div>
 
             {/* Action Type Toggle */}
             <div className="space-y-3">
-              <label className="block text-sm font-medium text-secondary">Action Type</label>
+              <label className="block text-sm font-medium text-slate-600">{t('bulletin.datesForFiling')}</label>
               <div className="flex gap-3">
                 <button
                   onClick={() => setActionType("final")}
                   className={`px-6 py-3 rounded-lg font-medium transition-all duration-200 ${
                     actionType === "final"
-                      ? "bg-green-500/20 text-green-300 border border-green-500/50"
-                      : "bg-white/5 text-secondary border border-white/10 hover:bg-white/10"
+                      ? "bg-emerald-50 text-green-300 border border-green-500/50"
+                      : "bg-white/5 text-slate-600 border border-slate-200 hover:bg-white/10"
                   }`}
                 >
-                  Final Action
+                  {t('bulletin.finalAction')}
                 </button>
                 <button
                   onClick={() => setActionType("filing")}
                   className={`px-6 py-3 rounded-lg font-medium transition-all duration-200 ${
                     actionType === "filing"
-                      ? "bg-green-500/20 text-green-300 border border-green-500/50"
-                      : "bg-white/5 text-secondary border border-white/10 hover:bg-white/10"
+                      ? "bg-emerald-50 text-green-300 border border-green-500/50"
+                      : "bg-white/5 text-slate-600 border border-slate-200 hover:bg-white/10"
                   }`}
                 >
-                  Dates for Filing
+                  {t('bulletin.datesForFiling')}
                 </button>
               </div>
             </div>
@@ -268,20 +270,20 @@ export default function VisaBulletin() {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-white/10">
-                  <th className="text-left py-4 px-4 font-semibold text-primary">Category</th>
-                  <th className="text-left py-4 px-4 font-semibold text-primary">All Countries</th>
-                  <th className="text-left py-4 px-4 font-semibold text-primary">China</th>
-                  <th className="text-left py-4 px-4 font-semibold text-primary">India</th>
-                  <th className="text-left py-4 px-4 font-semibold text-primary">Mexico</th>
-                  <th className="text-left py-4 px-4 font-semibold text-primary">Philippines</th>
+                <tr className="border-b border-slate-200">
+                  <th className="text-left py-4 px-4 font-semibold text-slate-900">{t('bulletin.category')}</th>
+                  <th className="text-left py-4 px-4 font-semibold text-slate-900">{t('bulletin.allCountries')}</th>
+                  <th className="text-left py-4 px-4 font-semibold text-slate-900">{t('bulletin.china')}</th>
+                  <th className="text-left py-4 px-4 font-semibold text-slate-900">{t('bulletin.india')}</th>
+                  <th className="text-left py-4 px-4 font-semibold text-slate-900">{t('bulletin.mexico')}</th>
+                  <th className="text-left py-4 px-4 font-semibold text-slate-900">{t('bulletin.philippines')}</th>
                 </tr>
               </thead>
               <tbody>
                 {data.map((row, idx) => (
-                  <tr key={idx} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+                  <tr key={idx} className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
                     <td className="py-6 px-4">
-                      <div className="font-semibold text-primary mb-1">{row.category}</div>
+                      <div className="font-semibold text-slate-900 mb-1">{row.category}</div>
                       <div className="text-xs text-muted">{row.description}</div>
                     </td>
                     <td className="py-6 px-4">
@@ -306,30 +308,30 @@ export default function VisaBulletin() {
           </div>
 
           {/* Legend */}
-          <div className="mt-8 p-6 rounded-lg bg-white/5 border border-white/10">
-            <h3 className="font-semibold text-primary mb-4">Wait Time Legend</h3>
+          <div className="mt-8 p-6 rounded-lg bg-white/5 border border-slate-200">
+            <h3 className="font-semibold text-slate-900 mb-4">{t('bulletin.title')} Legend</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-sm">
               <div className="flex items-center gap-3">
                 <div className="w-3 h-3 rounded bg-green-500"></div>
-                <span className="text-secondary">CURRENT or &lt;2 years</span>
+                <span className="text-slate-600">CURRENT or &lt;2 years</span>
               </div>
               <div className="flex items-center gap-3">
                 <div className="w-3 h-3 rounded bg-amber-400"></div>
-                <span className="text-secondary">2-5 years</span>
+                <span className="text-slate-600">2-5 years</span>
               </div>
               <div className="flex items-center gap-3">
                 <div className="w-3 h-3 rounded bg-orange-500"></div>
-                <span className="text-secondary">5-10 years</span>
+                <span className="text-slate-600">5-10 years</span>
               </div>
               <div className="flex items-center gap-3">
                 <div className="w-3 h-3 rounded bg-red-500"></div>
-                <span className="text-secondary">&gt;10 years</span>
+                <span className="text-slate-600">&gt;10 years</span>
               </div>
             </div>
           </div>
 
           {/* Info Box */}
-          <div className="mt-8 p-6 rounded-lg bg-blue-500/10 border border-blue-500/30">
+          <div className="mt-8 p-6 rounded-lg bg-blue-50 border border-blue-500/30">
             <p className="text-sm text-blue-300">
               <strong>Note:</strong> Priority dates are based on the official USCIS Visa Bulletin for April 2026. These dates indicate when your visa number becomes available for adjudication. Actual processing times may vary based on individual circumstances, background checks, and USCIS workload.
             </p>

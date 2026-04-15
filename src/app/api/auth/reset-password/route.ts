@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { z } from "zod";
+import { getDb } from "@/lib/db";
+import { users } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
 import { hashPassword } from "@/lib/auth";
 import { sendEmail, passwordResetEmail } from "@/lib/email";
 import { revokeAllUserTokens } from "@/lib/session";
@@ -82,10 +85,20 @@ export async function POST(request: NextRequest): Promise<Response> {
         });
       }
 
-      // TODO: Look up user in DB by email
-      // const user = await db.query.users.findFirst({ where: eq(users.email, parsed.data.email) });
-      // For now, simulate:
-      const mockUserId = "user-lookup-placeholder";
+      // Look up user in DB by email
+      const user = await getDb()
+        .query.users.findFirst({ 
+          where: eq(users.email, parsed.data.email) 
+        });
+
+      // Return success regardless (to prevent email enumeration)
+      if (!user) {
+        return NextResponse.json({
+          message: "If that email exists, a reset link has been sent.",
+        });
+      }
+
+      const mockUserId = user.id;
 
       // Generate a cryptographically secure token
       const rawToken = crypto.randomBytes(32).toString("hex");
@@ -142,8 +155,12 @@ export async function POST(request: NextRequest): Promise<Response> {
       // Hash the new password
       const hashedPassword = await hashPassword(parsed.data.newPassword);
 
-      // TODO: Update password in DB
-      // await db.update(users).set({ password: hashedPassword }).where(eq(users.id, entry.userId));
+      // Update password in DB
+      await getDb()
+        .update(users)
+        .set({ passwordHash: hashedPassword })
+        .where(eq(users.id, entry.userId));
+
       console.log(
         `[password-reset] Password updated for user ${entry.userId}, hash: ${hashedPassword.slice(0, 10)}...`
       );

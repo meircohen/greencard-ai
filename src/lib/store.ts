@@ -17,7 +17,7 @@ interface AuthStore {
   user: User | null;
   isAuthenticated: boolean;
   login: (user: User) => void;
-  logout: () => void;
+  logout: () => Promise<void>;
   updateProfile: (updates: Partial<User>) => void;
 }
 
@@ -111,11 +111,27 @@ export const useAuthStore = create<AuthStore>()(
           user,
           isAuthenticated: true,
         }),
-      logout: () =>
-        set({
-          user: null,
-          isAuthenticated: false,
-        }),
+      logout: async () => {
+        try {
+          // Call the logout API
+          await fetch("/api/auth/logout", {
+            method: "POST",
+            credentials: "include",
+          });
+        } catch (error) {
+          console.error("Logout API call failed:", error);
+        } finally {
+          // Clear state regardless of API success
+          set({
+            user: null,
+            isAuthenticated: false,
+          });
+          // Redirect to login page
+          if (typeof window !== "undefined") {
+            window.location.href = "/login";
+          }
+        }
+      },
       updateProfile: (updates: Partial<User>) =>
         set((state) => ({
           user: state.user ? { ...state.user, ...updates } : null,

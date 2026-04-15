@@ -78,22 +78,22 @@ export default function MfaSetupPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-midnight via-deep to-midnight px-4 py-8">
+    <div className="min-h-screen bg-white px-4 py-8">
       <div className="max-w-lg mx-auto space-y-6">
         <div className="flex items-center gap-3">
-          <Link href="/settings" className="text-secondary hover:text-primary">
+          <Link href="/settings" className="text-slate-600 hover:text-slate-900">
             <ArrowLeft className="h-5 w-5" />
           </Link>
-          <h1 className="text-2xl font-bold text-primary">Two-Factor Authentication</h1>
+          <h1 className="text-2xl font-bold text-blue-900">Two-Factor Authentication</h1>
         </div>
 
         {/* Step: Start */}
         {step === "start" && (
-          <Card className="p-8 space-y-6">
+          <Card className="p-8 space-y-6 bg-gray-50 border border-gray-300">
             <div className="text-center space-y-4">
-              <Shield className="mx-auto h-16 w-16 text-accent" />
-              <h2 className="text-xl font-semibold text-primary">Secure your account</h2>
-              <p className="text-secondary">
+              <Shield className="mx-auto h-16 w-16 text-blue-900" />
+              <h2 className="text-xl font-semibold text-blue-900">Secure your account</h2>
+              <p className="text-slate-600">
                 Two-factor authentication adds an extra layer of security. You will need
                 an authenticator app like Google Authenticator, Authy, or 1Password.
               </p>
@@ -101,7 +101,7 @@ export default function MfaSetupPage() {
 
             {error && <p className="text-red-400 text-sm text-center">{error}</p>}
 
-            <Button onClick={startSetup} className="w-full" disabled={isLoading}>
+            <Button onClick={startSetup} className="w-full bg-blue-900 hover:bg-blue-800 text-white" disabled={isLoading}>
               {isLoading ? "Setting up..." : "Set up 2FA"}
             </Button>
           </Card>
@@ -109,11 +109,11 @@ export default function MfaSetupPage() {
 
         {/* Step: Scan QR */}
         {step === "scan" && (
-          <Card className="p-8 space-y-6">
-            <h2 className="text-lg font-semibold text-primary text-center">
+          <Card className="p-8 space-y-6 bg-gray-50 border border-gray-300">
+            <h2 className="text-lg font-semibold text-blue-900 text-center">
               Scan this QR code
             </h2>
-            <p className="text-secondary text-center text-sm">
+            <p className="text-slate-600 text-center text-sm">
               Open your authenticator app and scan the QR code below.
             </p>
 
@@ -126,7 +126,7 @@ export default function MfaSetupPage() {
             )}
 
             <div className="space-y-3">
-              <label htmlFor="totp" className="block text-sm font-medium text-primary">
+              <label htmlFor="totp" className="block text-sm font-medium text-slate-900">
                 Enter the 6-digit code from your app
               </label>
               <Input
@@ -145,7 +145,7 @@ export default function MfaSetupPage() {
 
             <Button
               onClick={verifySetup}
-              className="w-full"
+              className="w-full bg-blue-900 hover:bg-blue-800 text-white"
               disabled={isLoading || verifyCode.length !== 6}
             >
               {isLoading ? "Verifying..." : "Verify and enable"}
@@ -155,20 +155,20 @@ export default function MfaSetupPage() {
 
         {/* Step: Backup codes */}
         {step === "backup" && (
-          <Card className="p-8 space-y-6">
+          <Card className="p-8 space-y-6 bg-gray-50 border border-gray-300">
             <div className="text-center space-y-2">
-              <CheckCircle className="mx-auto h-12 w-12 text-green-400" />
-              <h2 className="text-lg font-semibold text-primary">2FA enabled</h2>
-              <p className="text-secondary text-sm">
+              <CheckCircle className="mx-auto h-12 w-12 text-blue-900" />
+              <h2 className="text-lg font-semibold text-blue-900">2FA enabled</h2>
+              <p className="text-slate-600 text-sm">
                 Save these backup codes in a safe place. Each code can only be used once
                 if you lose access to your authenticator app.
               </p>
             </div>
 
-            <div className="bg-surface-dark rounded-lg p-4">
+            <div className="bg-white rounded-lg p-4 border border-gray-300">
               <div className="grid grid-cols-2 gap-2">
                 {backupCodes.map((code, i) => (
-                  <code key={i} className="text-sm text-primary font-mono bg-surface rounded px-2 py-1 text-center">
+                  <code key={i} className="text-sm text-slate-900 font-mono bg-gray-50 rounded px-2 py-1 text-center">
                     {code}
                   </code>
                 ))}
@@ -178,13 +178,13 @@ export default function MfaSetupPage() {
             <Button
               onClick={copyBackupCodes}
               variant="secondary"
-              className="w-full flex items-center justify-center gap-2"
+              className="w-full flex items-center justify-center gap-2 bg-gray-200 hover:bg-gray-300 text-slate-900"
             >
               <Copy className="h-4 w-4" />
               {copiedBackup ? "Copied!" : "Copy backup codes"}
             </Button>
 
-            <Button onClick={() => setStep("done")} className="w-full">
+            <Button onClick={() => setStep("done")} className="w-full bg-blue-900 hover:bg-blue-800 text-white">
               I have saved my backup codes
             </Button>
           </Card>
@@ -192,15 +192,15 @@ export default function MfaSetupPage() {
 
         {/* Step: Done */}
         {step === "done" && (
-          <Card className="p-8 space-y-6 text-center">
-            <CheckCircle className="mx-auto h-16 w-16 text-green-400" />
-            <h2 className="text-xl font-semibold text-primary">All set!</h2>
-            <p className="text-secondary">
+          <Card className="p-8 space-y-6 text-center bg-gray-50 border border-gray-300">
+            <CheckCircle className="mx-auto h-16 w-16 text-blue-900" />
+            <h2 className="text-xl font-semibold text-blue-900">All set!</h2>
+            <p className="text-slate-600">
               Two-factor authentication is now enabled on your account.
               You will be asked for a code each time you sign in.
             </p>
             <Link href="/settings">
-              <Button className="w-full mt-4">Back to settings</Button>
+              <Button className="w-full mt-4 bg-blue-900 hover:bg-blue-800 text-white">Back to settings</Button>
             </Link>
           </Card>
         )}

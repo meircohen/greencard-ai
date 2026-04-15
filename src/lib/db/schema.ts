@@ -79,6 +79,16 @@ export const caseNoteVisibilityEnum = pgEnum('case_note_visibility', [
   'team',
   'public',
 ]);
+export const notificationTypeEnum = pgEnum('notification_type', [
+  'case_status_update',
+  'document_received',
+  'deadline_reminder',
+  'payment_receipt',
+  'welcome',
+  'rfe_alert',
+  'case_approved',
+  'system_alert',
+]);
 
 // ============================================================================
 // USERS & AUTH TABLES
@@ -471,6 +481,31 @@ export const payments = pgTable(
   })
 );
 
+export const notifications = pgTable(
+  'notifications',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    caseId: uuid('case_id').references(() => cases.id, { onDelete: 'cascade' }),
+    type: notificationTypeEnum('type').notNull(),
+    title: varchar('title', { length: 255 }).notNull(),
+    message: text('message').notNull(),
+    metadata: jsonb('metadata'),
+    read: boolean('read').notNull().default(false),
+    readAt: timestamp('read_at', { withTimezone: true }),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => ({
+    userIdIdx: index('idx_notifications_user_id').on(table.userId),
+    caseIdIdx: index('idx_notifications_case_id').on(table.caseId),
+    typeIdx: index('idx_notifications_type').on(table.type),
+    readIdx: index('idx_notifications_read').on(table.read),
+    createdAtIdx: index('idx_notifications_created_at').on(table.createdAt),
+  })
+);
+
 // ============================================================================
 // SECURITY & SESSION TABLES
 // ============================================================================
@@ -594,6 +629,7 @@ export const usersRelations = relations(users, ({ one, many }) => ({
   subscriptions: many(subscriptions),
   payments: many(payments),
   caseNotes: many(caseNotes),
+  notifications: many(notifications),
 }));
 
 export const casesRelations = relations(cases, ({ one, many }) => ({
@@ -612,6 +648,7 @@ export const casesRelations = relations(cases, ({ one, many }) => ({
   notes: many(caseNotes),
   assessments: many(assessments),
   conversations: many(conversations),
+  notifications: many(notifications),
 }));
 
 export const conversationsRelations = relations(conversations, ({ one, many }) => ({
@@ -619,6 +656,17 @@ export const conversationsRelations = relations(conversations, ({ one, many }) =
   case: one(cases),
   messages: many(messages),
   assessments: many(assessments),
+}));
+
+export const notificationsRelations = relations(notifications, ({ one }) => ({
+  user: one(users, {
+    fields: [notifications.userId],
+    references: [users.id],
+  }),
+  case: one(cases, {
+    fields: [notifications.caseId],
+    references: [cases.id],
+  }),
 }));
 
 // ============================================================================
@@ -672,3 +720,6 @@ export type NewSubscription = typeof subscriptions.$inferInsert;
 
 export type Payment = typeof payments.$inferSelect;
 export type NewPayment = typeof payments.$inferInsert;
+
+export type Notification = typeof notifications.$inferSelect;
+export type NewNotification = typeof notifications.$inferInsert;

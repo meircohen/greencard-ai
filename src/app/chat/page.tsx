@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Send, Loader2, AlertCircle, CheckCircle2, Zap } from 'lucide-react';
+import { Send, Loader2, AlertCircle, CheckCircle2, Zap, X } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
@@ -235,28 +235,24 @@ export default function ChatPage() {
 
   return (
     <div className="h-screen flex flex-col bg-midnight">
-      {/* Header */}
-      <div className="border-b border-white/10 bg-surface/30 backdrop-blur-md sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-green-brand to-blue-accent flex items-center justify-center">
-              <span className="text-white font-bold text-lg">G</span>
+      {/* Slim Header with Navigation */}
+      <div className="h-14 border-b border-white/10 bg-white/5 backdrop-blur-md sticky top-0 z-40 flex items-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex items-center justify-between">
+          {/* Logo/Home link */}
+          <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-green-brand to-blue-accent flex items-center justify-center">
+              <span className="text-white font-bold text-sm">G</span>
             </div>
-            <div>
-              <h1 className="text-lg font-semibold text-primary">GreenCard Document Assistant</h1>
-              <div className="flex items-center gap-2 text-sm">
-                <div className="w-2 h-2 rounded-full bg-green-brand animate-pulse-glow" />
-                <span className="text-secondary">Online</span>
-              </div>
-            </div>
-          </div>
+            <span className="text-sm font-semibold text-primary hidden sm:inline">GreenCard.ai</span>
+          </Link>
 
-          {/* Status Badge */}
-          <div className="flex items-center gap-4">
-            <Badge variant={apiAvailable ? 'green' : 'amber'} withPulse={!apiAvailable}>
-              {apiAvailable === null ? 'Checking...' : apiAvailable ? 'Live AI' : 'Demo Mode'}
-            </Badge>
-          </div>
+          {/* Title */}
+          <h1 className="text-sm font-medium text-secondary flex-1 text-center">Immigration Assistant</h1>
+
+          {/* Close Button */}
+          <Link href="/" className="p-1.5 hover:bg-white/10 rounded transition-colors">
+            <X className="w-5 h-5 text-secondary hover:text-primary" />
+          </Link>
         </div>
       </div>
 

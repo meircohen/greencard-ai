@@ -1,5 +1,7 @@
 "use client";
 
+import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
 import React, { useState } from "react";
 import { CheckCircle2, AlertCircle, Clock, FileText, Loader2 } from "lucide-react";
 
@@ -89,7 +91,9 @@ export default function CaseStatusPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 to-indigo-50">
+      <Navbar />
+      <main className="flex-1 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
@@ -272,6 +276,8 @@ export default function CaseStatusPage() {
           </div>
         )}
       </div>
+      </main>
+      <Footer />
     </div>
   );
 }

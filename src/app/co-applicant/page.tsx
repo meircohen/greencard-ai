@@ -1,5 +1,7 @@
 "use client";
 
+import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
 import React, { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Card } from "@/components/ui/Card";
@@ -95,37 +97,43 @@ function CoApplicantPortalInner() {
 
   if (!isVerified) {
     return (
-      <div className="min-h-screen bg-white text-slate-900">
-        <div className="pt-32 pb-12 px-4 sm:px-6 lg:px-8 border-b border-gray-200">
-          <div className="max-w-3xl mx-auto">
-            <div className="flex items-center gap-2 mb-4">
-              <AlertCircle className="w-5 h-5 text-red-600" />
-              <span className="text-sm font-medium text-red-600">Invalid Access</span>
-            </div>
-            <h1 className="text-4xl font-bold mb-2">Access Link Invalid</h1>
-            <p className="text-slate-600 text-lg">
-              The access token in the URL is invalid or has expired.
-            </p>
-          </div>
-        </div>
-        <div className="px-4 sm:px-6 lg:px-8 py-12">
-          <div className="max-w-3xl mx-auto">
-            <Card className="p-8">
-              <p className="text-slate-700 mb-4">
-                Please ask your spouse to send you a fresh invitation link to complete the I-864 Affidavit of Support.
+      <div className="min-h-screen flex flex-col bg-white text-slate-900">
+        <Navbar />
+        <main className="flex-1">
+          <div className="pt-32 pb-12 px-4 sm:px-6 lg:px-8 border-b border-gray-200">
+            <div className="max-w-3xl mx-auto">
+              <div className="flex items-center gap-2 mb-4">
+                <AlertCircle className="w-5 h-5 text-red-600" />
+                <span className="text-sm font-medium text-red-600">Invalid Access</span>
+              </div>
+              <h1 className="text-4xl font-bold mb-2">Access Link Invalid</h1>
+              <p className="text-slate-600 text-lg">
+                The access token in the URL is invalid or has expired.
               </p>
-              <Button variant="primary" size="lg">
-                Contact Support
-              </Button>
-            </Card>
+            </div>
           </div>
-        </div>
+          <div className="px-4 sm:px-6 lg:px-8 py-12">
+            <div className="max-w-3xl mx-auto">
+              <Card className="p-8">
+                <p className="text-slate-700 mb-4">
+                  Please ask your spouse to send you a fresh invitation link to complete the I-864 Affidavit of Support.
+                </p>
+                <Button variant="primary" size="lg">
+                  Contact Support
+                </Button>
+              </Card>
+            </div>
+          </div>
+        </main>
+        <Footer />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white text-slate-900">
+    <div className="min-h-screen flex flex-col bg-white text-slate-900">
+      <Navbar />
+      <main className="flex-1">
       <div className="pt-32 pb-12 px-4 sm:px-6 lg:px-8 border-b border-gray-200">
         <div className="max-w-3xl mx-auto">
           <div className="flex items-center gap-2 mb-4">
@@ -295,6 +303,8 @@ function CoApplicantPortalInner() {
           )}
         </div>
       </div>
+      </main>
+      <Footer />
     </div>
   );
 }

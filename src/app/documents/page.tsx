@@ -1,5 +1,7 @@
 "use client";
 
+import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
 import React, { useState } from "react";
 import {
   FileText,
@@ -242,9 +244,9 @@ const statusConfig = {
 };
 
 const confidenceConfig = {
-  high: { color: "text-green-400", bg: "bg-green-400/10", label: "High" },
-  medium: { color: "text-amber-400", bg: "bg-amber-400/10", label: "Medium" },
-  low: { color: "text-red-400", bg: "bg-red-400/10", label: "Low" },
+  high: { color: "text-emerald-600", bg: "bg-green-400/10", label: "High" },
+  medium: { color: "text-amber-600", bg: "bg-amber-400/10", label: "Medium" },
+  low: { color: "text-red-600", bg: "bg-red-400/10", label: "Low" },
 };
 
 export default function DocumentsPage() {
@@ -255,6 +257,7 @@ export default function DocumentsPage() {
   const [uploadedFiles, setUploadedFiles] = useState<
     { name: string; size: string; date: string }[]
   >([]);
+  const [dragActive, setDragActive] = useState(false);
 
   const selectedForm = mockForms.find((f) => f.id === selectedFormId);
 
@@ -281,10 +284,11 @@ export default function DocumentsPage() {
     );
   };
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files) {
-      Array.from(files).forEach((file) => {
+      Array.from(files).forEach(async (file) => {
+        // Local file tracking
         setUploadedFiles((prev) => [
           ...prev,
           {
@@ -293,6 +297,81 @@ export default function DocumentsPage() {
             date: new Date().toLocaleDateString(),
           },
         ]);
+
+        // Upload to backend
+        try {
+          const formData = new FormData();
+          formData.append("file", file);
+          formData.append("caseId", "default");
+          formData.append("documentType", "supporting");
+
+          const res = await fetch("/api/documents/upload", {
+            method: "POST",
+            body: formData,
+            credentials: "include",
+          });
+
+          if (!res.ok) {
+            const data = await res.json();
+            console.error("Upload failed:", data.error);
+          }
+        } catch (err) {
+          console.error("Upload error:", err);
+        }
+      });
+    }
+  };
+
+  const handleDrag = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true);
+    } else if (e.type === "dragleave") {
+      setDragActive(false);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+
+    const files = e.dataTransfer.files;
+    if (files && files.length > 0) {
+      // Simulate file input change event
+      const fileList = files;
+      Array.from(fileList).forEach(async (file) => {
+        // Local file tracking
+        setUploadedFiles((prev) => [
+          ...prev,
+          {
+            name: file.name,
+            size: (file.size / 1024 / 1024).toFixed(2) + " MB",
+            date: new Date().toLocaleDateString(),
+          },
+        ]);
+
+        // Upload to backend
+        try {
+          const formData = new FormData();
+          formData.append("file", file);
+          formData.append("caseId", "default");
+          formData.append("documentType", "supporting");
+
+          const res = await fetch("/api/documents/upload", {
+            method: "POST",
+            body: formData,
+            credentials: "include",
+          });
+
+          if (!res.ok) {
+            const data = await res.json();
+            console.error("Upload failed:", data.error);
+          }
+        } catch (err) {
+          console.error("Upload error:", err);
+        }
       });
     }
   };
@@ -324,27 +403,29 @@ export default function DocumentsPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-midnight pt-24 pb-12">
+    <div className="min-h-screen flex flex-col bg-white bg-white">
+      <Navbar />
+      <main className="flex-1 pt-20 sm:pt-24 pb-8 sm:pb-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-primary mb-2">
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-2">
             Document Management
           </h1>
-          <p className="text-secondary">
+          <p className="text-slate-600">
             Manage your USCIS forms with professional assistance
           </p>
         </div>
 
         {/* Main Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-6">
           {/* Left Sidebar - Form List */}
-          <div className="lg:col-span-1">
-            <Card className="p-6 sticky top-28">
-              <h2 className="text-lg font-semibold text-primary mb-4">
+          <div className="lg:col-span-1 order-2 lg:order-1">
+            <Card className="p-4 sm:p-6 sticky top-20 sm:top-28">
+              <h2 className="text-base sm:text-lg font-semibold text-slate-900 mb-4">
                 Your Forms
               </h2>
-              <div className="space-y-3">
+              <div className="space-y-2 sm:space-y-3">
                 {mockForms.map((form) => (
                   <div
                     key={form.id}
@@ -352,18 +433,18 @@ export default function DocumentsPage() {
                       setSelectedFormId(form.id);
                       setSections(form.sections);
                     }}
-                    className={`p-4 rounded-lg cursor-pointer transition-all border ${
+                    className={`p-3 sm:p-4 rounded-lg cursor-pointer transition-all border text-sm sm:text-base ${
                       selectedFormId === form.id
-                        ? "bg-green-500/20 border-green-500/50 ring-1 ring-green-500/50"
-                        : "bg-surface/30 border-white/10 hover:bg-surface/50 hover:border-white/20"
+                        ? "bg-emerald-50 border-green-500/50 ring-1 ring-green-500/50"
+                        : "bg-slate-50 border-slate-200 hover:bg-slate-50 hover:border-slate-100"
                     }`}
                   >
                     <div className="flex items-start justify-between gap-2 mb-2">
                       <div>
-                        <p className="text-sm font-semibold text-primary">
+                        <p className="text-sm font-semibold text-slate-900">
                           {form.number}
                         </p>
-                        <p className="text-xs text-secondary line-clamp-2">
+                        <p className="text-xs text-slate-600 line-clamp-2">
                           {form.name}
                         </p>
                       </div>
@@ -388,7 +469,7 @@ export default function DocumentsPage() {
                     </div>
 
                     {/* Progress Bar */}
-                    <div className="w-full bg-surface/50 rounded-full h-1.5 overflow-hidden">
+                    <div className="w-full bg-slate-50 rounded-full h-1.5 overflow-hidden">
                       <div
                         className="h-full bg-gradient-to-r from-green-500 to-green-400"
                         style={{ width: `${form.completion}%` }}
@@ -404,54 +485,54 @@ export default function DocumentsPage() {
           </div>
 
           {/* Main Content Area */}
-          <div className="lg:col-span-3 space-y-6">
+          <div className="lg:col-span-3 space-y-4 sm:space-y-6 order-1 lg:order-2">
             {/* Top Toolbar */}
-            <div className="flex flex-wrap gap-3">
-              <Button className="flex items-center gap-2 bg-green-500 hover:bg-green-600">
-                <Zap size={18} />
+            <div className="flex flex-wrap gap-2 sm:gap-3">
+              <Button className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-xs sm:text-sm whitespace-nowrap">
+                <Zap size={16} className="sm:w-4 sm:h-4" />
                 Auto-Fill with AI
               </Button>
-              <Button variant="secondary" className="flex items-center gap-2">
-                <FileCheck size={18} />
+              <Button variant="secondary" className="flex items-center gap-2 text-xs sm:text-sm whitespace-nowrap">
+                <FileCheck size={16} className="sm:w-4 sm:h-4" />
                 Validate
               </Button>
-              <Button variant="secondary" className="flex items-center gap-2">
-                <Download size={18} />
+              <Button variant="secondary" className="flex items-center gap-2 text-xs sm:text-sm whitespace-nowrap">
+                <Download size={16} className="sm:w-4 sm:h-4" />
                 Generate PDF
               </Button>
-              <Button variant="secondary" className="flex items-center gap-2">
-                <Save size={18} />
+              <Button variant="secondary" className="flex items-center gap-2 text-xs sm:text-sm whitespace-nowrap">
+                <Save size={16} className="sm:w-4 sm:h-4" />
                 Save Draft
               </Button>
             </div>
 
             {/* Form Header */}
             {selectedForm && (
-              <Card className="p-8 border-l-4 border-l-green-500">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+              <Card className="p-4 sm:p-8 border-l-4 border-l-green-500">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
                   <div>
-                    <p className="text-sm text-secondary mb-1">Form Number</p>
-                    <p className="text-2xl font-bold text-primary">
+                    <p className="text-sm text-slate-600 mb-1">Form Number</p>
+                    <p className="text-2xl font-bold text-slate-900">
                       {selectedForm.number}
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-secondary mb-1">Full Name</p>
-                    <p className="text-lg font-semibold text-primary">
+                    <p className="text-sm text-slate-600 mb-1">Full Name</p>
+                    <p className="text-lg font-semibold text-slate-900">
                       {selectedForm.sections[0]?.fields[0]?.value || "N/A"}
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-secondary mb-1">Filing Fee</p>
-                    <p className="text-lg font-semibold text-primary">
+                    <p className="text-sm text-slate-600 mb-1">Filing Fee</p>
+                    <p className="text-lg font-semibold text-slate-900">
                       ${selectedForm.filingFee}
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-secondary mb-1">
+                    <p className="text-sm text-slate-600 mb-1">
                       Processing Time
                     </p>
-                    <p className="text-lg font-semibold text-primary">
+                    <p className="text-lg font-semibold text-slate-900">
                       {selectedForm.processingTime}
                     </p>
                   </div>
@@ -460,31 +541,31 @@ export default function DocumentsPage() {
             )}
 
             {/* Form Sections */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-primary">Form Fields</h3>
+            <div className="space-y-3 sm:space-y-4">
+              <h3 className="text-base sm:text-lg font-semibold text-slate-900">Form Fields</h3>
               {sections.map((section) => (
                 <Card key={section.id} className="overflow-hidden">
                   <button
                     onClick={() => toggleSection(section.id)}
-                    className="w-full p-6 flex items-center justify-between hover:bg-surface/50 transition-colors"
+                    className="w-full p-4 sm:p-6 flex items-center justify-between hover:bg-slate-50 transition-colors"
                   >
-                    <h4 className="font-semibold text-primary text-left">
+                    <h4 className="font-semibold text-slate-900 text-left text-sm sm:text-base truncate">
                       {section.title}
                     </h4>
                     <ChevronDown
                       size={20}
-                      className={`text-secondary transition-transform ${
+                      className={`text-slate-600 transition-transform ${
                         section.expanded ? "rotate-180" : ""
                       }`}
                     />
                   </button>
 
                   {section.expanded && (
-                    <div className="border-t border-white/10 p-6 space-y-6">
+                    <div className="border-t border-slate-200 p-4 sm:p-6 space-y-4 sm:space-y-6">
                       {section.fields.map((field) => (
                         <div key={field.id} className="space-y-2">
                           <div className="flex items-center justify-between gap-2">
-                            <label className="text-sm font-medium text-primary flex items-center gap-2">
+                            <label className="text-sm font-medium text-slate-900 flex items-center gap-2">
                               {field.label}
                               <div
                                 className={`w-2.5 h-2.5 rounded-full ${
@@ -497,9 +578,9 @@ export default function DocumentsPage() {
                               <div className="group relative">
                                 <Lightbulb
                                   size={16}
-                                  className="text-amber-400 cursor-help"
+                                  className="text-amber-600 cursor-help"
                                 />
-                                <div className="absolute right-0 top-full mt-2 w-48 p-2 bg-surface-2 rounded-lg text-xs text-secondary opacity-0 group-hover:opacity-100 transition-opacity z-10 pointer-events-none group-hover:pointer-events-auto border border-white/10">
+                                <div className="absolute right-0 top-full mt-2 w-48 p-2 bg-slate-50 rounded-lg text-xs text-slate-600 opacity-0 group-hover:opacity-100 transition-opacity z-10 pointer-events-none group-hover:pointer-events-auto border border-slate-200">
                                   {field.aiSuggestion}
                                 </div>
                               </div>
@@ -522,41 +603,41 @@ export default function DocumentsPage() {
             </div>
 
             {/* Suggestions Panel */}
-            <Card className="p-6 bg-green-500/5 border-green-500/30">
-              <div className="flex items-start gap-4 mb-4">
+            <Card className="p-4 sm:p-6 bg-green-500/5 border-green-500/30">
+              <div className="flex items-start gap-3 sm:gap-4 mb-3 sm:mb-4">
                 <Lightbulb
                   size={24}
-                  className="text-green-400 flex-shrink-0 mt-1"
+                  className="text-emerald-600 flex-shrink-0 mt-1"
                 />
                 <div>
-                  <h3 className="font-semibold text-primary mb-4">
+                  <h3 className="font-semibold text-slate-900 mb-4">
                     Smart Suggestions
                   </h3>
                   <div className="space-y-3">
                     {aiSuggestions.map((suggestion, idx) => (
                       <div
                         key={idx}
-                        className="flex items-start gap-3 p-3 bg-surface/30 rounded-lg border border-white/5"
+                        className="flex items-start gap-3 p-3 bg-slate-50 rounded-lg border border-slate-100"
                       >
                         {suggestion.type === "warning" && (
                           <AlertCircle
                             size={18}
-                            className="text-amber-400 flex-shrink-0 mt-0.5"
+                            className="text-amber-600 flex-shrink-0 mt-0.5"
                           />
                         )}
                         {suggestion.type === "info" && (
                           <CheckCircle2
                             size={18}
-                            className="text-green-400 flex-shrink-0 mt-0.5"
+                            className="text-emerald-600 flex-shrink-0 mt-0.5"
                           />
                         )}
                         {suggestion.type === "tip" && (
                           <Lightbulb
                             size={18}
-                            className="text-blue-400 flex-shrink-0 mt-0.5"
+                            className="text-blue-600 flex-shrink-0 mt-0.5"
                           />
                         )}
-                        <p className="text-sm text-secondary">
+                        <p className="text-sm text-slate-600">
                           {suggestion.message}
                         </p>
                       </div>
@@ -567,18 +648,28 @@ export default function DocumentsPage() {
             </Card>
 
             {/* Document Upload */}
-            <Card className="p-8">
-              <h3 className="font-semibold text-primary mb-4">
+            <Card className="p-4 sm:p-8">
+              <h3 className="font-semibold text-slate-900 mb-3 sm:mb-4 text-base sm:text-lg">
                 Supporting Documents
               </h3>
 
               {/* Drag & Drop Zone */}
-              <div className="border-2 border-dashed border-white/20 rounded-lg p-8 text-center mb-6 hover:border-white/30 transition-colors cursor-pointer">
-                <Upload size={32} className="mx-auto text-secondary mb-2" />
-                <p className="text-primary font-medium mb-1">
+              <div
+                onDragEnter={handleDrag}
+                onDragLeave={handleDrag}
+                onDragOver={handleDrag}
+                onDrop={handleDrop}
+                className={`border-2 border-dashed rounded-lg p-4 sm:p-8 text-center mb-4 sm:mb-6 transition-colors cursor-pointer ${
+                  dragActive
+                    ? "border-green-500/60 bg-green-500/5"
+                    : "border-slate-100 hover:border-slate-200"
+                }`}
+              >
+                <Upload size={32} className="mx-auto text-slate-600 mb-2" />
+                <p className="text-slate-900 font-medium mb-1">
                   Drag documents here or click to browse
                 </p>
-                <p className="text-sm text-secondary mb-4">
+                <p className="text-sm text-slate-600 mb-4">
                   PDF, JPG, PNG, DOCX (Max 10MB each)
                 </p>
                 <input
@@ -588,37 +679,37 @@ export default function DocumentsPage() {
                   className="hidden"
                   id="file-upload"
                 />
-                <label htmlFor="file-upload" className="inline-block px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-medium rounded-lg transition-colors cursor-pointer">
+                <label htmlFor="file-upload" className="inline-block px-4 py-2 bg-green-500 hover:bg-green-600 text-slate-900 font-medium rounded-lg transition-colors cursor-pointer">
                   Select Files
                 </label>
               </div>
 
               {/* File List */}
               {uploadedFiles.length > 0 && (
-                <div className="space-y-2">
-                  <p className="text-sm text-secondary font-medium">
+                <div className="space-y-1 sm:space-y-2">
+                  <p className="text-sm text-slate-600 font-medium">
                     Uploaded Files
                   </p>
                   {uploadedFiles.map((file, idx) => (
                     <div
                       key={idx}
-                      className="flex items-center justify-between p-3 bg-surface/30 rounded-lg border border-white/10"
+                      className="flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-200"
                     >
                       <div className="flex items-center gap-3">
                         <FileText
                           size={18}
-                          className="text-blue-400 flex-shrink-0"
+                          className="text-blue-600 flex-shrink-0"
                         />
                         <div>
-                          <p className="text-sm text-primary font-medium">
+                          <p className="text-sm text-slate-900 font-medium">
                             {file.name}
                           </p>
-                          <p className="text-xs text-secondary">
+                          <p className="text-xs text-slate-600">
                             {file.size} • {file.date}
                           </p>
                         </div>
                       </div>
-                      <CheckCircle2 size={18} className="text-green-400" />
+                      <CheckCircle2 size={18} className="text-emerald-600" />
                     </div>
                   ))}
                 </div>
@@ -626,18 +717,18 @@ export default function DocumentsPage() {
             </Card>
 
             {/* Status Tracking */}
-            <Card className="p-6">
-              <h3 className="font-semibold text-primary mb-6">Status</h3>
-              <div className="flex items-center justify-between">
+            <Card className="p-4 sm:p-6">
+              <h3 className="font-semibold text-slate-900 mb-4 sm:mb-6 text-base sm:text-lg">Status</h3>
+              <div className="flex items-center justify-between overflow-x-auto gap-2 -mx-4 px-4 sm:mx-0 sm:px-0">
                 {steps.map((item, idx) => (
                   <div key={idx} className="flex items-center">
                     <div
                       className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm ${
                         item.completed
-                          ? "bg-green-500/30 border border-green-500 text-green-400"
+                          ? "bg-green-500/30 border border-green-500 text-emerald-600"
                           : item.active
                             ? "bg-green-500/50 border border-green-500 text-white"
-                            : "bg-surface/50 border border-white/10 text-secondary"
+                            : "bg-slate-50 border border-slate-200 text-slate-600"
                       }`}
                     >
                       {item.completed ? (
@@ -649,8 +740,8 @@ export default function DocumentsPage() {
                     <p
                       className={`text-xs font-medium ml-2 ${
                         item.active || item.completed
-                          ? "text-primary"
-                          : "text-secondary"
+                          ? "text-slate-900"
+                          : "text-slate-600"
                       }`}
                     >
                       {item.step}
@@ -671,6 +762,8 @@ export default function DocumentsPage() {
           </div>
         </div>
       </div>
+      </main>
+      <Footer />
     </div>
   );
 }

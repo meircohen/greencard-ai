@@ -49,21 +49,21 @@ function RequestReset() {
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-midnight via-deep to-midnight flex items-center justify-center px-4 py-8">
+      <div className="min-h-screen bg-white flex items-center justify-center px-4 py-8">
         <div className="w-full max-w-md space-y-6">
           <div className="text-center">
             <Link href="/">
-              <h1 className="text-3xl font-bold gradient-text">GreenCard.ai</h1>
+              <h1 className="text-3xl font-bold text-blue-900">GreenCard.ai</h1>
             </Link>
           </div>
-          <Card className="p-8 space-y-6 text-center">
-            <CheckCircle className="mx-auto h-12 w-12 text-green-400" />
-            <h2 className="text-xl font-semibold text-primary">Check your email</h2>
-            <p className="text-secondary">
+          <Card className="p-8 space-y-6 text-center bg-white border border-gray-300">
+            <CheckCircle className="mx-auto h-12 w-12 text-blue-900" />
+            <h2 className="text-xl font-semibold text-blue-900">Check your email</h2>
+            <p className="text-slate-600">
               If an account exists with that email, we sent a password reset link.
               It expires in 1 hour.
             </p>
-            <Link href="/login" className="text-accent hover:underline block mt-4">
+            <Link href="/login" className="text-blue-900 hover:underline block mt-4">
               Back to login
             </Link>
           </Card>
@@ -73,23 +73,23 @@ function RequestReset() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-midnight via-deep to-midnight flex items-center justify-center px-4 py-8">
+    <div className="min-h-screen bg-white flex items-center justify-center px-4 py-8">
       <div className="w-full max-w-md space-y-6">
         <div className="text-center">
           <Link href="/">
-            <h1 className="text-3xl font-bold gradient-text">GreenCard.ai</h1>
+            <h1 className="text-3xl font-bold text-blue-900">GreenCard.ai</h1>
           </Link>
-          <p className="text-secondary mt-2">Reset your password</p>
+          <p className="text-slate-600 mt-2">Reset your password</p>
         </div>
 
-        <Card className="p-8 space-y-6">
+        <Card className="p-8 space-y-6 bg-white border border-gray-300">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-primary mb-1">
+              <label htmlFor="email" className="block text-sm font-medium text-slate-900 mb-1">
                 Email address
               </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-secondary" />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
                 <Input
                   id="email"
                   type="email"
@@ -106,14 +106,14 @@ function RequestReset() {
               <p className="text-red-400 text-sm">{error}</p>
             )}
 
-            <Button type="submit" className="w-full" disabled={isLoading}>
+            <Button type="submit" className="w-full bg-blue-900 hover:bg-blue-800 text-white" disabled={isLoading}>
               {isLoading ? "Sending..." : "Send reset link"}
             </Button>
           </form>
 
-          <p className="text-center text-sm text-secondary">
+          <p className="text-center text-sm text-slate-600">
             Remember your password?{" "}
-            <Link href="/login" className="text-accent hover:underline">
+            <Link href="/login" className="text-blue-900 hover:underline">
               Sign in
             </Link>
           </p>
@@ -170,21 +170,21 @@ function CompleteReset({ token }: { token: string }) {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-midnight via-deep to-midnight flex items-center justify-center px-4 py-8">
+      <div className="min-h-screen bg-white flex items-center justify-center px-4 py-8">
         <div className="w-full max-w-md space-y-6">
           <div className="text-center">
             <Link href="/">
-              <h1 className="text-3xl font-bold gradient-text">GreenCard.ai</h1>
+              <h1 className="text-3xl font-bold text-blue-900">GreenCard.ai</h1>
             </Link>
           </div>
-          <Card className="p-8 space-y-6 text-center">
-            <CheckCircle className="mx-auto h-12 w-12 text-green-400" />
-            <h2 className="text-xl font-semibold text-primary">Password reset</h2>
-            <p className="text-secondary">
+          <Card className="p-8 space-y-6 text-center bg-white border border-gray-300">
+            <CheckCircle className="mx-auto h-12 w-12 text-blue-900" />
+            <h2 className="text-xl font-semibold text-blue-900">Password reset</h2>
+            <p className="text-slate-600">
               Your password has been updated. You can now sign in with your new password.
             </p>
             <Link href="/login">
-              <Button className="w-full mt-4">Sign in</Button>
+              <Button className="w-full mt-4 bg-blue-900 hover:bg-blue-800 text-white">Sign in</Button>
             </Link>
           </Card>
         </div>
@@ -193,23 +193,23 @@ function CompleteReset({ token }: { token: string }) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-midnight via-deep to-midnight flex items-center justify-center px-4 py-8">
+    <div className="min-h-screen bg-white flex items-center justify-center px-4 py-8">
       <div className="w-full max-w-md space-y-6">
         <div className="text-center">
           <Link href="/">
-            <h1 className="text-3xl font-bold gradient-text">GreenCard.ai</h1>
+            <h1 className="text-3xl font-bold text-blue-900">GreenCard.ai</h1>
           </Link>
-          <p className="text-secondary mt-2">Set a new password</p>
+          <p className="text-slate-600 mt-2">Set a new password</p>
         </div>
 
-        <Card className="p-8 space-y-6">
+        <Card className="p-8 space-y-6 bg-white border border-gray-300">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-primary mb-1">
+              <label htmlFor="password" className="block text-sm font-medium text-slate-900 mb-1">
                 New password
               </label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-secondary" />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
                 <Input
                   id="password"
                   type="password"
@@ -224,11 +224,11 @@ function CompleteReset({ token }: { token: string }) {
             </div>
 
             <div>
-              <label htmlFor="confirm" className="block text-sm font-medium text-primary mb-1">
+              <label htmlFor="confirm" className="block text-sm font-medium text-slate-900 mb-1">
                 Confirm password
               </label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-secondary" />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
                 <Input
                   id="confirm"
                   type="password"
@@ -246,7 +246,7 @@ function CompleteReset({ token }: { token: string }) {
               <p className="text-red-400 text-sm">{error}</p>
             )}
 
-            <Button type="submit" className="w-full" disabled={isLoading}>
+            <Button type="submit" className="w-full bg-blue-900 hover:bg-blue-800 text-white" disabled={isLoading}>
               {isLoading ? "Resetting..." : "Reset password"}
             </Button>
           </form>
@@ -259,8 +259,8 @@ function CompleteReset({ token }: { token: string }) {
 export default function ResetPasswordPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-gradient-to-br from-midnight via-deep to-midnight flex items-center justify-center">
-        <p className="text-secondary">Loading...</p>
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <p className="text-slate-600">Loading...</p>
       </div>
     }>
       <ResetPasswordForm />

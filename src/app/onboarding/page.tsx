@@ -1,5 +1,7 @@
 "use client";
 
+import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -159,6 +161,8 @@ export default function Onboarding() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-midnight via-deep to-surface">
+      <Navbar />
+      <main className="flex-1">
       {/* Logo */}
       <div className="pt-8 px-4">
         <Link href="/" className="inline-flex items-center gap-2">
@@ -542,6 +546,8 @@ export default function Onboarding() {
           </button>
         )}
       </div>
+      </main>
+      <Footer />
     </div>
   );
 }

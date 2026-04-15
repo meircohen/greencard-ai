@@ -1,5 +1,7 @@
 "use client";
 
+import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
 import { useAuthStore } from "@/lib/store";
 import { BarChart3, Users, FileText, DollarSign, TrendingUp, AlertCircle, RefreshCw, Mail, Activity } from "lucide-react";
 import { useState } from "react";
@@ -138,11 +140,11 @@ export default function AdminPage() {
   if (!user || user.role !== "admin") {
     return (
       <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="flex items-center gap-4 p-8 bg-red-500/10 border border-red-500/30 rounded-lg">
-          <AlertCircle className="w-8 h-8 text-red-500 flex-shrink-0" />
+        <div className="flex items-center gap-4 p-8 bg-red-50 border border-red-200 rounded-lg">
+          <AlertCircle className="w-8 h-8 text-red-600 flex-shrink-0" />
           <div>
-            <h2 className="text-lg font-semibold text-red-400">Access Denied</h2>
-            <p className="text-red-300 text-sm mt-1">
+            <h2 className="text-lg font-semibold text-red-600">Access Denied</h2>
+            <p className="text-red-700 text-sm mt-1">
               You do not have permission to access the admin dashboard. Only administrators can view this page.
             </p>
           </div>
@@ -186,39 +188,42 @@ export default function AdminPage() {
   });
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
+    <div className="min-h-screen flex flex-col bg-white">
+      <Navbar />
+      <main className="flex-1 pt-20">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 py-6 sm:py-8">
       {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-2">
-          <h1 className="text-3xl font-bold text-gray-100">Admin Dashboard</h1>
-          <span className="px-3 py-1 bg-green-500/20 text-green-400 text-xs font-semibold rounded-full">
+      <div className="mb-6 sm:mb-8">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 mb-2">
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">Admin Dashboard</h1>
+          <span className="px-3 py-1 bg-emerald-50 text-emerald-600 text-xs font-semibold rounded-full">
             ADMIN
           </span>
         </div>
-        <p className="text-gray-400">Platform overview and management</p>
+        <p className="text-slate-600 text-sm">Platform overview and management</p>
       </div>
 
       {/* Metrics Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
         {metrics.map((metric, idx) => (
-          <div key={idx} className="p-6 bg-surface/50 border border-surface/40 rounded-lg">
+          <div key={idx} className="p-6 bg-slate-50 border border-slate-200 rounded-lg">
             <div className="flex items-start justify-between mb-4">
               <div>
-                <p className="text-gray-400 text-sm">{metric.label}</p>
-                <p className="text-2xl font-bold text-gray-100 mt-1">{metric.value}</p>
+                <p className="text-slate-600 text-sm">{metric.label}</p>
+                <p className="text-2xl font-bold text-slate-900 mt-1">{metric.value}</p>
               </div>
               {metric.icon}
             </div>
             <div className="flex items-center gap-2">
               <TrendingUp className="w-4 h-4 text-green-500" />
-              <span className="text-xs text-green-400">+{metric.trend}% this month</span>
+              <span className="text-xs text-emerald-600">+{metric.trend}% this month</span>
             </div>
             {/* Simple sparkline representation */}
             <div className="flex gap-1 mt-3">
               {[...Array(10)].map((_, i) => (
                 <div
                   key={i}
-                  className="flex-1 h-1 bg-green-500/20 rounded-full"
+                  className="flex-1 h-1 bg-emerald-50 rounded-full"
                   style={{ opacity: 0.4 + (Math.random() * 0.6) }}
                 />
               ))}
@@ -227,30 +232,30 @@ export default function AdminPage() {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
         {/* Users Section */}
         <div className="lg:col-span-2">
-          <div className="p-6 bg-surface/50 border border-surface/40 rounded-lg">
-            <h2 className="text-lg font-semibold text-gray-100 mb-4">Users</h2>
-            
+          <div className="p-4 sm:p-6 bg-slate-50 border border-slate-200 rounded-lg">
+            <h2 className="text-base sm:text-lg font-semibold text-slate-900 mb-4">Users</h2>
+
             {/* Search and Filter */}
-            <div className="flex gap-3 mb-4">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mb-4">
               <input
                 type="text"
                 placeholder="Search by name or email..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="flex-1 px-3 py-2 bg-deep border border-surface/30 rounded-lg text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:border-green-500/50"
+                className="flex-1 px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-emerald-500/50"
               />
-              <div className="flex gap-2">
+              <div className="flex gap-1 sm:gap-2 overflow-x-auto">
                 {["all", "active", "inactive"].map((status) => (
                   <button
                     key={status}
                     onClick={() => setSelectedFilter(status as any)}
-                    className={`px-3 py-2 text-xs font-medium rounded-lg transition-colors ${
+                    className={`px-2 sm:px-3 py-2 text-xs font-medium rounded-lg transition-colors whitespace-nowrap ${
                       selectedFilter === status
-                        ? "bg-green-500/20 text-green-400 border border-green-500/40"
-                        : "text-gray-400 hover:text-gray-200"
+                        ? "bg-emerald-50 text-emerald-600 border border-emerald-500/40"
+                        : "text-slate-600 hover:text-slate-700"
                     }`}
                   >
                     {status.charAt(0).toUpperCase() + status.slice(1)}
@@ -263,35 +268,35 @@ export default function AdminPage() {
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-surface/30">
-                    <th className="px-4 py-3 text-left text-gray-400">Name</th>
-                    <th className="px-4 py-3 text-left text-gray-400">Email</th>
-                    <th className="px-4 py-3 text-left text-gray-400">Plan</th>
-                    <th className="px-4 py-3 text-left text-gray-400">Cases</th>
-                    <th className="px-4 py-3 text-left text-gray-400">Joined</th>
-                    <th className="px-4 py-3 text-left text-gray-400">Status</th>
+                  <tr className="border-b border-slate-200">
+                    <th className="px-4 py-3 text-left text-slate-600">Name</th>
+                    <th className="px-4 py-3 text-left text-slate-600">Email</th>
+                    <th className="px-4 py-3 text-left text-slate-600">Plan</th>
+                    <th className="px-4 py-3 text-left text-slate-600">Cases</th>
+                    <th className="px-4 py-3 text-left text-slate-600">Joined</th>
+                    <th className="px-4 py-3 text-left text-slate-600">Status</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredUsers.map((user) => (
-                    <tr key={user.id} className="border-b border-surface/20 hover:bg-surface/20 transition-colors">
-                      <td className="px-4 py-3 text-gray-100 font-medium">{user.name}</td>
-                      <td className="px-4 py-3 text-gray-400 text-xs">{user.email}</td>
+                    <tr key={user.id} className="border-b border-slate-100 hover:bg-slate-100 transition-colors">
+                      <td className="px-4 py-3 text-slate-900 font-medium">{user.name}</td>
+                      <td className="px-4 py-3 text-slate-600 text-xs">{user.email}</td>
                       <td className="px-4 py-3">
-                        <span className="px-2 py-1 text-xs font-medium rounded bg-blue-500/10 text-blue-400">
+                        <span className="px-2 py-1 text-xs font-medium rounded bg-blue-50 text-blue-600">
                           {user.plan}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-gray-300">{user.cases}</td>
-                      <td className="px-4 py-3 text-gray-400 text-xs">{user.joined}</td>
+                      <td className="px-4 py-3 text-slate-700">{user.cases}</td>
+                      <td className="px-4 py-3 text-slate-600 text-xs">{user.joined}</td>
                       <td className="px-4 py-3">
                         <span
                           className={`px-2 py-1 text-xs font-medium rounded ${
                             user.status === "active"
-                              ? "bg-green-500/10 text-green-400"
+                              ? "bg-emerald-50 text-emerald-600"
                               : user.status === "inactive"
-                              ? "bg-gray-500/10 text-gray-400"
-                              : "bg-red-500/10 text-red-400"
+                              ? "bg-slate-100 text-slate-600"
+                              : "bg-red-50 text-red-600"
                           }`}
                         >
                           {user.status.charAt(0).toUpperCase() + user.status.slice(1)}
@@ -308,18 +313,18 @@ export default function AdminPage() {
         {/* System Health */}
         <div className="space-y-4">
           {/* Attorneys Verification */}
-          <div className="p-6 bg-surface/50 border border-surface/40 rounded-lg">
-            <h3 className="text-lg font-semibold text-gray-100 mb-4">Attorneys Pending Verification</h3>
+          <div className="p-4 sm:p-6 bg-slate-50 border border-slate-200 rounded-lg">
+            <h3 className="text-base sm:text-lg font-semibold text-slate-900 mb-4">Attorneys Pending Verification</h3>
             <div className="space-y-3">
               {mockAttorneys.map((attorney) => (
-                <div key={attorney.id} className="p-3 bg-deep border border-surface/30 rounded">
-                  <p className="text-sm font-medium text-gray-100">{attorney.name}</p>
-                  <p className="text-xs text-gray-400 mt-1">{attorney.barNumber} • {attorney.state}</p>
+                <div key={attorney.id} className="p-3 bg-white border border-slate-200 rounded">
+                  <p className="text-sm font-medium text-slate-900">{attorney.name}</p>
+                  <p className="text-xs text-slate-600 mt-1">{attorney.barNumber} • {attorney.state}</p>
                   <div className="flex gap-2 mt-3">
-                    <button className="flex-1 px-2 py-1 bg-green-500/20 text-green-400 text-xs font-medium rounded hover:bg-green-500/30 transition-colors">
+                    <button className="flex-1 px-2 py-1 bg-emerald-50 text-emerald-600 text-xs font-medium rounded hover:bg-emerald-100 transition-colors">
                       Verify
                     </button>
-                    <button className="flex-1 px-2 py-1 bg-red-500/20 text-red-400 text-xs font-medium rounded hover:bg-red-500/30 transition-colors">
+                    <button className="flex-1 px-2 py-1 bg-red-50 text-red-600 text-xs font-medium rounded hover:bg-red-100 transition-colors">
                       Reject
                     </button>
                   </div>
@@ -329,41 +334,41 @@ export default function AdminPage() {
           </div>
 
           {/* System Health */}
-          <div className="p-6 bg-surface/50 border border-surface/40 rounded-lg">
-            <h3 className="text-lg font-semibold text-gray-100 mb-4">System Health</h3>
+          <div className="p-4 sm:p-6 bg-slate-50 border border-slate-200 rounded-lg">
+            <h3 className="text-base sm:text-lg font-semibold text-slate-900 mb-4">System Health</h3>
             <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <p className="text-sm text-gray-400">API Latency</p>
-                <p className="text-sm font-medium text-green-400">45ms</p>
+                <p className="text-sm text-slate-600">API Latency</p>
+                <p className="text-sm font-medium text-emerald-600">45ms</p>
               </div>
               <div className="flex justify-between items-center">
-                <p className="text-sm text-gray-400">Error Rate</p>
-                <p className="text-sm font-medium text-green-400">0.02%</p>
+                <p className="text-sm text-slate-600">Error Rate</p>
+                <p className="text-sm font-medium text-emerald-600">0.02%</p>
               </div>
               <div className="flex justify-between items-center">
-                <p className="text-sm text-gray-400">AI Tokens Today</p>
-                <p className="text-sm font-medium text-blue-400">1.2M</p>
+                <p className="text-sm text-slate-600">AI Tokens Today</p>
+                <p className="text-sm font-medium text-blue-600">1.2M</p>
               </div>
               <div className="flex justify-between items-center">
-                <p className="text-sm text-gray-400">Storage Used</p>
-                <p className="text-sm font-medium text-amber-400">15.3 GB</p>
+                <p className="text-sm text-slate-600">Storage Used</p>
+                <p className="text-sm font-medium text-amber-600">15.3 GB</p>
               </div>
             </div>
           </div>
 
           {/* Quick Actions */}
-          <div className="p-6 bg-surface/50 border border-surface/40 rounded-lg">
-            <h3 className="text-lg font-semibold text-gray-100 mb-4">Quick Actions</h3>
+          <div className="p-4 sm:p-6 bg-slate-50 border border-slate-200 rounded-lg">
+            <h3 className="text-base sm:text-lg font-semibold text-slate-900 mb-4">Quick Actions</h3>
             <div className="space-y-2">
-              <button className="w-full flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-300 hover:text-green-400 bg-deep hover:bg-surface/20 rounded transition-colors">
+              <button className="w-full flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-700 hover:text-emerald-600 bg-white hover:bg-slate-100 rounded transition-colors">
                 <RefreshCw className="w-4 h-4" />
                 Refresh Visa Bulletin
               </button>
-              <button className="w-full flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-300 hover:text-green-400 bg-deep hover:bg-surface/20 rounded transition-colors">
+              <button className="w-full flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-700 hover:text-emerald-600 bg-white hover:bg-slate-100 rounded transition-colors">
                 <Mail className="w-4 h-4" />
                 Send Newsletter
               </button>
-              <button className="w-full flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-300 hover:text-green-400 bg-deep hover:bg-surface/20 rounded transition-colors">
+              <button className="w-full flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-700 hover:text-emerald-600 bg-white hover:bg-slate-100 rounded transition-colors">
                 <Activity className="w-4 h-4" />
                 View Logs
               </button>
@@ -373,21 +378,24 @@ export default function AdminPage() {
       </div>
 
       {/* Recent Activity */}
-      <div className="mt-8 p-6 bg-surface/50 border border-surface/40 rounded-lg">
-        <h2 className="text-lg font-semibold text-gray-100 mb-4">Recent Activity</h2>
+      <div className="mt-6 sm:mt-8 p-4 sm:p-6 bg-slate-50 border border-slate-200 rounded-lg">
+        <h2 className="text-base sm:text-lg font-semibold text-slate-900 mb-4">Recent Activity</h2>
         <div className="space-y-3">
           {mockActivity.map((item, idx) => (
-            <div key={item.id} className="flex gap-4 py-3 border-b border-surface/20 last:border-b-0">
+            <div key={item.id} className="flex gap-4 py-3 border-b border-slate-100 last:border-b-0">
               <div className="w-2 h-2 rounded-full bg-green-500 flex-shrink-0 mt-2" />
               <div className="flex-1">
-                <p className="text-sm font-medium text-gray-100">{item.type}</p>
-                <p className="text-xs text-gray-400 mt-1">{item.description}</p>
+                <p className="text-sm font-medium text-slate-900">{item.type}</p>
+                <p className="text-xs text-slate-600 mt-1">{item.description}</p>
               </div>
-              <p className="text-xs text-gray-500 flex-shrink-0">{item.timestamp}</p>
+              <p className="text-xs text-slate-400 flex-shrink-0">{item.timestamp}</p>
             </div>
           ))}
         </div>
       </div>
+      </div>
+      </main>
+      <Footer />
     </div>
   );
 }

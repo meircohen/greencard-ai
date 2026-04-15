@@ -1,5 +1,6 @@
 'use client';
 import React, { useState } from 'react';
+import { useTranslation } from '@/i18n';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/Button';
@@ -17,6 +18,7 @@ import {
 } from 'lucide-react';
 
 export default function EmergencyPage() {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -141,7 +143,7 @@ export default function EmergencyPage() {
             <AlertTriangle className="w-8 h-8 md:w-10 md:h-10 text-red-600 flex-shrink-0 mt-1" />
             <div>
               <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-2">
-                Salva tu Caso: Emergency Immigration Help
+                {t('emergency.title')}
               </h1>
               <p className="text-lg md:text-xl text-red-700 font-semibold mb-2">
                 Ayuda de Emergencia para tu Caso de Inmigracion
@@ -156,7 +158,7 @@ export default function EmergencyPage() {
 
           <div className="bg-white rounded-lg p-6 mb-8 border-2 border-red-200">
             <p className="text-3xl md:text-4xl font-bold text-red-600 mb-4">
-              $99 Emergency Consultation
+              {t('emergency.consultation')}
             </p>
             <p className="text-gray-700 mb-6">
               48-hour attorney review plus written action plan
@@ -169,7 +171,7 @@ export default function EmergencyPage() {
               >
                 <Button className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white">
                   <MessageCircle className="w-4 h-4 mr-2" />
-                  Get Emergency Help on WhatsApp
+                  {t('emergency.ctaPrimary')}
                 </Button>
               </a>
               <a href="tel:+19547776678">

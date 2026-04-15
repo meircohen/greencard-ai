@@ -22,8 +22,10 @@ import {
 } from 'lucide-react';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
+import { useTranslation } from '@/i18n';
 
 export default function Home() {
+  const { t } = useTranslation();
   const [videoOpen, setVideoOpen] = useState(false);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -64,25 +66,25 @@ export default function Home() {
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
                     <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
                   </span>
-                  Trusted by families nationwide
+                  {t('home.heroBadge')}
                 </span>
               </div>
 
               <h1 className="animate-fade-up-d1 text-4xl sm:text-5xl lg:text-[3.5rem] font-extrabold tracking-tight leading-[1.1] text-slate-900">
-                Attorney-Filed Green Cards{' '}
+                {t('home.heroTitle')}{' '}
                 <span className="bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">
-                  Starting at $999
+                  {t('home.heroHighlight')}
                 </span>
               </h1>
 
               <p className="animate-fade-up-d2 text-lg sm:text-xl text-slate-600 leading-relaxed max-w-lg">
-                A licensed immigration attorney prepares, reviews, and files your case with USCIS. You never touch a government form. Bilingual support, payment plans, and a 14-day money-back guarantee.
+                {t('home.heroDescription')}
               </p>
 
               <div className="animate-fade-up-d3 flex flex-col sm:flex-row gap-3">
                 <Link href="/assessment">
                   <button className="w-full sm:w-auto px-7 py-3.5 rounded-xl text-[15px] font-semibold text-white bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-700 hover:to-emerald-600 transition-all duration-200 shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/30 flex items-center justify-center gap-2">
-                    Check Your Eligibility
+                    {t('home.ctaPrimary')}
                     <ArrowRight className="w-4 h-4" />
                   </button>
                 </Link>
@@ -91,7 +93,7 @@ export default function Home() {
                   className="w-full sm:w-auto px-7 py-3.5 rounded-xl text-[15px] font-semibold text-slate-700 bg-white border border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-all duration-200 shadow-sm flex items-center justify-center gap-2"
                 >
                   <Play className="w-4 h-4" />
-                  See How It Works
+                  {t('home.ctaSecondary')}
                 </button>
               </div>
 
@@ -99,19 +101,19 @@ export default function Home() {
               <div className="animate-fade-up-d4 space-y-3 pt-4">
                 <div className="flex items-center gap-2 text-sm text-slate-600">
                   <Award className="w-4 h-4 text-emerald-600" />
-                  Licensed immigration attorneys
+                  {t('home.trustAttorney')}
                 </div>
                 <div className="flex items-center gap-2 text-sm text-slate-600">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                  High approval rates
+                  {t('home.trustApproval')}
                 </div>
                 <div className="flex items-center gap-2 text-sm text-slate-600">
                   <Globe className="w-4 h-4 text-emerald-600" />
-                  Bilingual support; English and Spanish
+                  {t('home.trustBilingual')}
                 </div>
                 <div className="flex items-center gap-2 text-sm text-slate-600">
                   <DollarSign className="w-4 h-4 text-emerald-600" />
-                  Starting at $999 for marriage green cards (government fees separate)
+                  {t('home.trustPrice')}
                 </div>
               </div>
             </div>
@@ -121,18 +123,18 @@ export default function Home() {
               <div className="rounded-2xl border border-slate-200/80 bg-white p-8 sm:p-10 shadow-lg shadow-slate-900/5">
                 <div className="space-y-8">
                   <div className="space-y-2">
-                    <p className="text-sm font-semibold text-emerald-600 uppercase tracking-wide">Average Savings</p>
-                    <p className="text-4xl font-bold text-slate-900">Significant Savings</p>
-                    <p className="text-sm text-slate-500">Compared to traditional law firms</p>
+                    <p className="text-sm font-semibold text-emerald-600 uppercase tracking-wide">{t('home.averageSavings')}</p>
+                    <p className="text-4xl font-bold text-slate-900">{t('home.significantSavings')}</p>
+                    <p className="text-sm text-slate-500">{t('home.comparedToFirms')}</p>
                   </div>
                   <div className="grid grid-cols-2 gap-6 pt-4 border-t border-slate-100">
                     <div>
-                      <p className="text-3xl font-bold text-slate-900">Growing</p>
-                      <p className="text-xs text-slate-500 mt-1">Cases filed every month</p>
+                      <p className="text-3xl font-bold text-slate-900">{t('home.casesPerMonth')}</p>
+                      <p className="text-xs text-slate-500 mt-1">{t('home.casesPerMonth')}</p>
                     </div>
                     <div>
-                      <p className="text-3xl font-bold text-slate-900">Thousands</p>
-                      <p className="text-xs text-slate-500 mt-1">Families helped</p>
+                      <p className="text-3xl font-bold text-slate-900">{t('home.familiesHelped')}</p>
+                      <p className="text-xs text-slate-500 mt-1">{t('home.familiesHelped')}</p>
                     </div>
                   </div>
                 </div>
@@ -150,10 +152,10 @@ export default function Home() {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900">
-              Our Immigration Services
+              {t('home.ourServices')}
             </h2>
             <p className="mt-4 text-lg text-slate-600 max-w-2xl mx-auto">
-              We handle the legal complexity so you can focus on your future.
+              {t('home.handleComplexity')}
             </p>
           </div>
 
@@ -161,43 +163,43 @@ export default function Home() {
             {[
               {
                 icon: Heart,
-                title: 'Marriage-Based Green Cards',
-                description: 'I-485, I-130, I-864. We guide married couples through immediate relative sponsorship.',
+                title: t('home.marriageGreenCard'),
+                description: t('home.marriageDesc'),
                 color: 'text-rose-600',
                 href: '/guides/marriage-green-card',
               },
               {
                 icon: Users,
-                title: 'Family Sponsorship',
-                description: 'Adult children, siblings, parents. Navigate family preference categories and priority dates.',
+                title: t('home.familySponsorship'),
+                description: t('home.familyDesc'),
                 color: 'text-blue-600',
                 href: '/guides/i-130-guide',
               },
               {
                 icon: CheckCircle2,
-                title: 'Adjustment of Status',
-                description: 'Stay in the US while your green card processes. Complete I-485 with expert review.',
+                title: t('home.adjustmentStatus'),
+                description: t('home.adjustmentDesc'),
                 color: 'text-emerald-600',
                 href: '/guides/i-485-guide',
               },
               {
                 icon: Briefcase,
-                title: 'Work Permits',
-                description: 'I-765 for EAD. Get authorization to work while your case is pending.',
+                title: t('home.workPermits'),
+                description: t('home.workDesc'),
                 color: 'text-amber-600',
                 href: '/guides/i-765-guide',
               },
               {
                 icon: Award,
-                title: 'Citizenship and Naturalization',
-                description: 'N-400 preparation and filing. Become a US citizen with confidence.',
+                title: t('home.citizenship'),
+                description: t('home.citizenshipDesc'),
                 color: 'text-purple-600',
                 href: '/guides/n-400-guide',
               },
               {
                 icon: Globe,
-                title: 'Consular Processing',
-                description: 'DS-260, medical exams, consulate interviews. Complete support for overseas processing.',
+                title: t('home.consularProcessing'),
+                description: t('home.consularDesc'),
                 color: 'text-cyan-600',
                 href: '/guides/green-card-timeline',
               },
@@ -216,7 +218,7 @@ export default function Home() {
                     {service.description}
                   </p>
                   <Link href={service.href} className="text-emerald-600 hover:text-emerald-700 font-medium text-sm flex items-center gap-1.5 transition-colors">
-                    Learn more
+                    {t('home.learnMore2')}
                     <ChevronRight className="w-4 h-4" />
                   </Link>
                 </div>
@@ -231,10 +233,10 @@ export default function Home() {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900">
-              How It Works
+              {t('home.howItWorks')}
             </h2>
             <p className="mt-4 text-lg text-slate-600 max-w-2xl mx-auto">
-              Three simple steps to your green card.
+              {t('home.threeSteps')}
             </p>
           </div>
 
@@ -242,20 +244,20 @@ export default function Home() {
             {[
               {
                 step: '1',
-                title: 'Tell Us Your Story',
-                description: 'Free confidential consultation. We review your case, answer your questions, and create your personalized strategy.',
+                title: t('home.tellUsStory'),
+                description: t('home.consultationFree'),
                 icon: FileText,
               },
               {
                 step: '2',
-                title: 'We Handle the Paperwork',
-                description: 'Our team prepares every form, gathers documents, and reviews everything before submission. You verify and sign.',
+                title: t('home.handlePaperwork'),
+                description: t('home.paperworkDesc'),
                 icon: Briefcase,
               },
               {
                 step: '3',
-                title: 'Attorney Files Your Case',
-                description: 'Licensed immigration attorney files with USCIS on your behalf. We track your case and respond to any requests.',
+                title: t('home.attorneyFiles'),
+                description: t('home.attorneyFilesDesc'),
                 icon: Award,
               },
             ].map((item, i) => {
@@ -289,10 +291,10 @@ export default function Home() {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900">
-              Meet Your Attorney
+              {t('home.meetYourAttorney')}
             </h2>
             <p className="mt-4 text-lg text-slate-600 max-w-2xl mx-auto">
-              Your case is personally overseen by a licensed Florida attorney.
+              {t('home.attorneyOversees')}
             </p>
           </div>
 
@@ -311,60 +313,60 @@ export default function Home() {
               <div className="space-y-6">
                 <div>
                   <h3 className="text-2xl sm:text-3xl font-bold text-slate-900">
-                    Jeremy "Yirmi" Knight, Esq.
+                    {t('home.attorneyName')}
                   </h3>
                   <p className="text-lg text-emerald-600 font-semibold mt-1">
-                    Lead Immigration Attorney
+                    {t('home.leadAttorney')}
                   </p>
                 </div>
 
                 <div className="space-y-4">
                   <div>
                     <p className="text-sm font-semibold text-slate-700 uppercase tracking-wide mb-1">
-                      Law Firm
+                      {t('home.lawFirm')}
                     </p>
-                    <p className="text-slate-600">Partner Immigration Law, PLLC</p>
+                    <p className="text-slate-600">{t('home.firmName')}</p>
                   </div>
 
                   <div>
                     <p className="text-sm font-semibold text-slate-700 uppercase tracking-wide mb-1">
-                      Bar Admission
+                      {t('home.barAdmission')}
                     </p>
-                    <p className="text-slate-600">Florida Bar; Trial Lawyers Section, Business Law Section</p>
+                    <p className="text-slate-600">{t('home.barInfo')}</p>
                   </div>
 
                   <div>
                     <p className="text-sm font-semibold text-slate-700 uppercase tracking-wide mb-1">
-                      Education
+                      {t('home.education')}
                     </p>
-                    <p className="text-slate-600">Florida International University College of Law; Award-Winning Graduate</p>
+                    <p className="text-slate-600">{t('home.educationInfo')}</p>
                   </div>
 
                   <div>
                     <p className="text-sm font-semibold text-slate-700 uppercase tracking-wide mb-1">
-                      Practice Areas
+                      {t('home.practiceAreas')}
                     </p>
-                    <p className="text-slate-600">Immigration Law, International Law, Commercial Litigation, Business Law</p>
+                    <p className="text-slate-600">{t('home.practiceInfo')}</p>
                   </div>
                 </div>
 
                 <div className="pt-2 border-t border-slate-200">
                   <p className="text-slate-600 leading-relaxed">
-                    Highly-regarded and award-winning attorney with extensive experience in immigration and international law. Known for strong client relationships and a track record of success. Court-appointed fiduciary with experience overseeing complex legal matters.
+                    {t('home.attorneyBio')}
                   </p>
                 </div>
 
                 <div className="space-y-3 pt-4">
                   <div>
                     <p className="text-sm font-semibold text-slate-700 uppercase tracking-wide mb-1">
-                      Contact
+                      {t('home.contact')}
                     </p>
                     <div className="space-y-2">
                       <p className="text-slate-600">
-                        <span className="font-medium">Phone:</span> <a href="tel:+19547776678" className="text-emerald-600 hover:text-emerald-700">(954) 777-6678</a>
+                        <span className="font-medium">{t('home.phone')}</span> <a href="tel:+19547776678" className="text-emerald-600 hover:text-emerald-700">(954) 777-6678</a>
                       </p>
                       <p className="text-slate-600">
-                        <span className="font-medium">Email:</span> <a href="mailto:Yirmi@LadyLibertyLawyers.com" className="text-emerald-600 hover:text-emerald-700">Yirmi@LadyLibertyLawyers.com</a>
+                        <span className="font-medium">{t('home.email')}</span> <a href="mailto:Yirmi@LadyLibertyLawyers.com" className="text-emerald-600 hover:text-emerald-700">Yirmi@LadyLibertyLawyers.com</a>
                       </p>
                     </div>
                   </div>
@@ -380,10 +382,10 @@ export default function Home() {
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900">
-              Why Choose GreenCard.ai
+              {t('home.whyChoose')}
             </h2>
             <p className="mt-4 text-lg text-slate-600">
-              Compare the costs and convenience.
+              {t('home.compareTheNeeds')}
             </p>
           </div>
 
@@ -392,16 +394,16 @@ export default function Home() {
               <thead>
                 <tr className="border-b border-slate-200">
                   <th className="px-6 py-4 text-left font-semibold text-slate-900">
-                    Factor
+                    {t('pricing.factor')}
                   </th>
                   <th className="px-6 py-4 text-center font-semibold text-slate-600">
-                    Traditional Attorney
+                    {t('pricing.traditional')}
                   </th>
                   <th className="px-6 py-4 text-center font-semibold text-slate-600">
-                    DIY
+                    {t('pricing.diy')}
                   </th>
                   <th className="px-6 py-4 text-center font-semibold text-emerald-600">
-                    GreenCard.ai
+                    {t('pricing.greencard')}
                   </th>
                 </tr>
               </thead>
@@ -533,10 +535,10 @@ export default function Home() {
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900">
-              See How Simple the Process Is
+              {t('home.howItWorks')}
             </h2>
             <p className="mt-4 text-lg text-slate-600">
-              Watch a walkthrough of our process.
+              {t('home.threeSteps')}
             </p>
           </div>
 
@@ -557,40 +559,22 @@ export default function Home() {
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900">
-              Frequently Asked Questions
+              {t('home.howItWorks')}
             </h2>
             <p className="mt-4 text-lg text-slate-600">
-              Everything you need to know about our services.
+              {t('home.threeSteps')}
             </p>
           </div>
 
           <div className="space-y-4">
             {[
-              {
-                question: 'How much does it cost?',
-                answer: 'Our fee range is $499 to $1,499 depending on your case complexity and the forms required. This typically includes free consultation, document preparation, attorney review, and USCIS filing. No hidden fees, no upfront costs.',
-              },
-              {
-                question: 'How long does the process take?',
-                answer: 'Case preparation takes 3 to 5 business days. Once we file with USCIS, processing times vary by case type and current government processing times. Family-based green cards typically range from 6 months to 2 years depending on visa availability and category.',
-              },
-              {
-                question: 'Do I need to visit an office?',
-                answer: 'No. The entire process is online. You upload documents, we prepare forms, our licensed attorney reviews everything, and you sign electronically. Everything happens in your account at GreenCard.ai.',
-              },
-              {
-                question: 'Who reviews my forms?',
-                answer: 'A licensed immigration attorney at Partner Immigration Law, PLLC reviews every single form before we file with USCIS. We do not submit anything without attorney sign-off.',
-              },
-              {
-                question: 'What if my case is denied?',
-                answer: 'We stand behind our work. If USCIS denies your case due to errors in our preparation, we will refile at no cost. We also provide guidance on appeals or reapplication strategies.',
-              },
-              {
-                question: 'Do you speak Spanish?',
-                answer: 'Yes. Our entire platform is available in English and Spanish. Documents are filed in English with USCIS as required, but we provide Spanish guidance throughout the process.',
-              },
-            ].map((faq, i) => (
+              { key: 'cost' },
+              { key: 'timeline' },
+              { key: 'office' },
+              { key: 'reviewer' },
+              { key: 'denial' },
+              { key: 'spanish' },
+            ].map((item, i) => (
               <div
                 key={i}
                 className="rounded-lg border border-slate-200 overflow-hidden transition-all duration-200"
@@ -600,7 +584,7 @@ export default function Home() {
                   className="w-full px-6 py-4 bg-white hover:bg-slate-50 flex items-center justify-between transition-colors"
                 >
                   <span className="font-semibold text-slate-900 text-left">
-                    {faq.question}
+                    {t(`faq.${item.key}.question`)}
                   </span>
                   <ChevronRight
                     className={`w-5 h-5 text-slate-400 transition-transform duration-200 flex-shrink-0 ml-4 ${
@@ -610,7 +594,7 @@ export default function Home() {
                 </button>
                 {openFaqIndex === i && (
                   <div className="px-6 py-4 bg-slate-50 border-t border-slate-200">
-                    <p className="text-slate-600 leading-relaxed">{faq.answer}</p>
+                    <p className="text-slate-600 leading-relaxed">{t(`faq.${item.key}.answer`)}</p>
                   </div>
                 )}
               </div>
@@ -623,19 +607,19 @@ export default function Home() {
       <section className="py-24 sm:py-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-emerald-50 to-teal-50">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">
-            Ready to Start Your Immigration Journey?
+            {t('home.howItWorks')}
           </h2>
           <p className="text-lg text-slate-600 max-w-xl mx-auto mb-8">
-            Get a free case evaluation. Our team will review your situation and explain your options.
+            {t('home.consultationFree')}
           </p>
           <Link href="/assessment">
             <button className="px-8 py-4 rounded-xl text-base font-semibold text-white bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-700 hover:to-emerald-600 transition-all duration-200 shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 mx-auto mb-6">
-              Check Your Eligibility
+              {t('home.ctaPrimary')}
               <ArrowRight className="w-5 h-5" />
             </button>
           </Link>
           <p className="text-sm text-slate-500 mb-8">
-            No upfront fees. No hidden costs. Cancel anytime.
+            {t('pricing.cancelAnytime')}
           </p>
           <p className="text-xs text-slate-400 max-w-lg mx-auto leading-relaxed">
             Legal services provided by Partner Immigration Law, PLLC, Jeremy Knight, Esq., Florida Bar No. 1009132, Fort Lauderdale, Broward County, FL. GreenCard.ai is the technology platform facilitating your engagement with licensed attorneys. This is attorney advertising.

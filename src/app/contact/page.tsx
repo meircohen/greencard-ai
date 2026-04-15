@@ -2,12 +2,14 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useTranslation } from '@/i18n';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/Button';
 import { Mail, Phone, MapPin, Clock, Globe } from 'lucide-react';
 
 export default function ContactPage() {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -54,10 +56,10 @@ export default function ContactPage() {
       <section className="relative pt-24 pb-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-slate-50 to-emerald-50">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 mb-6">
-            Get in Touch
+            {t('contact.title')}
           </h1>
           <p className="text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto">
-            Have questions about your immigration case? Our team at Partner Immigration Law, PLLC is here to help.
+            {t('contact.subtitle')}
           </p>
         </div>
       </section>
@@ -70,7 +72,7 @@ export default function ContactPage() {
             <div className="md:col-span-1 space-y-8">
               <div>
                 <h2 className="text-2xl font-bold text-slate-900 mb-8">
-                  Contact Information
+                  {t('contact.contactInformation')}
                 </h2>
               </div>
 
@@ -80,7 +82,7 @@ export default function ContactPage() {
                   <Phone className="w-6 h-6 text-emerald-600 mt-1" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-slate-900 mb-1">Phone</h3>
+                  <h3 className="font-semibold text-slate-900 mb-1">{t('contact.phone')}</h3>
                   <p className="text-slate-600">
                     <a href="tel:+19547776678" className="hover:text-emerald-600 transition-colors">
                       (954) 777-6678
@@ -95,7 +97,7 @@ export default function ContactPage() {
                   <Mail className="w-6 h-6 text-emerald-600 mt-1" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-slate-900 mb-1">Email</h3>
+                  <h3 className="font-semibold text-slate-900 mb-1">{t('contact.email')}</h3>
                   <p className="text-slate-600">
                     <a href="mailto:hello@greencard.ai" className="hover:text-emerald-600 transition-colors">
                       hello@greencard.ai
@@ -110,8 +112,8 @@ export default function ContactPage() {
                   <MapPin className="w-6 h-6 text-emerald-600 mt-1" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-slate-900 mb-1">Office</h3>
-                  <p className="text-slate-600">Fort Lauderdale, Florida</p>
+                  <h3 className="font-semibold text-slate-900 mb-1">{t('contact.office')}</h3>
+                  <p className="text-slate-600">{t('contact.officeLocation')}</p>
                 </div>
               </div>
 
@@ -121,9 +123,9 @@ export default function ContactPage() {
                   <Clock className="w-6 h-6 text-emerald-600 mt-1" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-slate-900 mb-1">Office Hours</h3>
-                  <p className="text-slate-600">Monday through Friday</p>
-                  <p className="text-slate-600">9am to 6pm EST</p>
+                  <h3 className="font-semibold text-slate-900 mb-1">{t('contact.officeHours')}</h3>
+                  <p className="text-slate-600">{t('contact.mondayFriday')}</p>
+                  <p className="text-slate-600">{t('contact.businessHours')}</p>
                 </div>
               </div>
 
@@ -133,9 +135,9 @@ export default function ContactPage() {
                   <Globe className="w-6 h-6 text-emerald-600 mt-1" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-slate-900 mb-1">Languages</h3>
-                  <p className="text-slate-600">English, Spanish</p>
-                  <p className="text-sm text-slate-500">Se habla Espanol</p>
+                  <h3 className="font-semibold text-slate-900 mb-1">{t('contact.languages')}</h3>
+                  <p className="text-slate-600">{t('contact.languagesSpoken')}</p>
+                  <p className="text-sm text-slate-500">{t('contact.spanishSpoken')}</p>
                 </div>
               </div>
 
@@ -160,16 +162,16 @@ export default function ContactPage() {
             <div className="md:col-span-2">
               <div className="bg-white rounded-lg border border-slate-200 p-8 shadow-sm">
                 <h2 className="text-2xl font-bold text-slate-900 mb-6">
-                  Send us a Message
+                  {t('contact.sendMessage')}
                 </h2>
 
                 {submitted ? (
                   <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-6 text-center">
                     <p className="text-emerald-900 font-semibold mb-2">
-                      Thank you for reaching out!
+                      {t('contact.thankYou')}
                     </p>
                     <p className="text-emerald-700">
-                      We have received your message and will get back to you shortly.
+                      {t('contact.messageReceived')}
                     </p>
                   </div>
                 ) : (
@@ -177,7 +179,7 @@ export default function ContactPage() {
                     {/* Name */}
                     <div>
                       <label htmlFor="name" className="block text-sm font-medium text-slate-900 mb-2">
-                        Full Name
+                        {t('contact.fullName')}
                       </label>
                       <input
                         type="text"
@@ -187,14 +189,14 @@ export default function ContactPage() {
                         onChange={handleChange}
                         required
                         className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-colors"
-                        placeholder="Your name"
+                        placeholder={t('contact.nameInputPlaceholder')}
                       />
                     </div>
 
                     {/* Email */}
                     <div>
                       <label htmlFor="email" className="block text-sm font-medium text-slate-900 mb-2">
-                        Email Address
+                        {t('contact.emailAddress')}
                       </label>
                       <input
                         type="email"
@@ -204,14 +206,14 @@ export default function ContactPage() {
                         onChange={handleChange}
                         required
                         className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-colors"
-                        placeholder="your@email.com"
+                        placeholder={t('contact.emailInputPlaceholder')}
                       />
                     </div>
 
                     {/* Phone */}
                     <div>
                       <label htmlFor="phone" className="block text-sm font-medium text-slate-900 mb-2">
-                        Phone Number
+                        {t('contact.phoneNumber')}
                       </label>
                       <input
                         type="tel"
@@ -221,14 +223,14 @@ export default function ContactPage() {
                         onChange={handleChange}
                         required
                         className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-colors"
-                        placeholder="(555) 000-0000"
+                        placeholder={t('contact.phoneInputPlaceholder')}
                       />
                     </div>
 
                     {/* Case Type */}
                     <div>
                       <label htmlFor="caseType" className="block text-sm font-medium text-slate-900 mb-2">
-                        Case Type
+                        {t('contact.caseType')}
                       </label>
                       <select
                         id="caseType"
@@ -249,7 +251,7 @@ export default function ContactPage() {
                     {/* Message */}
                     <div>
                       <label htmlFor="message" className="block text-sm font-medium text-slate-900 mb-2">
-                        Message
+                        {t('contact.message')}
                       </label>
                       <textarea
                         id="message"
@@ -259,7 +261,7 @@ export default function ContactPage() {
                         required
                         rows={5}
                         className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-colors resize-none"
-                        placeholder="Tell us about your case..."
+                        placeholder={t('contact.messageInputPlaceholder')}
                       />
                     </div>
 
@@ -270,7 +272,7 @@ export default function ContactPage() {
                       size="lg"
                       className="w-full"
                     >
-                      Send Message
+                      {t('contact.sendButton')}
                     </Button>
                   </form>
                 )}
@@ -279,14 +281,14 @@ export default function ContactPage() {
               {/* CTA to Assessment */}
               <div className="mt-8 bg-emerald-50 border border-emerald-200 rounded-lg p-6">
                 <h3 className="font-semibold text-slate-900 mb-2">
-                  Ready to get started?
+                  {t('contact.readyToStart')}
                 </h3>
                 <p className="text-slate-600 mb-4">
-                  Take our free visa assessment to see which immigration pathways you may qualify for.
+                  {t('contact.assessmentCTA')}
                 </p>
                 <Link href="/assessment">
                   <Button variant="secondary" size="lg">
-                    Start Free Assessment
+                    {t('contact.startAssessment')}
                   </Button>
                 </Link>
               </div>

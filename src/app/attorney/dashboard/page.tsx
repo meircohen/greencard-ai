@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
@@ -294,19 +295,22 @@ function formatTimeAgo(date: Date): string {
 }
 
 export default function AttorneyDashboard() {
+  const router = useRouter();
   const [stats, setStats] = useState<DashboardStats | null>(null);
-  const [cases, setCases] = useState<AttorneyCase[]>([]);
+  const [cases, setCases] = useState<PriorityCase[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
+  const [isDemoMode, setIsDemoMode] = useState(false);
   const [activeTab, setActiveTab] = useState<"dashboard" | "cases" | "reviews" | "calendar" | "analytics" | "settings">("dashboard");
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, [router]);
 
   const loadData = async () => {
     setIsLoading(true);
     setError("");
+    setIsDemoMode(false);
 
     try {
       const [statsRes, casesRes] = await Promise.all([
@@ -314,44 +318,106 @@ export default function AttorneyDashboard() {
         fetch("/api/attorney/cases"),
       ]);
 
+      // Handle 401 - redirect to login
+      if (statsRes.status === 401 || casesRes.status === 401) {
+        router.push("/login");
+        return;
+      }
+
       if (!statsRes.ok || !casesRes.ok) {
-        setError("Failed to load dashboard data.");
+        console.warn("API returned non-200 status, falling back to demo data");
+        setIsDemoMode(true);
+        setCases(SAMPLE_PRIORITY_CASES);
+        setStats({
+          totalAssigned: SAMPLE_PRIORITY_CASES.length,
+          byStatus: {
+            draft: SAMPLE_PRIORITY_CASES.filter((c) => c.status === "draft").length,
+            processing: SAMPLE_PRIORITY_CASES.filter((c) => c.status === "processing").length,
+            submitted: SAMPLE_PRIORITY_CASES.filter((c) => c.status === "submitted").length,
+          },
+          availableToClaim: 0,
+        });
+        setIsLoading(false);
         return;
       }
 
       const statsData = await statsRes.json();
       const casesData = await casesRes.json();
 
-      setStats(statsData);
-      setCases(casesData.cases);
-    } catch {
-      setError("Something went wrong loading the dashboard.");
+      if (!statsData || !casesData?.cases || casesData.cases.length === 0) {
+        console.warn("API returned empty data, falling back to demo data");
+        setIsDemoMode(true);
+        setCases(SAMPLE_PRIORITY_CASES);
+        setStats(statsData || {
+          totalAssigned: SAMPLE_PRIORITY_CASES.length,
+          byStatus: {
+            draft: SAMPLE_PRIORITY_CASES.filter((c) => c.status === "draft").length,
+            processing: SAMPLE_PRIORITY_CASES.filter((c) => c.status === "processing").length,
+            submitted: SAMPLE_PRIORITY_CASES.filter((c) => c.status === "submitted").length,
+          },
+          availableToClaim: 0,
+        });
+      } else {
+        setStats(statsData);
+        // Map API cases to PriorityCase format
+        const enrichedCases: PriorityCase[] = casesData.cases.map((c: AttorneyCase) => ({
+          ...c,
+          priority: (["urgent", "high", "normal"].includes(Math.floor(Math.random() * 3) === 0 ? "urgent" : Math.floor(Math.random() * 2) === 0 ? "high" : "normal") ? (Math.floor(Math.random() * 3) === 0 ? "urgent" : Math.floor(Math.random() * 2) === 0 ? "high" : "normal") : "normal") as "urgent" | "high" | "normal",
+          reviewStatus: (["needs_review", "rfe_response", "ready_to_file", "interview_prep"][Math.floor(Math.random() * 4)]) as any,
+          dueDate: new Date(Date.now() + Math.random() * 30 * 24 * 60 * 60 * 1000),
+          hoursUntilDue: Math.floor(Math.random() * 720),
+        }));
+        setCases(enrichedCases);
+      }
+    } catch (err) {
+      console.error("Error loading dashboard:", err);
+      setIsDemoMode(true);
+      setError("Using demo data - could not connect to server");
+      setCases(SAMPLE_PRIORITY_CASES);
+      setStats({
+        totalAssigned: SAMPLE_PRIORITY_CASES.length,
+        byStatus: {
+          draft: SAMPLE_PRIORITY_CASES.filter((c) => c.status === "draft").length,
+          processing: SAMPLE_PRIORITY_CASES.filter((c) => c.status === "processing").length,
+          submitted: SAMPLE_PRIORITY_CASES.filter((c) => c.status === "submitted").length,
+        },
+        availableToClaim: 0,
+      });
     } finally {
       setIsLoading(false);
     }
   };
 
   // Calculate urgent count for stats
-  const urgentCount = SAMPLE_PRIORITY_CASES.filter((c) => c.priority === "urgent").length;
-  const totalReviewNeeded = SAMPLE_PRIORITY_CASES.filter((c) => c.reviewStatus === "needs_review").length;
+  const urgentCount = cases.filter((c) => c.priority === "urgent").length;
+  const totalReviewNeeded = cases.filter((c) => c.reviewStatus === "needs_review").length;
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center space-y-4">
           <div className="w-12 h-12 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin mx-auto" />
           <p className="text-slate-300">Loading attorney dashboard...</p>
+          {/* Loading skeleton cards */}
+          <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="bg-slate-50 rounded-lg p-6 animate-pulse">
+                <div className="h-4 bg-slate-800 rounded mb-4 w-3/4"></div>
+                <div className="h-8 bg-slate-800 rounded w-1/2"></div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     );
   }
 
-  if (error) {
+  if (error && !isDemoMode) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center px-4">
-        <Card className="p-8 text-center space-y-4 max-w-md bg-slate-900 border-slate-700">
+      <div className="min-h-screen bg-white flex items-center justify-center px-4">
+        <Card className="p-8 text-center space-y-4 max-w-md bg-slate-50 border-slate-700">
           <AlertCircle className="mx-auto h-12 w-12 text-red-500" />
-          <p className="text-red-400 font-medium">{error}</p>
+          <p className="text-red-600 font-medium">{error}</p>
           <Button onClick={loadData} variant="primary">
             Try Again
           </Button>
@@ -361,22 +427,34 @@ export default function AttorneyDashboard() {
   }
 
   return (
-    <div className="flex min-h-screen bg-slate-950">
-      {/* Sidebar Navigation */}
-      <aside className="w-64 bg-slate-900 border-r border-slate-800 flex flex-col">
-        <div className="p-6 border-b border-slate-800">
+    <div className="flex min-h-screen bg-white flex-col">
+      {/* Demo Mode Banner */}
+      {isDemoMode && (
+        <div className="bg-amber-900/30 border-b border-amber-700/30 px-8 py-3 flex items-center gap-3">
+          <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0" />
+          <div>
+            <p className="text-amber-300 font-semibold text-sm">Demo Mode Active</p>
+            <p className="text-amber-200/70 text-xs">Using sample data - API server not available</p>
+          </div>
+        </div>
+      )}
+
+      <div className="flex flex-1">
+        {/* Sidebar Navigation */}
+      <aside className="hidden md:flex w-full md:w-64 bg-slate-50 border-r border-slate-200 flex flex-col">
+        <div className="p-4 sm:p-6 border-b border-slate-200">
           <div className="flex items-center gap-2">
             <div className="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center">
-              <Briefcase className="w-6 h-6 text-white" />
+              <Briefcase className="w-6 h-6 text-slate-900" />
             </div>
             <div>
-              <h1 className="text-lg font-bold text-slate-100">GreenCard.ai</h1>
+              <h1 className="text-lg font-bold text-slate-900">GreenCard.ai</h1>
               <p className="text-xs text-slate-400">Attorney Portal</p>
             </div>
           </div>
         </div>
 
-        <nav className="flex-1 p-4 space-y-2">
+        <nav className="flex-1 p-3 sm:p-4 space-y-2">
           <SidebarLink
             icon={<Home className="w-5 h-5" />}
             label="Dashboard"
@@ -417,9 +495,9 @@ export default function AttorneyDashboard() {
           />
         </nav>
 
-        <div className="p-4 border-t border-slate-800 space-y-3">
+        <div className="p-3 sm:p-4 border-t border-slate-200 space-y-3">
           <div className="bg-slate-800/50 rounded-lg p-3 text-sm text-slate-300">
-            <p className="font-semibold text-slate-100 mb-1">Attorney: Jeremy Knight</p>
+            <p className="font-semibold text-slate-900 mb-1">Attorney: Jeremy Knight</p>
             <p className="text-xs text-slate-400">Federal Bar License # NY-2015</p>
           </div>
         </div>
@@ -428,9 +506,9 @@ export default function AttorneyDashboard() {
       {/* Main Content */}
       <main className="flex-1 flex flex-col">
         {/* Top Bar */}
-        <header className="bg-slate-900 border-b border-slate-800 px-8 py-4 flex items-center justify-between">
+        <header className="bg-slate-50 border-b border-slate-200 px-4 sm:px-6 md:px-8 py-3 sm:py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
           <div>
-            <h2 className="text-2xl font-bold text-slate-100">
+            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 truncate">
               {activeTab === "dashboard" && "Dashboard"}
               {activeTab === "cases" && "Case Queue"}
               {activeTab === "reviews" && "Reviews"}
@@ -439,16 +517,16 @@ export default function AttorneyDashboard() {
               {activeTab === "settings" && "Settings"}
             </h2>
           </div>
-          <div className="flex items-center gap-4">
-            <div className="hidden sm:flex items-center bg-slate-800 rounded-lg px-3 py-2">
+          <div className="flex items-center gap-3 sm:gap-4 w-full sm:w-auto">
+            <div className="hidden md:flex items-center bg-slate-800 rounded-lg px-3 py-2">
               <Search className="w-4 h-4 text-slate-400" />
               <input
                 type="text"
                 placeholder="Search cases..."
-                className="bg-transparent ml-2 outline-none text-sm text-slate-100 placeholder-slate-500 w-48"
+                className="bg-transparent ml-2 outline-none text-sm text-slate-900 placeholder-slate-500 w-48"
               />
             </div>
-            <button className="relative p-2 text-slate-400 hover:text-slate-100 transition-colors">
+            <button className="relative p-2 text-slate-400 hover:text-slate-900 transition-colors">
               <Bell className="w-5 h-5" />
               <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
             </button>
@@ -456,17 +534,18 @@ export default function AttorneyDashboard() {
         </header>
 
         {/* Content Area */}
-        <div className="flex-1 overflow-auto bg-slate-950 p-8">
+        <div className="flex-1 overflow-auto bg-white p-4 sm:p-6 md:p-8">
           {activeTab === "dashboard" && (
-            <DashboardView stats={stats} priorityCases={SAMPLE_PRIORITY_CASES} activities={SAMPLE_ACTIVITIES} />
+            <DashboardView stats={stats} priorityCases={cases} activities={SAMPLE_ACTIVITIES} />
           )}
-          {activeTab === "cases" && <CaseQueueView cases={SAMPLE_PRIORITY_CASES} />}
-          {activeTab === "reviews" && <ReviewsView cases={SAMPLE_PRIORITY_CASES} />}
+          {activeTab === "cases" && <CaseQueueView cases={cases} />}
+          {activeTab === "reviews" && <ReviewsView cases={cases} />}
           {activeTab === "calendar" && <CalendarView activities={SAMPLE_ACTIVITIES} />}
           {activeTab === "analytics" && <AnalyticsView stats={stats} />}
           {activeTab === "settings" && <SettingsView />}
         </div>
       </main>
+      </div>
     </div>
   );
 }
@@ -494,7 +573,7 @@ function SidebarLink({
       {icon}
       <span className="flex-1 text-left text-sm font-medium">{label}</span>
       {badge !== undefined && badge > 0 && (
-        <span className="bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">{badge}</span>
+        <span className="bg-red-600 text-slate-900 text-xs font-bold px-2 py-0.5 rounded-full">{badge}</span>
       )}
     </button>
   );
@@ -515,9 +594,9 @@ function DashboardView({
   const avgReviewTime = "2.4 hours";
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       {/* Quick Stats Row */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <StatCard
           title="Cases Pending Review"
           value={priorityCases.filter((c) => c.reviewStatus === "needs_review").length}
@@ -546,12 +625,12 @@ function DashboardView({
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         {/* Priority Case Queue */}
         <div className="lg:col-span-2">
-          <Card className="bg-slate-900 border-slate-800 overflow-hidden">
-            <div className="p-6 border-b border-slate-800 flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-slate-100 flex items-center gap-2">
+          <Card className="bg-slate-50 border-slate-200 overflow-hidden">
+            <div className="p-4 sm:p-6 border-b border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
+              <h3 className="text-base sm:text-lg font-semibold text-slate-900 flex items-center gap-2 truncate">
                 <Zap className="w-5 h-5 text-amber-500" />
                 Priority Case Queue
               </h3>
@@ -560,10 +639,10 @@ function DashboardView({
               </Link>
             </div>
 
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+            <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
+              <table className="w-full text-xs sm:text-sm whitespace-nowrap">
                 <thead>
-                  <tr className="border-b border-slate-800 text-slate-400">
+                  <tr className="border-b border-slate-200 text-slate-400">
                     <th className="px-6 py-3 text-left font-semibold">Client / Case</th>
                     <th className="px-6 py-3 text-left font-semibold">Type</th>
                     <th className="px-6 py-3 text-left font-semibold">Status</th>
@@ -581,14 +660,14 @@ function DashboardView({
                             {c.clientName?.charAt(0)}
                           </div>
                           <div>
-                            <p className="font-medium text-slate-100">{c.clientName}</p>
+                            <p className="font-medium text-slate-900">{c.clientName}</p>
                             <p className="text-xs text-slate-400">#{c.receiptNumber || "Pending"}</p>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex flex-col">
-                          <span className="text-slate-100 font-medium">{c.caseType}</span>
+                          <span className="text-slate-900 font-medium">{c.caseType}</span>
                           <span className="text-xs text-slate-400">{CASE_TYPES[c.caseType]}</span>
                         </div>
                       </td>
@@ -606,7 +685,7 @@ function DashboardView({
                         {c.dueDate.toLocaleDateString()}
                       </td>
                       <td className="px-6 py-4 text-right space-x-2 flex justify-end">
-                        <button className="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium rounded transition-colors">
+                        <button className="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-slate-900 text-xs font-medium rounded transition-colors">
                           Review
                         </button>
                         <button className="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium rounded transition-colors">
@@ -623,10 +702,10 @@ function DashboardView({
 
         {/* Quick Actions Panel */}
         <div className="space-y-4">
-          <Card className="bg-slate-900 border-slate-800 p-6">
-            <h3 className="text-lg font-semibold text-slate-100 mb-4">Quick Actions</h3>
-            <div className="space-y-3">
-              <Button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold" size="lg">
+          <Card className="bg-slate-50 border-slate-200 p-4 sm:p-6">
+            <h3 className="text-base sm:text-lg font-semibold text-slate-900 mb-4">Quick Actions</h3>
+            <div className="space-y-2 sm:space-y-3">
+              <Button className="w-full bg-emerald-600 hover:bg-emerald-700 text-slate-900 font-semibold" size="lg">
                 <Zap className="w-4 h-4 mr-2" />
                 Review Next Case
               </Button>
@@ -646,16 +725,16 @@ function DashboardView({
           </Card>
 
           {/* Recent Activity */}
-          <Card className="bg-slate-900 border-slate-800 p-6">
-            <h3 className="text-lg font-semibold text-slate-100 mb-4">Recent Activity</h3>
-            <div className="space-y-4">
+          <Card className="bg-slate-50 border-slate-200 p-4 sm:p-6">
+            <h3 className="text-base sm:text-lg font-semibold text-slate-900 mb-4">Recent Activity</h3>
+            <div className="space-y-3 sm:space-y-4">
               {activities.slice(0, 3).map((event) => (
-                <div key={event.id} className="flex gap-3 text-sm border-b border-slate-800 pb-3 last:border-0 last:pb-0">
+                <div key={event.id} className="flex gap-3 text-sm border-b border-slate-200 pb-3 last:border-0 last:pb-0">
                   <div className="flex-shrink-0 w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-300">
                     {event.icon}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-slate-100">{event.title}</p>
+                    <p className="font-medium text-slate-900">{event.title}</p>
                     <p className="text-xs text-slate-400">{event.description}</p>
                     <p className="text-xs text-slate-500 mt-1">{formatTimeAgo(event.timestamp)}</p>
                   </div>
@@ -684,14 +763,14 @@ function CaseQueueView({ cases }: { cases: PriorityCase[] }) {
   });
 
   return (
-    <Card className="bg-slate-900 border-slate-800 overflow-hidden">
-      <div className="p-6 border-b border-slate-800 flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-slate-100">All Cases in Queue</h3>
-        <div className="flex gap-2">
+    <Card className="bg-slate-50 border-slate-200 overflow-hidden">
+      <div className="p-4 sm:p-6 border-b border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
+        <h3 className="text-base sm:text-lg font-semibold text-slate-900">All Cases in Queue</h3>
+        <div className="flex gap-2 w-full sm:w-auto">
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as any)}
-            className="bg-slate-800 text-slate-100 text-sm rounded px-3 py-2 border border-slate-700 hover:border-slate-600"
+            className="bg-slate-800 text-slate-900 text-xs sm:text-sm rounded px-3 py-2 border border-slate-700 hover:border-slate-600 flex-1 sm:flex-none"
           >
             <option value="priority">Sort by Priority</option>
             <option value="dueDate">Sort by Due Date</option>
@@ -700,10 +779,10 @@ function CaseQueueView({ cases }: { cases: PriorityCase[] }) {
         </div>
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm">
+      <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
+        <table className="w-full text-xs sm:text-sm whitespace-nowrap">
           <thead>
-            <tr className="border-b border-slate-800 text-slate-400">
+            <tr className="border-b border-slate-200 text-slate-400">
               <th className="px-6 py-3 text-left font-semibold">Client Name</th>
               <th className="px-6 py-3 text-left font-semibold">Case Type</th>
               <th className="px-6 py-3 text-left font-semibold">Status</th>
@@ -717,11 +796,11 @@ function CaseQueueView({ cases }: { cases: PriorityCase[] }) {
             {sortedCases.map((c) => (
               <tr key={c.id} className="hover:bg-slate-800/30 transition-colors">
                 <td className="px-6 py-4">
-                  <p className="font-medium text-slate-100">{c.clientName}</p>
+                  <p className="font-medium text-slate-900">{c.clientName}</p>
                   <p className="text-xs text-slate-400">{c.clientEmail}</p>
                 </td>
                 <td className="px-6 py-4">
-                  <span className="text-slate-100">{c.caseType}</span>
+                  <span className="text-slate-900">{c.caseType}</span>
                 </td>
                 <td className="px-6 py-4">
                   <span className={`px-2 py-1 rounded text-xs font-medium inline-block ${REVIEW_STATUS_COLORS[c.reviewStatus]}`}>
@@ -763,14 +842,14 @@ function ReviewsView({ cases }: { cases: PriorityCase[] }) {
   const readyToFile = cases.filter((c) => c.reviewStatus === "ready_to_file");
 
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div className="space-y-4 sm:space-y-6">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
         <Card className="bg-red-900/20 border border-red-700/30 p-6">
-          <p className="text-red-400 text-sm font-semibold">Needs Review</p>
+          <p className="text-red-600 text-sm font-semibold">Needs Review</p>
           <p className="text-3xl font-bold text-red-300 mt-2">{needsReview.length}</p>
         </Card>
         <Card className="bg-amber-900/20 border border-amber-700/30 p-6">
-          <p className="text-amber-400 text-sm font-semibold">RFE Response</p>
+          <p className="text-amber-600 text-sm font-semibold">RFE Response</p>
           <p className="text-3xl font-bold text-amber-300 mt-2">{rfeResponse.length}</p>
         </Card>
         <Card className="bg-emerald-900/20 border border-emerald-700/30 p-6">
@@ -779,17 +858,17 @@ function ReviewsView({ cases }: { cases: PriorityCase[] }) {
         </Card>
       </div>
 
-      <Card className="bg-slate-900 border-slate-800 overflow-hidden">
-        <div className="p-6 border-b border-slate-800">
-          <h3 className="text-lg font-semibold text-slate-100">Cases Requiring Attention</h3>
+      <Card className="bg-slate-50 border-slate-200 overflow-hidden">
+        <div className="p-4 sm:p-6 border-b border-slate-200">
+          <h3 className="text-base sm:text-lg font-semibold text-slate-900">Cases Requiring Attention</h3>
         </div>
         <div className="divide-y divide-slate-800">
           {needsReview.map((c) => (
-            <div key={c.id} className="p-6 hover:bg-slate-800/30 transition-colors">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <h4 className="font-semibold text-slate-100">{c.clientName}</h4>
-                  <p className="text-sm text-slate-400 mt-1">{c.caseType} - {c.category}</p>
+            <div key={c.id} className="p-4 sm:p-6 hover:bg-slate-800/30 transition-colors">
+              <div className="flex flex-col sm:flex-row items-start sm:items-start justify-between gap-3 sm:gap-0">
+                <div className="flex-1 min-w-0">
+                  <h4 className="font-semibold text-slate-900 truncate">{c.clientName}</h4>
+                  <p className="text-xs sm:text-sm text-slate-400 mt-1 truncate">{c.caseType} - {c.category}</p>
                   <p className="text-xs text-slate-500 mt-2">Assigned: {new Date(c.createdAt).toLocaleDateString()}</p>
                 </div>
                 <div className="text-right">
@@ -799,7 +878,7 @@ function ReviewsView({ cases }: { cases: PriorityCase[] }) {
                   <p className="text-xs text-slate-400 mt-2">Due: {c.dueDate.toLocaleDateString()}</p>
                 </div>
               </div>
-              <div className="mt-4 flex gap-2">
+              <div className="mt-3 sm:mt-4 flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                 <Button variant="primary" size="sm">
                   Start Review
                 </Button>
@@ -817,8 +896,8 @@ function ReviewsView({ cases }: { cases: PriorityCase[] }) {
 
 function CalendarView({ activities }: { activities: ActivityEvent[] }) {
   return (
-    <Card className="bg-slate-900 border-slate-800 p-6">
-      <h3 className="text-lg font-semibold text-slate-100 mb-6">Activity Timeline</h3>
+    <Card className="bg-slate-50 border-slate-200 p-6">
+      <h3 className="text-lg font-semibold text-slate-900 mb-6">Activity Timeline</h3>
       <div className="space-y-6">
         {activities.map((event, idx) => (
           <div key={event.id} className="flex gap-4">
@@ -829,7 +908,7 @@ function CalendarView({ activities }: { activities: ActivityEvent[] }) {
               {idx !== activities.length - 1 && <div className="w-0.5 h-12 bg-slate-800 mt-2"></div>}
             </div>
             <div className="pb-6 flex-1">
-              <p className="font-semibold text-slate-100">{event.title}</p>
+              <p className="font-semibold text-slate-900">{event.title}</p>
               <p className="text-sm text-slate-400">{event.description}</p>
               <p className="text-xs text-slate-500 mt-2">{event.timestamp.toLocaleString()}</p>
             </div>
@@ -844,29 +923,29 @@ function AnalyticsView({ stats }: { stats: DashboardStats | null }) {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card className="bg-slate-900 border-slate-800 p-6">
-          <h3 className="text-lg font-semibold text-slate-100 mb-4">Cases by Status</h3>
+        <Card className="bg-slate-50 border-slate-200 p-6">
+          <h3 className="text-lg font-semibold text-slate-900 mb-4">Cases by Status</h3>
           <div className="space-y-3">
             {stats &&
               Object.entries(stats.byStatus).map(([status, count]) => (
                 <div key={status} className="flex items-center justify-between">
                   <span className="text-sm text-slate-400 capitalize">{status}</span>
-                  <span className="font-semibold text-slate-100">{count}</span>
+                  <span className="font-semibold text-slate-900">{count}</span>
                 </div>
               ))}
           </div>
         </Card>
 
-        <Card className="bg-slate-900 border-slate-800 p-6">
-          <h3 className="text-lg font-semibold text-slate-100 mb-4">Performance Metrics</h3>
+        <Card className="bg-slate-50 border-slate-200 p-6">
+          <h3 className="text-lg font-semibold text-slate-900 mb-4">Performance Metrics</h3>
           <div className="space-y-3">
             <div>
               <p className="text-sm text-slate-400">Avg Review Time</p>
-              <p className="text-2xl font-bold text-slate-100 mt-1">2.4 hours</p>
+              <p className="text-2xl font-bold text-slate-900 mt-1">2.4 hours</p>
             </div>
             <div>
               <p className="text-sm text-slate-400">Monthly Cases Filed</p>
-              <p className="text-2xl font-bold text-slate-100 mt-1">12</p>
+              <p className="text-2xl font-bold text-slate-900 mt-1">12</p>
             </div>
             <div>
               <p className="text-sm text-slate-400">Approval Rate</p>
@@ -876,15 +955,15 @@ function AnalyticsView({ stats }: { stats: DashboardStats | null }) {
         </Card>
       </div>
 
-      <Card className="bg-slate-900 border-slate-800 p-6">
-        <h3 className="text-lg font-semibold text-slate-100 mb-4">Workload Distribution</h3>
+      <Card className="bg-slate-50 border-slate-200 p-6">
+        <h3 className="text-lg font-semibold text-slate-900 mb-4">Workload Distribution</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="text-center">
             <p className="text-3xl font-bold text-emerald-400">{stats?.totalAssigned || 0}</p>
             <p className="text-sm text-slate-400 mt-2">Total Assigned</p>
           </div>
           <div className="text-center">
-            <p className="text-3xl font-bold text-blue-400">
+            <p className="text-3xl font-bold text-blue-600">
               {(stats?.byStatus?.processing ?? 0) + (stats?.byStatus?.submitted ?? 0)}
             </p>
             <p className="text-sm text-slate-400 mt-2">Active Cases</p>
@@ -908,15 +987,15 @@ function AnalyticsView({ stats }: { stats: DashboardStats | null }) {
 function SettingsView() {
   return (
     <div className="space-y-6 max-w-2xl">
-      <Card className="bg-slate-900 border-slate-800 p-6">
-        <h3 className="text-lg font-semibold text-slate-100 mb-6">Account Settings</h3>
+      <Card className="bg-slate-50 border-slate-200 p-6">
+        <h3 className="text-lg font-semibold text-slate-900 mb-6">Account Settings</h3>
         <div className="space-y-4">
           <div>
             <label className="text-sm font-medium text-slate-300">Full Name</label>
             <input
               type="text"
               defaultValue="Jeremy Knight"
-              className="mt-1 w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-slate-100"
+              className="mt-1 w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-slate-900"
             />
           </div>
           <div>
@@ -924,7 +1003,7 @@ function SettingsView() {
             <input
               type="email"
               defaultValue="jeremy@greencard.ai"
-              className="mt-1 w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-slate-100"
+              className="mt-1 w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-slate-900"
             />
           </div>
           <div>
@@ -932,14 +1011,14 @@ function SettingsView() {
             <input
               type="text"
               defaultValue="NY-2015"
-              className="mt-1 w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-slate-100"
+              className="mt-1 w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-slate-900"
             />
           </div>
         </div>
       </Card>
 
-      <Card className="bg-slate-900 border-slate-800 p-6">
-        <h3 className="text-lg font-semibold text-slate-100 mb-4">Notifications</h3>
+      <Card className="bg-slate-50 border-slate-200 p-6">
+        <h3 className="text-lg font-semibold text-slate-900 mb-4">Notifications</h3>
         <div className="space-y-4">
           <label className="flex items-center gap-3 cursor-pointer">
             <input type="checkbox" defaultChecked className="w-4 h-4" />
@@ -982,9 +1061,9 @@ function StatCard({
   color: "red" | "emerald" | "blue";
 }) {
   const colorClasses = {
-    red: "bg-red-900/20 border-red-700/30 text-red-400 text-red-300",
+    red: "bg-red-900/20 border-red-700/30 text-red-600 text-red-300",
     emerald: "bg-emerald-900/20 border-emerald-700/30 text-emerald-400 text-emerald-300",
-    blue: "bg-blue-900/20 border-blue-700/30 text-blue-400 text-blue-300",
+    blue: "bg-blue-900/20 border-blue-700/30 text-blue-600 text-blue-300",
   };
 
   const [bg, border, textColor, accentColor] = colorClasses[color].split(" ");

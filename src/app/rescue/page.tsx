@@ -1,5 +1,6 @@
 'use client';
 import React, { useState } from 'react';
+import { useTranslation } from '@/i18n';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/Button';
@@ -18,6 +19,7 @@ import {
 } from 'lucide-react';
 
 export default function RescuePage() {
+  const { t } = useTranslation();
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
 
   const painPoints = [
@@ -95,7 +97,7 @@ export default function RescuePage() {
 
   const serviceTiers = [
     {
-      name: 'Free Case Audit',
+      name: t('rescue.freeCaseAudit'),
       price: '$0',
       features: [
         '20-minute attorney review of what was filed',
@@ -143,7 +145,7 @@ export default function RescuePage() {
       answer: 'They are legally required to. We help you with the request and can follow up with bar complaints if necessary.',
     },
     {
-      question: 'Is the Free Case Audit really free?',
+      question: `Is the ${t('rescue.freeCaseAudit')} really free?`,
       answer: 'Yes. No credit card, no obligation. 20 minutes with an attorney. We just want to understand your situation.',
     },
     {
@@ -161,7 +163,7 @@ export default function RescuePage() {
         <section className="bg-gradient-to-b from-blue-900 to-blue-800 text-white py-20 px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-4xl sm:text-5xl font-bold mb-6">
-              Switch to GreenCard.ai Mid-Case. Zero Risk.
+              {t('rescue.heroTitle')}
             </h1>
             <p className="text-lg sm:text-xl text-blue-100 mb-8 leading-relaxed">
               Stuck with a bad attorney? Ghosted after paying? Case filed by a notario? We take over your case, fix what's broken, and get you back on track. Switching attorneys does NOT hurt your case at USCIS.
@@ -171,26 +173,26 @@ export default function RescuePage() {
                 onClick={() => document.getElementById('form-section')?.scrollIntoView({ behavior: 'smooth' })}
                 className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg font-semibold"
               >
-                Free Case Audit
+                {t('rescue.freeCaseAudit')}
               </Button>
               <Button
                 onClick={() => document.getElementById('process-section')?.scrollIntoView({ behavior: 'smooth' })}
                 className="bg-white text-blue-900 hover:bg-blue-50 px-8 py-3 rounded-lg font-semibold"
               >
-                Learn How Transfers Work
+                {t('rescue.learnTransfers')}
               </Button>
             </div>
           </div>
         </section>
 
-        {/* Why Clients Switch */}
+        {/* {t('rescue.whySwitch')} */}
         <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-50">
           <div className="max-w-6xl mx-auto">
             <h2 className="text-3xl font-bold text-gray-900 mb-4 text-center">
-              Why Clients Switch
+              {t('rescue.whySwitch')}
             </h2>
             <p className="text-center text-gray-600 mb-12">
-              These situations are more common than you think. We fix them every week.
+              {t('rescue.whySwitchSubtitle')}
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -217,10 +219,10 @@ export default function RescuePage() {
         <section id="process-section" className="py-16 px-4 sm:px-6 lg:px-8">
           <div className="max-w-6xl mx-auto">
             <h2 className="text-3xl font-bold text-gray-900 mb-4 text-center">
-              The Transfer Process
+              {t('rescue.processHeading')}
             </h2>
             <p className="text-center text-gray-600 mb-12">
-              Five straightforward steps to get your case under control.
+              {t('rescue.processSubtitle')}
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-12">
@@ -258,7 +260,7 @@ export default function RescuePage() {
         <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-50">
           <div className="max-w-6xl mx-auto">
             <h2 className="text-3xl font-bold text-gray-900 mb-4 text-center">
-              Three Service Tiers
+              {t('rescue.tiersHeading')}
             </h2>
             <p className="text-center text-gray-600 mb-12">
               Choose the level of support your case needs.
@@ -352,7 +354,7 @@ export default function RescuePage() {
         <section id="form-section" className="py-16 px-4 sm:px-6 lg:px-8">
           <div className="max-w-2xl mx-auto">
             <h2 className="text-3xl font-bold text-gray-900 mb-4 text-center">
-              Free Case Audit
+              {t('rescue.freeCaseAudit')}
             </h2>
             <p className="text-center text-gray-600 mb-8">
               20 minutes with Jeremy Knight. No credit card required.
@@ -469,14 +471,14 @@ export default function RescuePage() {
               Your Case Deserves Better
             </h2>
             <p className="text-lg text-blue-100 mb-8">
-              Free Case Audit. No obligation. Licensed attorney review.
+              {t('rescue.freeCaseAudit')}. No obligation. Licensed attorney review.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
               <Button
                 onClick={() => document.getElementById('form-section')?.scrollIntoView({ behavior: 'smooth' })}
                 className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg font-semibold"
               >
-                Get Your Free Case Audit
+                Get Your {t('rescue.freeCaseAudit')}
               </Button>
             </div>
             <div className="flex flex-col sm:flex-row gap-6 justify-center text-blue-100">

@@ -171,11 +171,10 @@ Return the filled form as a JSON object with field names as keys.`;
   }
 
   const jsonMatch = responseText.match(/\{[\s\S]*\}/);
-  if (jsonMatch) {
-    return JSON.parse(jsonMatch[0]);
+  if (!jsonMatch) {
+    throw new Error('Failed to parse AI response');
   }
-
-  return {};
+  return JSON.parse(jsonMatch[0]);
 }
 
 async function performValidation(
@@ -235,17 +234,16 @@ Return a JSON object with:
   }
 
   const jsonMatch = responseText.match(/\{[\s\S]*\}/);
-  if (jsonMatch) {
-    const result = JSON.parse(jsonMatch[0]);
-    return {
-      isValid: result.issues.filter((i: ValidationIssue) => i.severity === "error")
-        .length === 0,
-      issues: result.issues || [],
-      completeness: result.completeness || 0,
-    };
+  if (!jsonMatch) {
+    throw new Error('Failed to parse AI response');
   }
-
-  return { isValid: false, issues: [], completeness: 0 };
+  const result = JSON.parse(jsonMatch[0]);
+  return {
+    isValid: result.issues.filter((i: ValidationIssue) => i.severity === "error")
+      .length === 0,
+    issues: result.issues || [],
+    completeness: result.completeness || 0,
+  };
 }
 
 async function performSuggestions(
@@ -293,11 +291,10 @@ Return a JSON array of objects with:
   }
 
   const jsonMatch = responseText.match(/\[[\s\S]*\]/);
-  if (jsonMatch) {
-    return JSON.parse(jsonMatch[0]);
+  if (!jsonMatch) {
+    throw new Error('Failed to parse AI response');
   }
-
-  return [];
+  return JSON.parse(jsonMatch[0]);
 }
 
 export async function POST(request: NextRequest): Promise<Response> {

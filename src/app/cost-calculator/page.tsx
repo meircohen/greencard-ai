@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo } from "react";
 import { DollarSign, Users } from "lucide-react";
+import { useTranslation } from "@/i18n";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 
@@ -113,6 +114,7 @@ const CostDisplay: React.FC<{ amount: number }> = ({ amount }) => (
 );
 
 export default function CostCalculator() {
+  const { t } = useTranslation();
   const [caseType, setCaseType] = useState("Spouse of US Citizen");
   const [filingMethod, setFilingMethod] = useState<"self" | "attorney">("attorney");
   const [householdSize, setHouseholdSize] = useState(4);
@@ -134,18 +136,18 @@ export default function CostCalculator() {
   const incomeRequirement = povertyGuidelines[householdSize as keyof typeof povertyGuidelines] || 63200;
 
   return (
-    <div className="min-h-screen bg-midnight text-primary flex flex-col">
+    <div className="min-h-screen bg-white text-slate-900 flex flex-col">
       <Navbar />
       {/* Page Header */}
-      <div className="pt-32 pb-12 px-4 sm:px-6 lg:px-8 border-b border-white/10">
+      <div className="pt-32 pb-12 px-4 sm:px-6 lg:px-8 border-b border-slate-200">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center gap-2 mb-4">
             <DollarSign className="w-5 h-5 text-green-500" />
-            <span className="text-sm font-medium text-green-400">Financial Planning</span>
+            <span className="text-sm font-medium text-emerald-600">{t('calculator.financialPlanning')}</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-2">Immigration Cost Calculator</h1>
-          <p className="text-secondary text-lg">
-            Estimate total costs for your immigration case, including government fees and attorney services
+          <h1 className="text-4xl md:text-5xl font-bold mb-2">{t('calculator.title')}</h1>
+          <p className="text-slate-600 text-lg">
+            {t('calculator.subtitle')}
           </p>
         </div>
       </div>
@@ -156,15 +158,15 @@ export default function CostCalculator() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Left Panel: Configuration */}
             <div className="space-y-6">
-              <h2 className="text-2xl font-bold">Configure Your Case</h2>
+              <h2 className="text-2xl font-bold">{t('calculator.configureCase')}</h2>
 
               {/* Case Type */}
               <div className="space-y-3">
-                <label className="block text-sm font-medium text-secondary">Case Type</label>
+                <label className="block text-sm font-medium text-slate-600">{t('calculator.caseType')}</label>
                 <select
                   value={caseType}
                   onChange={(e) => setCaseType(e.target.value)}
-                  className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-primary focus:border-green-500/50 focus:outline-none transition-colors"
+                  className="w-full px-4 py-3 rounded-lg bg-white/5 border border-slate-200 text-slate-900 focus:border-green-500/50 focus:outline-none transition-colors"
                 >
                   {Object.keys(feeData).map((type) => (
                     <option key={type} value={type}>
@@ -176,36 +178,36 @@ export default function CostCalculator() {
 
               {/* Filing Method */}
               <div className="space-y-3">
-                <label className="block text-sm font-medium text-secondary">Filing Method</label>
+                <label className="block text-sm font-medium text-slate-600">{t('calculator.filingMethod')}</label>
                 <div className="flex gap-3">
                   <button
                     onClick={() => setFilingMethod("self")}
                     className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all duration-200 ${
                       filingMethod === "self"
-                        ? "bg-green-500/20 text-green-300 border border-green-500/50"
-                        : "bg-white/5 text-secondary border border-white/10 hover:bg-white/10"
+                        ? "bg-emerald-50 text-green-300 border border-green-500/50"
+                        : "bg-white/5 text-slate-600 border border-slate-200 hover:bg-white/10"
                     }`}
                   >
-                    Self-File
+                    {t('calculator.selfFile')}
                   </button>
                   <button
                     onClick={() => setFilingMethod("attorney")}
                     className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all duration-200 ${
                       filingMethod === "attorney"
-                        ? "bg-green-500/20 text-green-300 border border-green-500/50"
-                        : "bg-white/5 text-secondary border border-white/10 hover:bg-white/10"
+                        ? "bg-emerald-50 text-green-300 border border-green-500/50"
+                        : "bg-white/5 text-slate-600 border border-slate-200 hover:bg-white/10"
                     }`}
                   >
-                    With Attorney
+                    {t('calculator.withAttorney')}
                   </button>
                 </div>
               </div>
 
               {/* Household Size */}
               <div className="space-y-3">
-                <label className="block text-sm font-medium text-secondary flex items-center gap-2">
+                <label className="block text-sm font-medium text-slate-600 flex items-center gap-2">
                   <Users className="w-4 h-4" />
-                  Household Size (for I-864)
+                  {t('calculator.householdSize')}
                 </label>
                 <div className="flex gap-3">
                   {[2, 3, 4, 5, 6, 7, 8].map((size) => (
@@ -214,8 +216,8 @@ export default function CostCalculator() {
                       onClick={() => setHouseholdSize(size)}
                       className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
                         householdSize === size
-                          ? "bg-green-500/20 text-green-300 border border-green-500/50"
-                          : "bg-white/5 text-secondary border border-white/10 hover:bg-white/10"
+                          ? "bg-emerald-50 text-green-300 border border-green-500/50"
+                          : "bg-white/5 text-slate-600 border border-slate-200 hover:bg-white/10"
                       }`}
                     >
                       {size}
@@ -225,16 +227,16 @@ export default function CostCalculator() {
               </div>
 
               {/* Income Requirement Info Box */}
-              <div className="mt-8 p-6 rounded-lg bg-blue-500/10 border border-blue-500/30 space-y-3">
-                <h3 className="font-semibold text-blue-300">I-864 Income Requirement</h3>
+              <div className="mt-8 p-6 rounded-lg bg-blue-50 border border-blue-500/30 space-y-3">
+                <h3 className="font-semibold text-blue-300">{t('calculator.incomeRequirement')}</h3>
                 <div className="flex items-baseline justify-between">
-                  <span className="text-secondary text-sm">For household size {householdSize}:</span>
+                  <span className="text-slate-600 text-sm">{t('calculator.forHouseholdSize')} {householdSize}:</span>
                   <span className="text-2xl font-mono font-bold text-blue-300">
                     ${incomeRequirement.toLocaleString()}
                   </span>
                 </div>
                 <p className="text-xs text-blue-200/70">
-                  Affidavit of Support minimum income requirement for your household size. Your household income must be at least 100% of federal poverty guidelines (125% for sponsors with income less than the poverty line).
+                  {t('calculator.incomeRequirementInfo')}
                 </p>
               </div>
             </div>
@@ -242,27 +244,27 @@ export default function CostCalculator() {
             {/* Right Panel: Cost Breakdown */}
             <div className="lg:sticky lg:top-24 h-fit">
               <div className="space-y-6">
-                <h2 className="text-2xl font-bold">Cost Breakdown</h2>
+                <h2 className="text-2xl font-bold">{t('calculator.costBreakdown')}</h2>
 
                 {/* Fees List */}
-                <div className="space-y-3 p-6 rounded-lg bg-white/5 border border-white/10">
+                <div className="space-y-3 p-6 rounded-lg bg-white/5 border border-slate-200">
                   {Object.entries(caseData.fees).map(([feeName, amount]) => (
-                    <div key={feeName} className="flex justify-between items-center py-2 border-b border-white/5 last:border-b-0">
-                      <span className="text-secondary">{feeName}</span>
+                    <div key={feeName} className="flex justify-between items-center py-2 border-b border-slate-100 last:border-b-0">
+                      <span className="text-slate-600">{feeName}</span>
                       <CostDisplay amount={amount} />
                     </div>
                   ))}
 
                   {/* Subtotal */}
-                  <div className="flex justify-between items-center py-3 mt-4 pt-4 border-t border-white/10 font-medium">
-                    <span>Government Fees Subtotal</span>
+                  <div className="flex justify-between items-center py-3 mt-4 pt-4 border-t border-slate-200 font-medium">
+                    <span>{t('calculator.governmentFeesSubtotal')}</span>
                     <CostDisplay amount={calculation.subtotal} />
                   </div>
 
                   {/* Attorney Fee */}
                   {filingMethod === "attorney" && (
-                    <div className="flex justify-between items-center py-2 border-b border-white/5">
-                      <span className="text-secondary">Attorney Services</span>
+                    <div className="flex justify-between items-center py-2 border-b border-slate-100">
+                      <span className="text-slate-600">{t('calculator.attorneyServices')}</span>
                       <CostDisplay amount={calculation.attorneyFee} />
                     </div>
                   )}
@@ -270,21 +272,21 @@ export default function CostCalculator() {
 
                 {/* Total */}
                 <div className="p-6 rounded-lg bg-gradient-to-r from-green-500/20 to-green-600/20 border border-green-500/30 space-y-2">
-                  <p className="text-secondary text-sm">Total Estimated Cost</p>
+                  <p className="text-slate-600 text-sm">{t('calculator.totalEstimatedCost')}</p>
                   <div className="text-4xl font-bold text-green-300 font-mono">
                     ${calculation.total.toLocaleString()}
                   </div>
                   <p className="text-xs text-green-200/70">
                     {filingMethod === "attorney"
-                      ? "Including attorney services and all government fees"
-                      : "Government fees only. Consider consulting an attorney."}
+                      ? t('calculator.includingAttorneyServices')
+                      : t('calculator.governmentFeesOnly')}
                   </p>
                 </div>
 
                 {/* Info Box */}
-                <div className="p-4 rounded-lg bg-amber-500/10 border border-amber-500/30">
+                <div className="p-4 rounded-lg bg-amber-50 border border-amber-500/30">
                   <p className="text-xs text-amber-200">
-                    <strong>Disclaimer:</strong> This is an estimate based on current USCIS fee schedules as of April 2026. Actual costs may vary. Attorney fees are approximate and should be verified directly with your attorney. This calculator is for informational purposes only.
+                    {t('calculator.disclaimer')}
                   </p>
                 </div>
               </div>

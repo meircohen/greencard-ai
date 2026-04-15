@@ -1,4 +1,5 @@
 'use client';
+import { useTranslation } from '@/i18n';
 import React, { useState } from 'react';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
@@ -16,6 +17,7 @@ import {
 } from 'lucide-react';
 
 export default function VerifyPage() {
+  const { t } = useTranslation();
   const [searchInput, setSearchInput] = useState('');
   const [verificationResult, setVerificationResult] = useState<{
     status: 'verified' | 'warning' | 'unable' | null;

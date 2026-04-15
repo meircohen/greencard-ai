@@ -5,8 +5,10 @@ import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
 import { Shield, CheckCircle, AlertCircle, TrendingUp, Award, Lock } from 'lucide-react';
+import { useTranslation } from '@/i18n';
 
 export default function GuaranteePage() {
+  const { t } = useTranslation();
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
@@ -19,14 +21,14 @@ export default function GuaranteePage() {
               <CheckCircle size={40} className="text-white" />
             </div>
           </div>
-          <h1 className="text-5xl font-bold mb-6">The GreenCard Guarantee</h1>
-          <h2 className="text-2xl font-semibold mb-8">Zero Errors or We Refile Free</h2>
+          <h1 className="text-5xl font-bold mb-6">{t('guarantee.title')}</h1>
+          <h2 className="text-2xl font-semibold mb-8">{t('guarantee.subtitle')}</h2>
           <p className="text-lg text-blue-100 mb-12 max-w-2xl mx-auto">
-            Every application triple-checked by AI and reviewed by a licensed attorney. If USCIS rejects your filing due to our error, we refile at no cost and cover the government fees.
+            {t('guarantee.description')}
           </p>
           <Link href="/assessment">
             <Button size="lg" className="bg-green-500 hover:bg-green-600 text-white px-8 py-3">
-              File With Confidence
+              {t('guarantee.ctaButton')}
             </Button>
           </Link>
         </div>
@@ -35,7 +37,7 @@ export default function GuaranteePage() {
       {/* The Problem Section */}
       <section className="py-16 px-4 bg-gray-50">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-3xl font-bold text-blue-900 mb-12 text-center">Why Filing Errors Destroy Cases</h2>
+          <h2 className="text-3xl font-bold text-blue-900 mb-12 text-center">{t('guarantee.problemHeading')}</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="bg-white p-6 rounded-lg border-l-4 border-red-500 shadow-sm">
               <div className="text-3xl font-bold text-red-500 mb-2">7%+</div>
@@ -60,7 +62,7 @@ export default function GuaranteePage() {
       {/* Triple-Check Process */}
       <section className="py-16 px-4">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-3xl font-bold text-blue-900 mb-12 text-center">Our Triple-Check Process</h2>
+          <h2 className="text-3xl font-bold text-blue-900 mb-12 text-center">{t('guarantee.processHeading')}</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Step 1 */}
             <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-8 rounded-lg text-center">
@@ -89,7 +91,7 @@ export default function GuaranteePage() {
       {/* What's Covered */}
       <section className="py-16 px-4 bg-gray-50">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-3xl font-bold text-blue-900 mb-12 text-center">What Is Covered by Your Guarantee</h2>
+          <h2 className="text-3xl font-bold text-blue-900 mb-12 text-center">{t('guarantee.coveredHeading')}</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             <div className="bg-green-50 border-l-4 border-green-500 p-6 rounded flex gap-4">
               <CheckCircle size={24} className="text-green-500 flex-shrink-0 mt-1" />
@@ -270,7 +272,7 @@ export default function GuaranteePage() {
       {/* Trust Badges */}
       <section className="py-16 px-4 bg-gray-50">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-3xl font-bold text-blue-900 mb-12 text-center">Why You Can Trust Us</h2>
+          <h2 className="text-3xl font-bold text-blue-900 mb-12 text-center">{t('guarantee.trustHeading')}</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="bg-white p-8 rounded-lg shadow-sm text-center">
               <Award size={48} className="text-blue-900 mx-auto mb-4" />
@@ -294,19 +296,19 @@ export default function GuaranteePage() {
       {/* Bottom CTA */}
       <section className="py-20 px-4 bg-blue-900 text-white">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl font-bold mb-6">File Your Case With the Only Guarantee in Immigration</h2>
+          <h2 className="text-4xl font-bold mb-6">{t('guarantee.bottomCtaHeading')}</h2>
           <p className="text-lg text-blue-100 mb-12 max-w-2xl mx-auto">
-            Stop worrying about errors. Stop throwing away money on fees for rejected cases. GreenCard.ai gives you peace of mind backed by real legal expertise
+            {t('guarantee.bottomCtaSubtitle')}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/assessment">
               <Button size="lg" className="bg-green-500 hover:bg-green-600 text-white px-8 py-3">
-                Start Your Assessment
+                {t('hero.ctaPrimary')}
               </Button>
             </Link>
             <a href="https://wa.me/19547776678" target="_blank" rel="noopener noreferrer">
               <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3">
-                Chat on WhatsApp
+                {t('guarantee.chatWhatsapp')}
               </Button>
             </a>
           </div>

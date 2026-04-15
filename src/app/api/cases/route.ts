@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
-import { cases } from "@/lib/db/schema";
+import { cases, caseDeadlines } from "@/lib/db/schema";
 import { eq, or, desc } from "drizzle-orm";
 import { z } from "zod";
 import crypto from "crypto";
+import { generateDeadlines } from "@/lib/deadline-monitor";
+import { logger } from "@/lib/logger";
 
 const createCaseSchema = z.object({
   caseType: z.string().min(1, "caseType is required"),
@@ -93,6 +95,24 @@ export async function POST(request: NextRequest) {
         status: "draft",
       })
       .returning();
+
+    // Auto-generate deadlines if case has approval date (for cases being created after approval)
+    try {
+      const deadlines = generateDeadlines(caseId, parsed.caseType);
+      if (deadlines.length > 0) {
+        await db.insert(caseDeadlines).values(deadlines);
+        logger.info(
+          { caseId, count: deadlines.length },
+          'Auto-generated deadlines on case creation'
+        );
+      }
+    } catch (deadlineError) {
+      logger.error(
+        { caseId, error: deadlineError },
+        'Failed to auto-generate deadlines on case creation'
+      );
+      // Non-critical: continue returning case even if deadline generation fails
+    }
 
     return NextResponse.json(newCase, { status: 201 });
   } catch (error) {

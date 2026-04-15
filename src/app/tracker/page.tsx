@@ -1,4 +1,5 @@
 'use client';
+import { useTranslation } from '@/i18n';
 
 import React, { useState, useEffect } from 'react';
 import { Navbar } from '@/components/Navbar';
@@ -152,6 +153,7 @@ const demoStages: DemoCaseStage[] = [
 ];
 
 export default function TrackerPage() {
+  const { t } = useTranslation();
   const [receiptNumber, setReceiptNumber] = useState('');
   const [selectedForm, setSelectedForm] = useState('I-485');
   const [showSearchResult, setShowSearchResult] = useState(false);

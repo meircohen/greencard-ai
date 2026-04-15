@@ -1,5 +1,7 @@
 "use client";
 
+import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
 import { useState } from "react";
 import { useNotificationStore, Notification } from "@/lib/store";
 import { Bell, Check, CheckCheck, Trash2, AlertCircle, FileText, CreditCard, Info, TrendingUp } from "lucide-react";
@@ -88,9 +90,9 @@ function getIcon(type: Notification["type"]) {
     case "document":
       return <FileText className="w-5 h-5 text-green-500" />;
     case "billing":
-      return <CreditCard className="w-5 h-5 text-amber-400" />;
+      return <CreditCard className="w-5 h-5 text-amber-600" />;
     case "system":
-      return <Info className="w-5 h-5 text-gray-400" />;
+      return <Info className="w-5 h-5 text-slate-600" />;
   }
 }
 
@@ -154,91 +156,94 @@ export default function NotificationsPage() {
   const unreadCount = displayNotifications.filter((n) => !n.read).length;
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
+    <div className="min-h-screen flex flex-col bg-white">
+      <Navbar />
+      <main className="flex-1 pt-20 sm:pt-24">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
       {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center gap-3 mb-4">
-          <Bell className="w-8 h-8 text-green-500" />
-          <h1 className="text-3xl font-bold text-gray-100">Notifications</h1>
+      <div className="mb-6 sm:mb-8">
+        <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+          <Bell className="w-6 sm:w-8 h-6 sm:h-8 text-green-500 flex-shrink-0" />
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">Notifications</h1>
         </div>
-        <p className="text-gray-400">
+        <p className="text-xs sm:text-sm text-slate-600">
           You have {unreadCount} unread notification{unreadCount !== 1 ? "s" : ""}
         </p>
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex gap-2 mb-6 border-b border-surface/30 pb-4">
+      <div className="flex flex-wrap gap-2 mb-4 sm:mb-6 border-b border-slate-200 pb-3 sm:pb-4 overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
         {tabs.map((tab) => (
           <button
             key={tab.value}
             onClick={() => setActiveFilter(tab.value)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${
               activeFilter === tab.value
-                ? "bg-green-500/20 text-green-400 border border-green-500/40"
-                : "text-gray-400 hover:text-gray-200"
+                ? "bg-emerald-50 text-emerald-600 border border-green-500/40"
+                : "text-slate-600 hover:text-slate-800"
             }`}
           >
             {tab.label}
-            {tab.count > 0 && <span className="ml-2 text-xs opacity-75">({tab.count})</span>}
+            {tab.count > 0 && <span className="ml-1 sm:ml-2 text-xs opacity-75">({tab.count})</span>}
           </button>
         ))}
       </div>
 
       {/* Bulk Actions */}
       {unreadCount > 0 && (
-        <div className="flex gap-3 mb-6">
+        <div className="flex gap-2 sm:gap-3 mb-4 sm:mb-6">
           <button
             onClick={markAllRead}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-500/10 text-blue-400 rounded-lg hover:bg-blue-500/20 transition-colors text-sm font-medium"
+            className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-500/20 transition-colors text-xs sm:text-sm font-medium whitespace-nowrap"
           >
-            <CheckCheck className="w-4 h-4" />
+            <CheckCheck className="w-4 h-4 flex-shrink-0" />
             Mark all as read
           </button>
         </div>
       )}
 
       {/* Notifications List */}
-      <div className="space-y-3">
+      <div className="space-y-2 sm:space-y-3">
         {filteredNotifications.length === 0 ? (
-          <div className="text-center py-12">
-            <Bell className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-            <p className="text-gray-400">No notifications in this category</p>
+          <div className="text-center py-8 sm:py-12">
+            <Bell className="w-8 sm:w-12 h-8 sm:h-12 text-slate-600 mx-auto mb-3 sm:mb-4" />
+            <p className="text-xs sm:text-sm text-slate-600">No notifications in this category</p>
           </div>
         ) : (
           filteredNotifications.map((notification) => (
             <div
               key={notification.id}
-              className={`flex gap-4 p-5 rounded-lg border transition-colors ${
+              className={`flex gap-3 sm:gap-4 p-3 sm:p-5 rounded-lg border transition-colors ${
                 notification.read
-                  ? "border-surface/20 bg-surface/5"
+                  ? "border-slate-100 bg-slate-50"
                   : "border-green-500/30 bg-green-500/5"
               }`}
             >
-              <div className="flex-shrink-0 pt-1">{getIcon(notification.type)}</div>
-              
+              <div className="flex-shrink-0 pt-1 text-sm sm:text-base">{getIcon(notification.type)}</div>
+
               <div className="flex-1 min-w-0">
-                <div className="flex items-start justify-between gap-3 mb-2">
-                  <h3 className="text-base font-semibold text-gray-100">
+                <div className="flex items-start justify-between gap-2 sm:gap-3 mb-2">
+                  <h3 className="text-sm sm:text-base font-semibold text-slate-900">
                     {notification.title}
                   </h3>
                   {!notification.read && (
-                    <span className="px-2 py-1 bg-green-500/20 text-green-400 text-xs font-medium rounded">
+                    <span className="px-2 py-1 bg-emerald-50 text-emerald-600 text-xs font-medium rounded flex-shrink-0">
                       New
                     </span>
                   )}
                 </div>
-                
-                <p className="text-gray-300 text-sm mb-3">{notification.description}</p>
-                
-                <div className="flex items-center justify-between">
-                  <p className="text-xs text-gray-500">
+
+                <p className="text-xs sm:text-sm text-slate-700 mb-2 sm:mb-3">{notification.description}</p>
+
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                  <p className="text-xs text-slate-400">
                     {formatFullDate(notification.timestamp)}
                   </p>
-                  
+
                   {notification.actionUrl && (
                     <Link
                       href={notification.actionUrl}
-                      className="text-xs text-green-500 hover:text-green-400 font-medium transition-colors"
+                      className="text-xs text-green-500 hover:text-emerald-600 font-medium transition-colors whitespace-nowrap"
                     >
                       View Case →
                     </Link>
@@ -249,16 +254,19 @@ export default function NotificationsPage() {
               {!notification.read && (
                 <button
                   onClick={() => markRead(notification.id)}
-                  className="flex-shrink-0 p-2 text-gray-500 hover:text-green-500 transition-colors"
+                  className="flex-shrink-0 p-1 text-slate-400 hover:text-green-500 transition-colors"
                   aria-label="Mark as read"
                 >
-                  <Check className="w-5 h-5" />
+                  <Check className="w-4 h-4 sm:w-5 sm:h-5" />
                 </button>
               )}
             </div>
           ))
         )}
       </div>
+      </div>
+      </main>
+      <Footer />
     </div>
   );
 }

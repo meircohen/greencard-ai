@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { useTranslation } from '@/i18n';
 import {
   AlertCircle,
   CheckCircle2,
@@ -99,6 +100,7 @@ const mockAssessmentData: AssessmentData = {
 };
 
 export default function AssessmentPage() {
+  const { t } = useTranslation();
   const [assessmentData, setAssessmentData] = useState<AssessmentData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -116,12 +118,12 @@ export default function AssessmentPage() {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col min-h-screen bg-midnight">
+      <div className="flex flex-col min-h-screen bg-white">
         <Navbar />
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center space-y-4">
             <div className="w-12 h-12 rounded-full border-2 border-green-brand border-t-transparent animate-spin mx-auto" />
-            <p className="text-secondary">Generating your assessment...</p>
+            <p className="text-slate-600">{t('common.loading')}</p>
           </div>
         </div>
         <Footer />
@@ -131,18 +133,18 @@ export default function AssessmentPage() {
 
   if (!assessmentData) {
     return (
-      <div className="flex flex-col min-h-screen bg-midnight">
+      <div className="flex flex-col min-h-screen bg-white">
         <Navbar />
-        <div className="flex-1 flex items-center justify-center px-4">
+        <div className="flex-1 flex items-center justify-center px-4 pt-20">
           <div className="text-center space-y-6 max-w-md">
             <AlertCircle className="w-12 h-12 text-amber-500 mx-auto" />
-            <h1 className="text-2xl font-bold text-primary">No Assessment Found</h1>
-            <p className="text-secondary">
-              Start a conversation to get your personalized assessment.
+            <h1 className="text-2xl font-bold text-slate-900">{t('assessment.title')}</h1>
+            <p className="text-slate-600">
+              {t('assessment.subtitle')}
             </p>
             <Link href="/chat">
               <Button variant="primary" size="lg">
-                Start Chat <ArrowRight className="w-4 h-4 ml-2" />
+                {t('common.learnMore')} <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </Link>
           </div>
@@ -173,19 +175,19 @@ export default function AssessmentPage() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-midnight">
+    <div className="flex flex-col min-h-screen bg-white">
       <Navbar />
       {/* Header */}
-      <div className="border-b border-white/10 bg-surface/30 backdrop-blur-md sticky top-20 z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center justify-between">
+      <div className="border-b border-slate-200 bg-white sticky top-20 z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
-              <h1 className="text-2xl font-bold text-primary">Your Assessment</h1>
-              <p className="text-secondary text-sm mt-1">Personalized immigration case analysis</p>
+              <h1 className="text-3xl font-bold text-slate-900">{t('assessment.title')}</h1>
+              <p className="text-slate-600 text-sm mt-2">{t('assessment.subtitle')}</p>
             </div>
             <Button variant="secondary" size="md">
               <Download className="w-4 h-4 mr-2" />
-              Download Report
+              {t('assessment.downloadReport')}
             </Button>
           </div>
         </div>
@@ -201,10 +203,10 @@ export default function AssessmentPage() {
         >
           {/* Score Circle */}
           <motion.div variants={itemVariants}>
-            <Card withGradientBorder withGlow className="p-8 lg:p-12">
+            <Card className="p-8 lg:p-12 bg-white border border-slate-200 shadow-sm rounded-xl">
               <div className="flex flex-col lg:flex-row items-center gap-8">
                 {/* SVG Circle Score */}
-                <div className="flex-shrink-0">
+                <div className="flex-shrink-0 relative">
                   <svg
                     width="200"
                     height="200"
@@ -217,7 +219,7 @@ export default function AssessmentPage() {
                       cy="100"
                       r="90"
                       fill="none"
-                      stroke="rgba(255,255,255,0.1)"
+                      stroke="rgba(148,163,184,0.2)"
                       strokeWidth="8"
                     />
                     {/* Progress circle */}
@@ -248,10 +250,10 @@ export default function AssessmentPage() {
                   {/* Score text overlay */}
                   <div className="absolute w-48 h-48 flex items-center justify-center -ml-48 -mt-48">
                     <div className="text-center">
-                      <div className="text-4xl font-bold text-green-brand">
+                      <div className="text-5xl font-bold text-green-brand">
                         {assessmentData.score}
                       </div>
-                      <div className="text-muted text-sm">out of 100</div>
+                      <div className="text-slate-600 text-sm font-medium">out of 100</div>
                     </div>
                   </div>
                 </div>
@@ -260,46 +262,46 @@ export default function AssessmentPage() {
                 <div className="flex-1 space-y-6">
                   <div>
                     <Badge variant="green">{assessmentData.category}</Badge>
-                    <h2 className="text-2xl font-bold text-primary mt-3">
+                    <h2 className="text-2xl font-bold text-slate-900 mt-3">
                       {assessmentData.summary}
                     </h2>
                   </div>
 
                   {/* Key Metrics Grid */}
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-surface/50 rounded-lg p-4 border border-white/10">
+                    <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
                       <div className="flex items-center gap-2 mb-2">
                         <Percent className="w-4 h-4 text-green-brand" />
-                        <span className="text-muted text-sm">Approval Rate</span>
+                        <span className="text-slate-700 text-sm font-medium">{t('assessment.approvalRate')}</span>
                       </div>
-                      <div className="text-2xl font-bold text-primary">
+                      <div className="text-2xl font-bold text-slate-900">
                         {assessmentData.approvalRate}%
                       </div>
                     </div>
-                    <div className="bg-surface/50 rounded-lg p-4 border border-white/10">
+                    <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
                       <div className="flex items-center gap-2 mb-2">
-                        <Clock className="w-4 h-4 text-blue-accent" />
-                        <span className="text-muted text-sm">Processing Time</span>
+                        <Clock className="w-4 h-4 text-blue-500" />
+                        <span className="text-slate-700 text-sm font-medium">{t('assessment.processingTime')}</span>
                       </div>
-                      <div className="text-2xl font-bold text-primary">
+                      <div className="text-2xl font-bold text-slate-900">
                         {assessmentData.processingTime}
                       </div>
                     </div>
-                    <div className="bg-surface/50 rounded-lg p-4 border border-white/10">
+                    <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
                       <div className="flex items-center gap-2 mb-2">
                         <DollarSign className="w-4 h-4 text-green-brand" />
-                        <span className="text-muted text-sm">Est. Cost</span>
+                        <span className="text-slate-700 text-sm font-medium">{t('assessment.estimatedCost')}</span>
                       </div>
-                      <div className="text-2xl font-bold text-primary">
+                      <div className="text-2xl font-bold text-slate-900">
                         ${assessmentData.estimatedCost.toLocaleString()}
                       </div>
                     </div>
-                    <div className="bg-surface/50 rounded-lg p-4 border border-white/10">
+                    <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
                       <div className="flex items-center gap-2 mb-2">
                         <AlertCircle className="w-4 h-4 text-amber-500" />
-                        <span className="text-muted text-sm">RFE Risk</span>
+                        <span className="text-slate-700 text-sm font-medium">{t('assessment.rfeRisk')}</span>
                       </div>
-                      <div className="text-2xl font-bold text-primary">
+                      <div className="text-2xl font-bold text-slate-900">
                         {assessmentData.rfeRisk}%
                       </div>
                     </div>
@@ -311,23 +313,21 @@ export default function AssessmentPage() {
 
           {/* Eligible Paths */}
           <motion.div variants={itemVariants}>
-            <div className="space-y-4">
-              <h2 className="text-2xl font-bold text-primary">Eligible Immigration Paths</h2>
-              <p className="text-secondary">
-                Based on your profile, you may qualify for these visa categories:
+            <div className="space-y-4 py-8">
+              <h2 className="text-3xl font-bold text-slate-900">{t('assessment.eligiblePaths')}</h2>
+              <p className="text-slate-600 text-lg">
+                {t('assessment.subtitle')}
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {assessmentData.paths.map((path, index) => (
                 <motion.div key={index} variants={itemVariants}>
                   <Card
-                    withGlow
-                    glowColor={path.probability > 75 ? 'green' : 'blue'}
-                    className="p-6 h-full flex flex-col"
+                    className="p-6 h-full flex flex-col bg-white border border-slate-200 shadow-sm rounded-xl"
                   >
                     <div className="flex items-start justify-between mb-4">
-                      <h3 className="text-lg font-semibold text-primary">{path.name}</h3>
+                      <h3 className="text-lg font-bold text-slate-900">{path.name}</h3>
                       <Badge
                         variant={path.probability > 75 ? 'green' : path.probability > 50 ? 'blue' : 'gray'}
                       >
@@ -335,24 +335,24 @@ export default function AssessmentPage() {
                       </Badge>
                     </div>
 
-                    <p className="text-secondary text-sm mb-4 flex-1">
+                    <p className="text-slate-600 text-sm mb-4 flex-1 leading-relaxed">
                       {path.description}
                     </p>
 
-                    <div className="space-y-3 mb-4">
+                    <div className="space-y-3 mb-4 bg-slate-50 rounded-lg p-4 border border-slate-200">
                       <div className="flex items-center gap-2">
-                        <Clock className="w-4 h-4 text-blue-accent flex-shrink-0" />
-                        <span className="text-sm text-secondary">{path.timeline}</span>
+                        <Clock className="w-4 h-4 text-blue-500 flex-shrink-0" />
+                        <span className="text-sm text-slate-700 font-medium">{path.timeline}</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <DollarSign className="w-4 h-4 text-green-brand flex-shrink-0" />
-                        <span className="text-sm text-secondary">{path.cost}</span>
+                        <span className="text-sm text-slate-700 font-medium">{path.cost}</span>
                       </div>
                     </div>
 
                     {/* Forms */}
-                    <div className="bg-surface/50 rounded-lg p-3 mb-4">
-                      <p className="text-xs text-muted font-medium mb-2">Required Forms:</p>
+                    <div className="bg-slate-50 rounded-lg p-3 mb-4 border border-slate-200">
+                      <p className="text-xs text-slate-800 font-semibold mb-2">{t('assessment.forms')}:</p>
                       <div className="flex flex-wrap gap-2">
                         {path.forms.map((form) => (
                           <Badge key={form} variant="gray">
@@ -363,7 +363,7 @@ export default function AssessmentPage() {
                     </div>
 
                     <Link href="/chat">
-                      <button className="w-full text-center px-4 py-2 rounded-lg border border-green-brand/30 text-green-light hover:bg-green-brand/10 transition-all text-sm font-medium">
+                      <button className="w-full text-center px-4 py-2 rounded-lg border border-green-brand text-green-brand bg-white hover:bg-green-50 transition-all text-sm font-semibold h-10">
                         Learn More
                       </button>
                     </Link>
@@ -375,24 +375,24 @@ export default function AssessmentPage() {
 
           {/* Required Documents */}
           <motion.div variants={itemVariants}>
-            <Card className="p-6 lg:p-8">
+            <Card className="p-6 lg:p-8 bg-white border border-slate-200 shadow-sm rounded-xl py-12">
               <div className="flex items-center gap-3 mb-6">
                 <FileText className="w-6 h-6 text-green-brand" />
-                <h2 className="text-2xl font-bold text-primary">Required Documents</h2>
+                <h2 className="text-3xl font-bold text-slate-900">{t('assessment.requiredDocuments')}</h2>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 {assessmentData.requiredDocuments.map((doc, index) => (
-                  <div key={index} className="flex items-start gap-3 p-3 rounded-lg bg-surface/50">
+                  <div key={index} className="flex items-start gap-3 p-4 rounded-lg bg-slate-50 border border-slate-200">
                     <CheckCircle2 className="w-5 h-5 text-green-brand flex-shrink-0 mt-0.5" />
-                    <span className="text-secondary text-sm">{doc}</span>
+                    <span className="text-slate-700 text-sm font-medium">{doc}</span>
                   </div>
                 ))}
               </div>
 
-              <Button variant="secondary" size="md" className="mt-6 w-full md:w-auto">
+              <Button variant="secondary" size="md" className="w-full md:w-auto h-11">
                 <Download className="w-4 h-4 mr-2" />
-                Download Checklist
+                {t('common.learnMore')}
               </Button>
             </Card>
           </motion.div>
@@ -400,20 +400,20 @@ export default function AssessmentPage() {
           {/* Warnings Section */}
           {assessmentData.warnings.length > 0 && (
             <motion.div variants={itemVariants}>
-              <Card className="p-6 lg:p-8 border-amber-500/30 bg-amber-500/5">
+              <Card className="p-6 lg:p-8 border border-amber-200 bg-amber-50 rounded-xl py-12">
                 <div className="flex items-center gap-3 mb-6">
-                  <AlertTriangle className="w-6 h-6 text-amber-500" />
-                  <h2 className="text-2xl font-bold text-primary">Important Considerations</h2>
+                  <AlertTriangle className="w-6 h-6 text-amber-600" />
+                  <h2 className="text-3xl font-bold text-amber-900">{t('assessment.warnings')}</h2>
                 </div>
 
                 <div className="space-y-4">
                   {assessmentData.warnings.map((warning, index) => (
                     <div
                       key={index}
-                      className="flex items-start gap-3 p-4 rounded-lg bg-surface/50 border border-amber-500/20"
+                      className="flex items-start gap-3 p-4 rounded-lg bg-white border border-amber-200"
                     >
-                      <AlertCircle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
-                      <span className="text-secondary text-sm">{warning}</span>
+                      <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                      <span className="text-amber-800 text-sm font-medium leading-relaxed">{warning}</span>
                     </div>
                   ))}
                 </div>
@@ -423,16 +423,16 @@ export default function AssessmentPage() {
 
           {/* Next Steps */}
           <motion.div variants={itemVariants}>
-            <Card className="p-6 lg:p-8">
-              <h2 className="text-2xl font-bold text-primary mb-6">Next Steps</h2>
+            <Card className="p-6 lg:p-8 bg-white border border-slate-200 shadow-sm rounded-xl py-12">
+              <h2 className="text-3xl font-bold text-slate-900 mb-8">{t('assessment.nextSteps')}</h2>
 
               <div className="space-y-4">
                 {assessmentData.nextSteps.map((step, index) => (
-                  <div key={index} className="flex items-start gap-4 p-4 rounded-lg bg-surface/50">
-                    <div className="w-8 h-8 rounded-full bg-green-brand/20 border border-green-brand/50 flex items-center justify-center flex-shrink-0 text-green-brand font-semibold text-sm">
+                  <div key={index} className="flex items-start gap-4 p-4 rounded-lg bg-slate-50 border border-slate-200">
+                    <div className="w-8 h-8 rounded-full bg-green-brand/20 border border-green-brand flex items-center justify-center flex-shrink-0 text-green-brand font-bold text-sm">
                       {index + 1}
                     </div>
-                    <span className="text-secondary text-sm pt-0.5">{step}</span>
+                    <span className="text-slate-700 text-sm pt-0.5 font-medium leading-relaxed">{step}</span>
                   </div>
                 ))}
               </div>
@@ -441,18 +441,18 @@ export default function AssessmentPage() {
 
           {/* Action Buttons */}
           <motion.div variants={itemVariants}>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Button variant="secondary" size="lg" className="w-full">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 py-8">
+              <Button variant="secondary" size="lg" className="w-full h-12">
                 <Users className="w-4 h-4 mr-2" />
-                Connect with Attorney
+                {t('assessment.connectAttorney')}
               </Button>
-              <Button variant="secondary" size="lg" className="w-full">
+              <Button variant="secondary" size="lg" className="w-full h-12">
                 <FileText className="w-4 h-4 mr-2" />
-                Start Form Filling
+                {t('assessment.startForms')}
               </Button>
-              <Button variant="primary" size="lg" className="w-full">
+              <Button variant="primary" size="lg" className="w-full h-12">
                 <Download className="w-4 h-4 mr-2" />
-                Download Report
+                {t('assessment.downloadReport')}
               </Button>
             </div>
           </motion.div>

@@ -1,4 +1,5 @@
 'use client';
+import { useTranslation } from '@/i18n';
 import React, { useState } from 'react';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
@@ -18,6 +19,7 @@ import {
 } from 'lucide-react';
 
 export default function ReferralPage() {
+  const { t } = useTranslation();
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [copied, setCopied] = useState(false);
   const [formData, setFormData] = useState({
@@ -73,10 +75,10 @@ export default function ReferralPage() {
             <Heart className="w-12 h-12 text-amber-500 fill-amber-500" />
           </div>
           <h1 className="text-5xl md:text-6xl font-bold text-blue-900 mb-6">
-            Familia First: Share the Gift of Legal Protection
+            {t('referral.heroTitle')}
           </h1>
           <p className="text-xl text-gray-700 mb-8 max-w-2xl mx-auto leading-relaxed">
-            You trusted us with your case. Now help your family and friends get the same expert care. Earn rewards for every referral.
+            {t('referral.heroSubtitle')}
           </p>
           <Button
             variant="primary"
@@ -112,10 +114,10 @@ export default function ReferralPage() {
         </div>
       </section>
 
-      {/* How It Works */}
+      {/* {t('referral.howItWorks')} */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-blue-50">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-4xl font-bold text-center text-blue-900 mb-16">How It Works</h2>
+          <h2 className="text-4xl font-bold text-center text-blue-900 mb-16">{t('referral.howItWorks')}</h2>
           <div className="grid md:grid-cols-3 gap-8">
             {/* Step 1 */}
             <div className="text-center">
@@ -147,10 +149,10 @@ export default function ReferralPage() {
         </div>
       </section>
 
-      {/* Reward Tiers */}
+      {/* {t('referral.rewardTiers')} */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-4xl font-bold text-center text-blue-900 mb-4">Reward Tiers</h2>
+          <h2 className="text-4xl font-bold text-center text-blue-900 mb-4">{t('referral.rewardTiers')}</h2>
           <p className="text-center text-gray-700 mb-16 text-lg">The more you share, the more you earn. Service credits apply to any future service: citizenship, family sponsorship, renewals, or Guardian Plan subscription.</p>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">

@@ -304,20 +304,20 @@ export default function InterviewPrep() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-midnight via-deep to-surface">
+    <div className="min-h-screen flex flex-col bg-white">
       <Navbar />
 
       <main className="flex-1 pt-24 pb-16">
         {/* Header */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
           <div className="text-center mb-8">
-            <div className="inline-block px-4 py-1 rounded-full bg-green-500/10 border border-green-500/30 mb-4">
-              <span className="text-green-400 text-sm font-semibold">INTERVIEW PREPARATION</span>
+            <div className="inline-block px-4 py-1 rounded-full bg-blue-900/10 border border-blue-900/30 mb-4">
+              <span className="text-blue-900 text-sm font-semibold">INTERVIEW PREPARATION</span>
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+            <h1 className="text-4xl md:text-5xl font-bold text-blue-900 mb-4">
               Master Your Immigration Interview
             </h1>
-            <p className="text-lg text-slate-400 max-w-2xl mx-auto">
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
               Prepare confidently with our comprehensive interview guides, practice questions, and expert tips.
             </p>
           </div>
@@ -352,12 +352,12 @@ export default function InterviewPrep() {
                 }}
                 className={`p-4 rounded-lg border transition-all ${
                   selectedCase === option.type
-                    ? "bg-green-500/20 border-green-500 shadow-lg shadow-green-500/20"
-                    : "bg-surface/50 border-white/[0.06] hover:border-green-500/50 hover:bg-surface-2"
+                    ? "bg-blue-900/20 border-blue-900 shadow-lg shadow-blue-900/20"
+                    : "bg-gray-50 border-gray-300 hover:border-blue-900/50 hover:bg-gray-100"
                 }`}
               >
-                <div className="font-semibold text-white mb-1">{option.label}</div>
-                <div className="text-sm text-slate-400">{option.desc}</div>
+                <div className="font-semibold text-blue-900 mb-1">{option.label}</div>
+                <div className="text-sm text-slate-600">{option.desc}</div>
               </button>
             ))}
           </div>
@@ -367,10 +367,10 @@ export default function InterviewPrep() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Questions List */}
               <div className="lg:col-span-2">
-                <Card className="bg-surface/50 border-white/[0.06]">
+                <Card className="bg-gray-50 border-gray-300">
                   <div className="p-6">
-                    <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-                      <BookOpen className="w-6 h-6 text-green-500" />
+                    <h2 className="text-2xl font-bold text-blue-900 mb-6 flex items-center gap-2">
+                      <BookOpen className="w-6 h-6 text-blue-900" />
                       Common Marriage Interview Questions
                     </h2>
 
@@ -378,15 +378,15 @@ export default function InterviewPrep() {
                       {marriageQuestions.map((q) => (
                         <div
                           key={q.id}
-                          className="border border-white/[0.06] rounded-lg overflow-hidden bg-surface-2/50"
+                          className="border border-gray-300 rounded-lg overflow-hidden bg-white"
                         >
                           <button
                             onClick={() => handleQuestionClick(q.id)}
-                            className="w-full p-4 flex items-start gap-3 hover:bg-surface-2 transition-colors text-left"
+                            className="w-full p-4 flex items-start gap-3 hover:bg-gray-50 transition-colors text-left"
                           >
-                            <span className="text-green-500 font-semibold min-w-6">{q.id}.</span>
+                            <span className="text-blue-900 font-semibold min-w-6">{q.id}.</span>
                             <div className="flex-1">
-                              <p className="text-white font-medium">{q.question}</p>
+                              <p className="text-slate-900 font-medium">{q.question}</p>
                             </div>
                             {expandedQuestion === q.id ? (
                               <ChevronUp className="w-5 h-5 text-slate-500 flex-shrink-0 mt-1" />
@@ -396,8 +396,8 @@ export default function InterviewPrep() {
                           </button>
 
                           {expandedQuestion === q.id && (
-                            <div className="px-4 pb-4 border-t border-white/[0.06] bg-surface-2/30">
-                              <p className="text-slate-300 leading-relaxed">{q.answer}</p>
+                            <div className="px-4 pb-4 border-t border-gray-300 bg-gray-50">
+                              <p className="text-slate-600 leading-relaxed">{q.answer}</p>
                             </div>
                           )}
                         </div>
@@ -409,7 +409,7 @@ export default function InterviewPrep() {
                 {/* Practice Button */}
                 <div className="mt-6">
                   <Link href="/chat?mode=interview-prep&type=spouse">
-                    <Button className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold">
+                    <Button className="w-full bg-blue-900 hover:bg-blue-800 text-white py-3 rounded-lg font-semibold">
                       Practice with AI Interview Coach
                     </Button>
                   </Link>
@@ -418,10 +418,10 @@ export default function InterviewPrep() {
 
               {/* Tips Panel */}
               <div className="lg:col-span-1">
-                <Card className="bg-surface/50 border-white/[0.06] sticky top-24">
+                <Card className="bg-gray-50 border-gray-300 sticky top-24">
                   <div className="p-6">
-                    <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                      <Lightbulb className="w-5 h-5 text-amber-400" />
+                    <h3 className="text-lg font-bold text-blue-900 mb-4 flex items-center gap-2">
+                      <Lightbulb className="w-5 h-5 text-blue-900" />
                       Interview Tips
                     </h3>
 
@@ -430,15 +430,15 @@ export default function InterviewPrep() {
                         <div key={idx} className="flex gap-3">
                           <div className="flex-shrink-0">{tip.icon}</div>
                           <div>
-                            <p className="text-white font-medium text-sm">{tip.title}</p>
-                            <p className="text-slate-400 text-xs mt-1">{tip.description}</p>
+                            <p className="text-slate-900 font-medium text-sm">{tip.title}</p>
+                            <p className="text-slate-600 text-xs mt-1">{tip.description}</p>
                           </div>
                         </div>
                       ))}
                     </div>
 
-                    <div className="mt-6 p-4 bg-amber-500/10 border border-amber-500/30 rounded-lg">
-                      <p className="text-amber-200 text-sm">
+                    <div className="mt-6 p-4 bg-blue-900/10 border border-blue-900/30 rounded-lg">
+                      <p className="text-blue-900 text-sm">
                         <strong>Pro Tip:</strong> USCIS will interview both spouses separately. Consistency is key to
                         proving a bona fide marriage.
                       </p>
@@ -451,14 +451,14 @@ export default function InterviewPrep() {
 
           {selectedCase === "naturalization" && (
             <div>
-              <Card className="bg-surface/50 border-white/[0.06] mb-6">
+              <Card className="bg-gray-50 border-gray-300 mb-6">
                 <div className="p-6">
                   <div className="mb-8">
-                    <h2 className="text-2xl font-bold text-white mb-2 flex items-center gap-2">
-                      <BookOpen className="w-6 h-6 text-green-500" />
+                    <h2 className="text-2xl font-bold text-blue-900 mb-2 flex items-center gap-2">
+                      <BookOpen className="w-6 h-6 text-blue-900" />
                       USCIS Civics Test
                     </h2>
-                    <p className="text-slate-400">
+                    <p className="text-slate-600">
                       Learn 100 civics questions required for the N-400 naturalization interview. You'll be asked up to 10 questions, and must answer at least 6 correctly to pass.
                     </p>
                   </div>
@@ -466,14 +466,14 @@ export default function InterviewPrep() {
                   {/* Progress */}
                   <div className="mb-6">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-slate-300">Questions Reviewed</span>
-                      <span className="text-green-400 font-semibold">
+                      <span className="text-slate-600">Questions Reviewed</span>
+                      <span className="text-blue-900 font-semibold">
                         {quizProgress}/20
                       </span>
                     </div>
-                    <div className="w-full bg-surface rounded-full h-2">
+                    <div className="w-full bg-gray-200 rounded-full h-2">
                       <div
-                        className="bg-green-500 h-2 rounded-full transition-all duration-300"
+                        className="bg-blue-900 h-2 rounded-full transition-all duration-300"
                         style={{ width: `${(quizProgress / 20) * 100}%` }}
                       />
                     </div>
@@ -487,9 +487,9 @@ export default function InterviewPrep() {
                       { name: "Rights and Responsibilities", count: 4 },
                       { name: "Colonial Period and Independence", count: 3 },
                     ].map((cat) => (
-                      <div key={cat.name} className="p-3 bg-surface-2 rounded-lg border border-white/[0.06]">
-                        <p className="text-white font-medium text-sm">{cat.name}</p>
-                        <p className="text-slate-400 text-xs mt-1">{cat.count} questions</p>
+                      <div key={cat.name} className="p-3 bg-white rounded-lg border border-gray-300">
+                        <p className="text-slate-900 font-medium text-sm">{cat.name}</p>
+                        <p className="text-slate-600 text-xs mt-1">{cat.count} questions</p>
                       </div>
                     ))}
                   </div>
@@ -499,15 +499,15 @@ export default function InterviewPrep() {
                     {civicsQuestions.map((q) => (
                       <div
                         key={q.id}
-                        className="border border-white/[0.06] rounded-lg overflow-hidden bg-surface-2/50"
+                        className="border border-gray-300 rounded-lg overflow-hidden bg-white"
                       >
                         <button
                           onClick={() => handleQuestionClick(q.id)}
-                          className="w-full p-4 flex items-start gap-3 hover:bg-surface-2 transition-colors text-left"
+                          className="w-full p-4 flex items-start gap-3 hover:bg-gray-50 transition-colors text-left"
                         >
-                          <span className="text-green-500 font-semibold min-w-6">{q.id}.</span>
+                          <span className="text-blue-900 font-semibold min-w-6">{q.id}.</span>
                           <div className="flex-1">
-                            <p className="text-white font-medium text-sm">{q.question}</p>
+                            <p className="text-slate-900 font-medium text-sm">{q.question}</p>
                             <p className="text-xs text-slate-500 mt-1">{q.category}</p>
                           </div>
                           {expandedQuestion === q.id ? (
@@ -518,8 +518,8 @@ export default function InterviewPrep() {
                         </button>
 
                         {expandedQuestion === q.id && (
-                          <div className="px-4 pb-4 border-t border-white/[0.06] bg-surface-2/30">
-                            <p className="text-slate-300 font-medium text-sm">Answer: {q.answer}</p>
+                          <div className="px-4 pb-4 border-t border-gray-300 bg-gray-50">
+                            <p className="text-slate-600 font-medium text-sm">Answer: {q.answer}</p>
                           </div>
                         )}
                       </div>
@@ -527,12 +527,12 @@ export default function InterviewPrep() {
                   </div>
 
                   {/* English Test Tips */}
-                  <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-6">
-                    <h3 className="text-lg font-bold text-white mb-4">English Test Requirements</h3>
+                  <div className="bg-blue-900/10 border border-blue-900/30 rounded-lg p-6">
+                    <h3 className="text-lg font-bold text-blue-900 mb-4">English Test Requirements</h3>
                     <ul className="space-y-2">
                       {EnglishTestTips.map((tip, idx) => (
-                        <li key={idx} className="flex gap-2 text-slate-300 text-sm">
-                          <span className="text-blue-400 font-bold">•</span>
+                        <li key={idx} className="flex gap-2 text-slate-600 text-sm">
+                          <span className="text-blue-900 font-bold">•</span>
                           <span>{tip}</span>
                         </li>
                       ))}
@@ -543,7 +543,7 @@ export default function InterviewPrep() {
 
               {/* CTA */}
               <Link href="/chat?mode=interview-prep&type=naturalization">
-                <Button className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold text-lg">
+                <Button className="w-full bg-blue-900 hover:bg-blue-800 text-white py-3 rounded-lg font-semibold text-lg">
                   Start AI Practice Session
                 </Button>
               </Link>
@@ -551,15 +551,15 @@ export default function InterviewPrep() {
           )}
 
           {selectedCase === "asylum" && (
-            <Card className="bg-surface/50 border-white/[0.06]">
+            <Card className="bg-gray-50 border-gray-300">
               <div className="p-8 text-center">
-                <BookOpen className="w-12 h-12 text-green-500 mx-auto mb-4" />
-                <h3 className="text-xl font-bold text-white mb-2">Asylum Interview Preparation</h3>
-                <p className="text-slate-400 mb-6">
+                <BookOpen className="w-12 h-12 text-blue-900 mx-auto mb-4" />
+                <h3 className="text-xl font-bold text-blue-900 mb-2">Asylum Interview Preparation</h3>
+                <p className="text-slate-600 mb-6">
                   Comprehensive guide for credible fear screening and asylum interviews coming soon.
                 </p>
                 <Link href="/chat?mode=interview-prep&type=asylum">
-                  <Button className="bg-green-600 hover:bg-green-700 text-white">
+                  <Button className="bg-blue-900 hover:bg-blue-800 text-white">
                     Chat with Advisor
                   </Button>
                 </Link>
@@ -568,15 +568,15 @@ export default function InterviewPrep() {
           )}
 
           {selectedCase === "employment" && (
-            <Card className="bg-surface/50 border-white/[0.06]">
+            <Card className="bg-gray-50 border-gray-300">
               <div className="p-8 text-center">
-                <BookOpen className="w-12 h-12 text-green-500 mx-auto mb-4" />
-                <h3 className="text-xl font-bold text-white mb-2">Employment-Based Interview Prep</h3>
-                <p className="text-slate-400 mb-6">
+                <BookOpen className="w-12 h-12 text-blue-900 mx-auto mb-4" />
+                <h3 className="text-xl font-bold text-blue-900 mb-2">Employment-Based Interview Prep</h3>
+                <p className="text-slate-600 mb-6">
                   Guide for H-1B, L-1, EB visa interviews coming soon. Get real-time help from our AI advisor.
                 </p>
                 <Link href="/chat?mode=interview-prep&type=employment">
-                  <Button className="bg-green-600 hover:bg-green-700 text-white">
+                  <Button className="bg-blue-900 hover:bg-blue-800 text-white">
                     Chat with Advisor
                   </Button>
                 </Link>
@@ -585,11 +585,11 @@ export default function InterviewPrep() {
           )}
 
           {!selectedCase && (
-            <Card className="bg-surface/50 border-white/[0.06]">
+            <Card className="bg-gray-50 border-gray-300">
               <div className="p-8 text-center">
-                <BookOpen className="w-12 h-12 text-green-500 mx-auto mb-4" />
-                <h3 className="text-xl font-bold text-white mb-2">Select Your Interview Type</h3>
-                <p className="text-slate-400">
+                <BookOpen className="w-12 h-12 text-blue-900 mx-auto mb-4" />
+                <h3 className="text-xl font-bold text-blue-900 mb-2">Select Your Interview Type</h3>
+                <p className="text-slate-600">
                   Choose above to get started with interview preparation materials, practice questions, and AI coaching.
                 </p>
               </div>

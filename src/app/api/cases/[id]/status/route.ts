@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db';
+import { getDb } from '@/lib/db';
 import { cases as casesTable } from '@/lib/db/schema';
 import { eq, and, or } from 'drizzle-orm';
 import { checkCaseStatus } from '@/lib/scrapers/case-status';
@@ -60,7 +60,7 @@ export async function GET(
     }
 
     // Fetch case with ownership check (user must be case owner or assigned attorney)
-    const caseRecord = await db.query.cases.findFirst({
+    const caseRecord = await getDb().query.cases.findFirst({
       where: actorRole === 'admin'
         ? eq(casesTable.id, caseId)
         : and(

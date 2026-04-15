@@ -1,4 +1,6 @@
-import { createContext, useContext, ReactNode } from "react";
+"use client";
+
+import { createContext, useContext, ReactNode, useState } from "react";
 import type { SupportedLocale } from "./config";
 import { SUPPORTED_LOCALES, DEFAULT_LOCALE, COOKIE_NAME, COOKIE_MAX_AGE, LOCALE_NAMES } from "./config";
 import enTranslations from "./en";
@@ -54,6 +56,34 @@ export function useTranslation() {
     throw new Error("useTranslation must be used within I18nProvider");
   }
   return context;
+}
+
+/**
+ * I18nProvider component - wrap your app with this to enable i18n
+ */
+export function I18nProvider({ children }: { children: ReactNode }) {
+  const [locale, setLocaleState] = useState<SupportedLocale>(() => {
+    if (typeof document === "undefined") return DEFAULT_LOCALE;
+    return getLocaleFromCookie();
+  });
+
+  const handleSetLocale = (newLocale: SupportedLocale) => {
+    setLocaleState(newLocale);
+    setLocaleInCookie(newLocale, false); // false = no reload, state change is enough
+  };
+
+  const contextValue: I18nContextType = {
+    locale,
+    t: (key: string, params?: Record<string, string | number>) =>
+      t(locale, key, params),
+    setLocale: handleSetLocale,
+  };
+
+  return (
+    <I18nContext.Provider value={contextValue}>
+      {children}
+    </I18nContext.Provider>
+  );
 }
 
 /**

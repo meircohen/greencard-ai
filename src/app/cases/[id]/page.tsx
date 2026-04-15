@@ -224,13 +224,13 @@ export default function CaseDetailPage() {
 
   if (!caseData) {
     return (
-      <div className="min-h-screen bg-midnight pt-24 pb-12 flex items-center justify-center">
+      <div className="min-h-screen bg-white pt-24 pb-12 flex items-center justify-center">
         <Card className="p-8 text-center">
           <FileText size={48} className="mx-auto text-muted mb-4 opacity-50" />
-          <h2 className="text-2xl font-bold text-primary mb-2">
+          <h2 className="text-2xl font-bold text-slate-900 mb-2">
             Case Not Found
           </h2>
-          <p className="text-secondary">
+          <p className="text-slate-600">
             The case you're looking for doesn't exist.
           </p>
         </Card>
@@ -245,13 +245,13 @@ export default function CaseDetailPage() {
   };
 
   const statusConfig = {
-    active: { badge: "blue", color: "text-blue-400" },
-    pending: { badge: "amber", color: "text-amber-400" },
-    completed: { badge: "green", color: "text-green-400" },
+    active: { badge: "blue", color: "text-blue-600" },
+    pending: { badge: "amber", color: "text-amber-600" },
+    completed: { badge: "green", color: "text-emerald-600" },
   };
 
   return (
-    <div className="min-h-screen bg-midnight pt-24 pb-12">
+    <div className="min-h-screen bg-white pt-24 pb-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
@@ -261,10 +261,10 @@ export default function CaseDetailPage() {
                 {typeEmojis[caseData.type as keyof typeof typeEmojis]}
               </span>
               <div>
-                <h1 className="text-4xl font-bold text-primary">
+                <h1 className="text-4xl font-bold text-slate-900">
                   {caseData.title}
                 </h1>
-                <p className="text-secondary">{caseData.receiptNumber}</p>
+                <p className="text-slate-600">{caseData.receiptNumber}</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
@@ -282,8 +282,8 @@ export default function CaseDetailPage() {
               </Badge>
               <Card className="px-6 py-3 bg-green-500/10 border-green-500/30">
                 <div className="text-center">
-                  <p className="text-xs text-secondary">Progress</p>
-                  <p className="text-2xl font-bold text-green-400">
+                  <p className="text-xs text-slate-600">Progress</p>
+                  <p className="text-2xl font-bold text-emerald-600">
                     {caseData.progress}%
                   </p>
                 </div>
@@ -293,7 +293,7 @@ export default function CaseDetailPage() {
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex flex-wrap gap-2 mb-8 border-b border-white/10 pb-4">
+        <div className="flex flex-wrap gap-2 mb-8 border-b border-slate-200 pb-4">
           {(
             [
               "overview",
@@ -308,8 +308,8 @@ export default function CaseDetailPage() {
               onClick={() => setActiveTab(tab)}
               className={`px-4 py-2 font-medium transition-colors capitalize ${
                 activeTab === tab
-                  ? "text-green-400 border-b-2 border-green-500"
-                  : "text-secondary hover:text-primary"
+                  ? "text-emerald-600 border-b-2 border-green-500"
+                  : "text-slate-600 hover:text-slate-900"
               }`}
             >
               {tab}
@@ -323,26 +323,26 @@ export default function CaseDetailPage() {
             {/* Key Metrics */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <Card className="p-6">
-                <p className="text-sm text-secondary mb-1">Filing Date</p>
-                <p className="text-lg font-semibold text-primary">
+                <p className="text-sm text-slate-600 mb-1">Filing Date</p>
+                <p className="text-lg font-semibold text-slate-900">
                   {caseData.filedDate}
                 </p>
               </Card>
               <Card className="p-6">
-                <p className="text-sm text-secondary mb-1">Service Center</p>
-                <p className="text-lg font-semibold text-primary line-clamp-2">
+                <p className="text-sm text-slate-600 mb-1">Service Center</p>
+                <p className="text-lg font-semibold text-slate-900 line-clamp-2">
                   {caseData.serviceCenter}
                 </p>
               </Card>
               <Card className="p-6">
-                <p className="text-sm text-secondary mb-1">Processing Time</p>
-                <p className="text-lg font-semibold text-primary">
+                <p className="text-sm text-slate-600 mb-1">Processing Time</p>
+                <p className="text-lg font-semibold text-slate-900">
                   {caseData.processingTime}
                 </p>
               </Card>
               <Card className="p-6 bg-green-500/10 border-green-500/30">
-                <p className="text-sm text-secondary mb-1">Estimated Decision</p>
-                <p className="text-lg font-semibold text-green-400">
+                <p className="text-sm text-slate-600 mb-1">Estimated Decision</p>
+                <p className="text-lg font-semibold text-emerald-600">
                   {caseData.estimatedDecision}
                 </p>
               </Card>
@@ -350,17 +350,17 @@ export default function CaseDetailPage() {
 
             {/* Progress Stepper */}
             <Card className="p-8">
-              <h3 className="font-semibold text-primary mb-8">Progress Steps</h3>
+              <h3 className="font-semibold text-slate-900 mb-8">Progress Steps</h3>
               <div className="flex items-center justify-between gap-4 flex-wrap">
                 {steps.map((step, idx) => (
                   <div key={idx} className="flex flex-col items-center gap-2">
                     <div
                       className={`w-12 h-12 rounded-full flex items-center justify-center text-xl font-semibold border-2 transition-all ${
                         idx < caseData.currentStep
-                          ? "bg-green-500/30 border-green-500 text-green-400"
+                          ? "bg-green-500/30 border-green-500 text-emerald-600"
                           : idx === caseData.currentStep
-                            ? "bg-green-500/50 border-green-500 text-white"
-                            : "bg-surface/50 border-white/10 text-secondary"
+                            ? "bg-green-500/50 border-green-500 text-slate-900"
+                            : "bg-slate-50 border-slate-200 text-slate-600"
                       }`}
                     >
                       {step.icon}
@@ -368,8 +368,8 @@ export default function CaseDetailPage() {
                     <p
                       className={`text-xs font-medium text-center ${
                         idx <= caseData.currentStep
-                          ? "text-primary"
-                          : "text-secondary"
+                          ? "text-slate-900"
+                          : "text-slate-600"
                       }`}
                     >
                       {step.label}
@@ -377,8 +377,8 @@ export default function CaseDetailPage() {
                   </div>
                 ))}
               </div>
-              <div className="flex items-center justify-between gap-2 mt-8 pt-8 border-t border-white/10">
-                <p className="text-sm text-secondary">Current Status</p>
+              <div className="flex items-center justify-between gap-2 mt-8 pt-8 border-t border-slate-200">
+                <p className="text-sm text-slate-600">Current Status</p>
                 <Badge variant="blue" className="flex items-center gap-1">
                   <CheckCircle2 size={14} />
                   {steps[caseData.currentStep].label}
@@ -389,8 +389,8 @@ export default function CaseDetailPage() {
             {/* Quick Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <Card className="p-6 border-l-4 border-l-blue-500">
-                <p className="text-sm text-secondary mb-2">Documents Uploaded</p>
-                <p className="text-4xl font-bold text-blue-400 mb-2">
+                <p className="text-sm text-slate-600 mb-2">Documents Uploaded</p>
+                <p className="text-4xl font-bold text-blue-600 mb-2">
                   {documents.length}
                 </p>
                 <p className="text-xs text-muted">
@@ -398,13 +398,13 @@ export default function CaseDetailPage() {
                 </p>
               </Card>
               <Card className="p-6 border-l-4 border-l-green-500">
-                <p className="text-sm text-secondary mb-2">Forms Completed</p>
-                <p className="text-4xl font-bold text-green-400 mb-2">3</p>
+                <p className="text-sm text-slate-600 mb-2">Forms Completed</p>
+                <p className="text-4xl font-bold text-emerald-600 mb-2">3</p>
                 <p className="text-xs text-muted">I-130, I-864, I-485</p>
               </Card>
               <Card className="p-6 border-l-4 border-l-amber-500">
-                <p className="text-sm text-secondary mb-2">Upcoming Deadlines</p>
-                <p className="text-4xl font-bold text-amber-400 mb-2">1</p>
+                <p className="text-sm text-slate-600 mb-2">Upcoming Deadlines</p>
+                <p className="text-4xl font-bold text-amber-600 mb-2">1</p>
                 <p className="text-xs text-muted">June 1, 2024</p>
               </Card>
             </div>
@@ -412,16 +412,16 @@ export default function CaseDetailPage() {
             {/* AI Analysis Card */}
             <Card className="p-8 bg-gradient-to-br from-green-500/10 to-blue-500/10 border-green-500/30">
               <div className="flex items-start gap-4">
-                <Zap size={24} className="text-green-400 flex-shrink-0 mt-1" />
+                <Zap size={24} className="text-emerald-600 flex-shrink-0 mt-1" />
                 <div className="flex-1">
-                  <h3 className="font-semibold text-primary mb-3">
+                  <h3 className="font-semibold text-slate-900 mb-3">
                     AI Analysis & Insights
                   </h3>
-                  <ul className="space-y-2 text-sm text-secondary">
+                  <ul className="space-y-2 text-sm text-slate-600">
                     <li className="flex items-start gap-2">
                       <CheckCircle2
                         size={16}
-                        className="text-green-400 flex-shrink-0 mt-0.5"
+                        className="text-emerald-600 flex-shrink-0 mt-0.5"
                       />
                       <span>
                         Your case has a high approval probability (94%) based on
@@ -431,7 +431,7 @@ export default function CaseDetailPage() {
                     <li className="flex items-start gap-2">
                       <AlertCircle
                         size={16}
-                        className="text-amber-400 flex-shrink-0 mt-0.5"
+                        className="text-amber-600 flex-shrink-0 mt-0.5"
                       />
                       <span>
                         RFE was issued but your response was strong and
@@ -441,7 +441,7 @@ export default function CaseDetailPage() {
                     <li className="flex items-start gap-2">
                       <Clock
                         size={16}
-                        className="text-blue-400 flex-shrink-0 mt-0.5"
+                        className="text-blue-600 flex-shrink-0 mt-0.5"
                       />
                       <span>
                         Expected decision by September 2024 based on current
@@ -478,14 +478,14 @@ export default function CaseDetailPage() {
                   {/* Event Content */}
                   <div className="flex-1 pb-4">
                     <div className="flex items-start justify-between gap-4 mb-2">
-                      <h4 className="font-semibold text-primary">
+                      <h4 className="font-semibold text-slate-900">
                         {event.step}
                       </h4>
-                      <span className="text-sm text-secondary">
+                      <span className="text-sm text-slate-600">
                         {event.date}
                       </span>
                     </div>
-                    <p className="text-sm text-secondary mb-3">
+                    <p className="text-sm text-slate-600 mb-3">
                       {event.description}
                     </p>
                     {event.attachment && (
@@ -529,7 +529,7 @@ export default function CaseDetailPage() {
                     <div className="flex items-start justify-between gap-4 mb-4">
                       <ImageIcon
                         size={24}
-                        className="text-blue-400 flex-shrink-0"
+                        className="text-blue-600 flex-shrink-0"
                       />
                       <Badge
                         variant={
@@ -544,10 +544,10 @@ export default function CaseDetailPage() {
                         {doc.status}
                       </Badge>
                     </div>
-                    <h4 className="font-semibold text-primary mb-1">
+                    <h4 className="font-semibold text-slate-900 mb-1">
                       {doc.name}
                     </h4>
-                    <p className="text-xs text-secondary mb-3">{doc.type}</p>
+                    <p className="text-xs text-slate-600 mb-3">{doc.type}</p>
                     <p className="text-xs text-muted">
                       Uploaded: {doc.uploadDate}
                     </p>
@@ -565,18 +565,18 @@ export default function CaseDetailPage() {
               {["I-130", "I-864", "I-485"].map((form) => (
                 <div
                   key={form}
-                  className="flex items-center justify-between p-4 bg-surface/30 rounded-lg border border-white/10 hover:border-white/20 transition-colors"
+                  className="flex items-center justify-between p-4 bg-slate-50 rounded-lg border border-slate-200 hover:border-slate-100 transition-colors"
                 >
                   <div className="flex items-center gap-3">
-                    <FileText size={20} className="text-blue-400" />
+                    <FileText size={20} className="text-blue-600" />
                     <div>
-                      <p className="font-medium text-primary">{form}</p>
-                      <p className="text-sm text-secondary">
+                      <p className="font-medium text-slate-900">{form}</p>
+                      <p className="text-sm text-slate-600">
                         View and edit form
                       </p>
                     </div>
                   </div>
-                  <ChevronRight size={20} className="text-secondary" />
+                  <ChevronRight size={20} className="text-slate-600" />
                 </div>
               ))}
             </div>
@@ -588,13 +588,13 @@ export default function CaseDetailPage() {
           <div className="space-y-6">
             {/* Add Note Form */}
             <Card className="p-6">
-              <h3 className="font-semibold text-primary mb-4">Add a Note</h3>
+              <h3 className="font-semibold text-slate-900 mb-4">Add a Note</h3>
               <div className="space-y-4">
                 <textarea
                   value={newNote}
                   onChange={(e) => setNewNote(e.target.value)}
                   placeholder="Write your notes here..."
-                  className="w-full min-h-24 p-4 rounded-lg bg-surface/30 border border-white/10 text-primary placeholder-secondary focus:outline-none focus:border-green-500/50"
+                  className="w-full min-h-24 p-4 rounded-lg bg-slate-50 border border-slate-200 text-slate-900 placeholder-secondary focus:outline-none focus:border-green-500/50"
                 />
                 <Button className="bg-green-500 hover:bg-green-600">
                   Save Note
@@ -607,10 +607,10 @@ export default function CaseDetailPage() {
               {notes.map((note) => (
                 <Card key={note.id} className="p-6">
                   <div className="flex items-start justify-between mb-2">
-                    <p className="font-semibold text-primary">{note.author}</p>
-                    <span className="text-xs text-secondary">{note.date}</span>
+                    <p className="font-semibold text-slate-900">{note.author}</p>
+                    <span className="text-xs text-slate-600">{note.date}</span>
                   </div>
-                  <p className="text-secondary">{note.content}</p>
+                  <p className="text-slate-600">{note.content}</p>
                 </Card>
               ))}
             </div>

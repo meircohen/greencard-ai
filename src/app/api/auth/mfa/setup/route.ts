@@ -1,4 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getDb } from "@/lib/db";
+import { users } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
 import { generateMfaSetup, isMfaEnabled } from "@/lib/mfa";
 import { safeErrorResponse } from "@/lib/errors";
 
@@ -12,14 +15,29 @@ import { safeErrorResponse } from "@/lib/errors";
 export async function POST(request: NextRequest): Promise<Response> {
   try {
     const userId = request.headers.get("x-user-id");
-    const userEmail = request.headers.get("x-user-email");
 
-    if (!userId || !userEmail) {
+    if (!userId) {
       return NextResponse.json(
         { error: "Authentication required." },
         { status: 401 }
       );
     }
+
+    // Fetch user email from database
+    const user = await getDb()
+      .select()
+      .from(users)
+      .where(eq(users.id, userId))
+      .limit(1);
+
+    if (!user || user.length === 0 || !user[0].email) {
+      return NextResponse.json(
+        { error: "User not found." },
+        { status: 401 }
+      );
+    }
+
+    const userEmail = user[0].email;
 
     if (await isMfaEnabled(userId)) {
       return NextResponse.json(

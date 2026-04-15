@@ -83,7 +83,7 @@ export default function I130Guide() {
     <>
       <StructuredData schema={structuredData} />
       <Navbar />
-      <main className="min-h-screen bg-white">
+      <main className="min-h-screen bg-white pt-20">
         <div className="max-w-4xl mx-auto px-4 py-12">
           {/* Header */}
           <div className="mb-12">

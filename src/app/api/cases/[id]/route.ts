@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
-import { cases } from "@/lib/db/schema";
+import { cases, caseDeadlines } from "@/lib/db/schema";
 import { eq, and, or } from "drizzle-orm";
 import { z } from "zod";
+import { generateDeadlines, getCaseDeadlines } from "@/lib/deadline-monitor";
+import { logger } from "@/lib/logger";
 
 /**
  * Helper: fetch a case with ownership check.
@@ -96,6 +98,43 @@ export async function PATCH(
       })
       .where(eq(cases.id, id))
       .returning();
+
+    // Handle deadline generation on status changes
+    if (parsed.status) {
+      try {
+        if (parsed.status === 'approved') {
+          // Check if deadlines already exist
+          const existingDeadlines = await getCaseDeadlines(id);
+          if (existingDeadlines.length === 0) {
+            // Generate deadlines based on case type
+            const deadlines = generateDeadlines(
+              id,
+              updated.caseType,
+              updated.priorityDate ? new Date(updated.priorityDate) : new Date()
+            );
+            if (deadlines.length > 0) {
+              await db.insert(caseDeadlines).values(deadlines);
+              logger.info(
+                { caseId: id, count: deadlines.length },
+                'Auto-generated deadlines on case approval'
+              );
+            }
+          }
+        } else if (parsed.status === 'denied' || parsed.status === 'abandoned') {
+          // Mark deadlines as irrelevant for denied/abandoned cases
+          logger.info(
+            { caseId: id, newStatus: parsed.status },
+            'Case status changed - review deadlines for relevance'
+          );
+        }
+      } catch (deadlineError) {
+        logger.error(
+          { caseId: id, error: deadlineError },
+          'Failed to handle deadline logic on status change'
+        );
+        // Non-critical: continue returning updated case even if deadline logic fails
+      }
+    }
 
     return NextResponse.json(updated);
   } catch (error) {

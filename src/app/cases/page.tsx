@@ -1,5 +1,7 @@
 "use client";
 
+import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
 import React, { useState } from "react";
 import Link from "next/link";
 import {
@@ -85,17 +87,17 @@ const statusConfig = {
   active: {
     badge: "blue",
     icon: CheckCircle2,
-    color: "text-blue-400",
+    color: "text-blue-600",
   },
   pending: {
     badge: "amber",
     icon: Clock,
-    color: "text-amber-400",
+    color: "text-amber-600",
   },
   completed: {
     badge: "green",
     icon: CheckCircle2,
-    color: "text-green-400",
+    color: "text-emerald-600",
   },
 };
 
@@ -108,13 +110,15 @@ export default function CasesPage() {
   });
 
   return (
-    <div className="min-h-screen bg-midnight pt-24 pb-12">
+    <div className="min-h-screen flex flex-col bg-white bg-white">
+      <Navbar />
+      <main className="flex-1 pt-20 sm:pt-24 pb-8 sm:pb-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 mb-6 sm:mb-8">
           <div>
-            <h1 className="text-4xl font-bold text-primary mb-2">My Cases</h1>
-            <p className="text-secondary">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-2">My Cases</h1>
+            <p className="text-slate-600">
               Track and manage your immigration cases
             </p>
           </div>
@@ -125,15 +129,15 @@ export default function CasesPage() {
         </div>
 
         {/* Filter Tabs */}
-        <div className="flex flex-wrap gap-2 mb-8 pb-4 border-b border-white/10">
+        <div className="flex flex-wrap gap-2 mb-6 sm:mb-8 pb-3 sm:pb-4 border-b border-slate-200 overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
           {["all", "active", "pending", "completed"].map((tab) => (
             <button
               key={tab}
               onClick={() => setFilterTab(tab as typeof filterTab)}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors capitalize ${
+              className={`px-3 sm:px-4 py-2 rounded-lg font-medium transition-colors capitalize whitespace-nowrap text-sm sm:text-base ${
                 filterTab === tab
-                  ? "bg-green-500/20 text-green-400 border border-green-500/50"
-                  : "text-secondary hover:text-primary hover:bg-surface/30"
+                  ? "bg-emerald-50 text-emerald-600 border border-green-500/50"
+                  : "text-slate-600 hover:text-slate-700 hover:bg-slate-50"
               }`}
             >
               {tab}
@@ -143,7 +147,7 @@ export default function CasesPage() {
 
         {/* Cases Grid */}
         {filteredCases.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {filteredCases.map((caseItem) => {
               const statusConfig_ = statusConfig[caseItem.status];
               const IconComponent = statusConfig_.icon;
@@ -154,18 +158,18 @@ export default function CasesPage() {
                   href={`/cases/${caseItem.id}`}
                   className="group"
                 >
-                  <Card className="p-6 h-full hover:border-green-500/50 transition-all cursor-pointer">
+                  <Card className="p-4 sm:p-6 h-full hover:border-green-500/50 transition-all cursor-pointer">
                     {/* Header */}
-                    <div className="flex items-start justify-between gap-4 mb-4">
-                      <div className="flex-1">
+                    <div className="flex items-start justify-between gap-3 sm:gap-4 mb-3 sm:mb-4">
+                      <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-2">
-                          <span className="text-2xl">
+                          <span className="text-xl sm:text-2xl flex-shrink-0">
                             {
                               caseTypeConfig[caseItem.type as keyof typeof caseTypeConfig]
                                 .icon
                             }
                           </span>
-                          <h3 className="font-semibold text-primary line-clamp-2">
+                          <h3 className="font-semibold text-slate-900 line-clamp-2 text-sm sm:text-base">
                             {caseItem.title}
                           </h3>
                         </div>
@@ -189,32 +193,32 @@ export default function CasesPage() {
                     </div>
 
                     {/* Details Grid */}
-                    <div className="grid grid-cols-2 gap-3 mb-4 py-4 border-y border-white/10">
+                    <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-3 sm:mb-4 py-3 sm:py-4 border-y border-slate-200">
                       <div>
-                        <p className="text-xs text-secondary mb-1">Filed Date</p>
-                        <p className="text-sm font-medium text-primary">
+                        <p className="text-xs text-slate-600 mb-1">Filed Date</p>
+                        <p className="text-sm font-medium text-slate-900">
                           {caseItem.filedDate}
                         </p>
                       </div>
                       <div>
-                        <p className="text-xs text-secondary mb-1">
+                        <p className="text-xs text-slate-600 mb-1">
                           Service Center
                         </p>
-                        <p className="text-sm font-medium text-primary">
+                        <p className="text-sm font-medium text-slate-900">
                           {caseItem.serviceCenter}
                         </p>
                       </div>
                     </div>
 
                     {/* Progress Bar */}
-                    <div className="mb-4">
+                    <div className="mb-3 sm:mb-4">
                       <div className="flex items-center justify-between mb-2">
-                        <p className="text-sm text-secondary">Progress</p>
-                        <p className="text-sm font-semibold text-primary">
+                        <p className="text-sm text-slate-600">Progress</p>
+                        <p className="text-sm font-semibold text-slate-900">
                           {caseItem.progress}%
                         </p>
                       </div>
-                      <div className="w-full bg-surface/50 rounded-full h-2 overflow-hidden">
+                      <div className="w-full bg-slate-50 rounded-full h-2 overflow-hidden">
                         <div
                           className="h-full bg-gradient-to-r from-green-500 to-green-400"
                           style={{ width: `${caseItem.progress}%` }}
@@ -223,22 +227,22 @@ export default function CasesPage() {
                     </div>
 
                     {/* Stats */}
-                    <div className="grid grid-cols-3 gap-3 mb-4 py-3 border-t border-b border-white/10 text-center">
+                    <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-3 sm:mb-4 py-2 sm:py-3 border-t border-b border-slate-200 text-center">
                       <div>
-                        <p className="text-xs text-secondary mb-1">Documents</p>
-                        <p className="text-sm font-semibold text-primary">
+                        <p className="text-xs text-slate-600 mb-1">Documents</p>
+                        <p className="text-sm font-semibold text-slate-900">
                           {caseItem.documents}
                         </p>
                       </div>
                       <div>
-                        <p className="text-xs text-secondary mb-1">Forms</p>
-                        <p className="text-sm font-semibold text-primary">
+                        <p className="text-xs text-slate-600 mb-1">Forms</p>
+                        <p className="text-sm font-semibold text-slate-900">
                           {caseItem.forms}
                         </p>
                       </div>
                       <div>
-                        <p className="text-xs text-secondary mb-1">Updated</p>
-                        <p className="text-sm font-semibold text-primary">
+                        <p className="text-xs text-slate-600 mb-1">Updated</p>
+                        <p className="text-sm font-semibold text-slate-900">
                           {caseItem.lastUpdated}
                         </p>
                       </div>
@@ -246,13 +250,13 @@ export default function CasesPage() {
 
                     {/* Deadline */}
                     {caseItem.nextDeadline && (
-                      <div className="flex items-center gap-2 p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg mb-4">
+                      <div className="flex items-center gap-2 p-2 sm:p-3 bg-amber-50 border border-amber-500/30 rounded-lg mb-3 sm:mb-4">
                         <AlertCircle
                           size={16}
-                          className="text-amber-400 flex-shrink-0"
+                          className="text-amber-600 flex-shrink-0"
                         />
                         <div className="flex-1 min-w-0">
-                          <p className="text-xs text-amber-400">
+                          <p className="text-xs text-amber-600">
                             Deadline: {caseItem.nextDeadline}
                           </p>
                         </div>
@@ -260,7 +264,7 @@ export default function CasesPage() {
                     )}
 
                     {/* Footer */}
-                    <div className="flex items-center gap-2 text-green-400 group-hover:translate-x-1 transition-transform">
+                    <div className="flex items-center gap-2 text-emerald-600 group-hover:translate-x-1 transition-transform">
                       <span className="text-sm font-medium">View Details</span>
                       <ArrowRight size={16} />
                     </div>
@@ -275,10 +279,10 @@ export default function CasesPage() {
               size={48}
               className="mx-auto text-muted mb-4 opacity-50"
             />
-            <h3 className="text-lg font-semibold text-primary mb-2">
+            <h3 className="text-lg font-semibold text-slate-900 mb-2">
               No cases found
             </h3>
-            <p className="text-secondary mb-6">
+            <p className="text-slate-600 mb-6">
               Create a new case to get started with your immigration journey
             </p>
             <Button className="bg-green-500 hover:bg-green-600">
@@ -287,6 +291,8 @@ export default function CasesPage() {
           </div>
         )}
       </div>
+      </main>
+      <Footer />
     </div>
   );
 }

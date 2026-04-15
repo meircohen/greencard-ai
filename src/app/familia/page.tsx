@@ -1,8 +1,11 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { useTranslation } from '@/i18n';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/Button';
+import { CheckoutButton } from '@/components/CheckoutButton';
 import Link from 'next/link';
 import {
   CheckCircle2,
@@ -15,14 +18,38 @@ import {
   TrendingUp,
   Heart,
   ArrowRight,
+  Check,
 } from 'lucide-react';
 
-export default function FamiliaPage() {
+function FamiliaPageInner() {
+  const { t } = useTranslation();
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+  const searchParams = useSearchParams();
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  useEffect(() => {
+    if (searchParams.get('success') === 'true') {
+      setShowSuccess(true);
+      const timer = setTimeout(() => setShowSuccess(false), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [searchParams]);
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
       <Navbar />
+
+      {showSuccess && (
+        <div className="fixed top-20 right-4 left-4 sm:left-auto sm:w-96 bg-green-500/20 border border-green-500/50 rounded-lg p-4 z-50">
+          <div className="flex items-start gap-3">
+            <Check className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+            <div>
+              <h3 className="font-semibold text-green-900">Subscription active!</h3>
+              <p className="text-sm text-green-800 mt-1">Your Guardian Plan has been activated. Check your email for confirmation details.</p>
+            </div>
+          </div>
+        </div>
+      )}
 
       <main className="flex-grow">
         {/* Hero Section */}
@@ -31,10 +58,10 @@ export default function FamiliaPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
               <div>
                 <h1 className="text-4xl sm:text-5xl font-bold text-white mb-6">
-                  The Familia Plan: Immigration Protection for Life
+                  {t('familia.title')}
                 </h1>
                 <p className="text-lg text-blue-100 mb-8 leading-relaxed">
-                  Your green card is just the beginning. Citizenship, family reunification, renewals, travel documents. We handle it all, for less than your phone bill.
+                  {t('familia.subtitle')}
                 </p>
                 <button
                   onClick={() => {
@@ -42,7 +69,7 @@ export default function FamiliaPage() {
                   }}
                   className="bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-8 rounded-lg transition flex items-center gap-2"
                 >
-                  Protect Your Family
+                  {t('familia.cta')}
                   <ArrowRight className="w-5 h-5" />
                 </button>
               </div>
@@ -86,10 +113,10 @@ export default function FamiliaPage() {
         <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
           <div className="max-w-6xl mx-auto">
             <h2 className="text-3xl font-bold text-gray-900 mb-4 text-center">
-              The Journey Doesn't End at the Green Card
+              {t('familia.journeyHeading')}
             </h2>
             <p className="text-lg text-gray-600 text-center mb-16 max-w-2xl mx-auto">
-              Your immigration path continues for years. Here is what happens if you miss key deadlines vs. having a Guardian Plan protecting you.
+              {t('familia.journeySubtitle')}
             </p>
 
             <div className="space-y-8">
@@ -259,9 +286,11 @@ export default function FamiliaPage() {
                     <CheckCircle2 className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
                     <p className="text-gray-700">Document storage vault</p>
                   </div>
-                  <Button className="w-full mt-8 bg-blue-600 hover:bg-blue-700 text-white">
-                    Get Started
-                  </Button>
+                  <CheckoutButton
+                    planId="guardian_essential"
+                    label="Get Started"
+                    className="w-full mt-8 bg-blue-600 hover:bg-blue-700 text-white"
+                  />
                 </div>
               </div>
 
@@ -300,9 +329,11 @@ export default function FamiliaPage() {
                     <CheckCircle2 className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
                     <p className="text-gray-700">10% discount on all new case filings</p>
                   </div>
-                  <Button className="w-full mt-8 bg-green-600 hover:bg-green-700 text-white font-semibold">
-                    Start Now
-                  </Button>
+                  <CheckoutButton
+                    planId="guardian_family"
+                    label="Start Now"
+                    className="w-full mt-8 bg-green-600 hover:bg-green-700 text-white"
+                  />
                 </div>
               </div>
 
@@ -340,9 +371,11 @@ export default function FamiliaPage() {
                     <CheckCircle2 className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
                     <p className="text-gray-700">Dedicated case manager</p>
                   </div>
-                  <Button className="w-full mt-8 bg-purple-600 hover:bg-purple-700 text-white font-semibold">
-                    Get Premium
-                  </Button>
+                  <CheckoutButton
+                    planId="guardian_dynasty"
+                    label="Get Premium"
+                    className="w-full mt-8 bg-purple-600 hover:bg-purple-700 text-white"
+                  />
                 </div>
               </div>
             </div>
@@ -581,15 +614,21 @@ export default function FamiliaPage() {
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-              <Button className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-8 rounded-lg w-full">
-                Start Essentials
-              </Button>
-              <Button className="bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-8 rounded-lg w-full">
-                Start Family
-              </Button>
-              <Button className="bg-purple-500 hover:bg-purple-600 text-white font-semibold py-3 px-8 rounded-lg w-full">
-                Get Dynasty
-              </Button>
+              <CheckoutButton
+                planId="guardian_essential"
+                label="Start Essentials"
+                className="w-full bg-blue-500 hover:bg-blue-600"
+              />
+              <CheckoutButton
+                planId="guardian_family"
+                label="Start Family"
+                className="w-full bg-green-500 hover:bg-green-600"
+              />
+              <CheckoutButton
+                planId="guardian_dynasty"
+                label="Get Dynasty"
+                className="w-full bg-purple-500 hover:bg-purple-600"
+              />
             </div>
 
             <p className="text-blue-100 mb-4">
@@ -604,5 +643,13 @@ export default function FamiliaPage() {
 
       <Footer />
     </div>
+  );
+}
+
+export default function FamiliaPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><p>Loading...</p></div>}>
+      <FamiliaPageInner />
+    </Suspense>
   );
 }

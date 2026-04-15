@@ -1,5 +1,7 @@
 "use client";
 
+import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
 import { useState } from "react";
 import { useAuthStore } from "@/lib/store";
 import { User, Lock, Bell, CreditCard, Database, Upload, Eye, EyeOff, AlertCircle, CheckCircle } from "lucide-react";
@@ -103,10 +105,13 @@ export default function SettingsPage() {
   ];
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
+    <div className="min-h-screen flex flex-col">
+      <Navbar />
+      <main className="flex-1 pt-20 sm:pt-24">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-100">Settings</h1>
+      <div className="mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-100">Settings</h1>
         <p className="text-gray-400 mt-2">Manage your account preferences and security</p>
       </div>
 
@@ -128,15 +133,15 @@ export default function SettingsPage() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-6">
         {/* Tabs Sidebar */}
-        <div className="lg:col-span-1">
-          <div className="space-y-2">
+        <div className="lg:col-span-1 order-2 lg:order-1">
+          <div className="space-y-1 sm:space-y-2">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as TabType)}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors ${
+                className={`w-full flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 rounded-lg font-medium text-xs sm:text-sm transition-colors ${
                   activeTab === tab.id
                     ? "bg-green-500/20 text-green-400 border border-green-500/40"
                     : "text-gray-400 hover:text-gray-200"
@@ -150,16 +155,16 @@ export default function SettingsPage() {
         </div>
 
         {/* Tab Content */}
-        <div className="lg:col-span-3">
+        <div className="lg:col-span-3 order-1 lg:order-2">
           {/* Profile Tab */}
           {activeTab === "profile" && (
-            <div className="p-6 bg-surface/50 border border-surface/40 rounded-lg">
-              <h2 className="text-xl font-bold text-gray-100 mb-6">Profile Settings</h2>
+            <div className="p-4 sm:p-6 bg-surface/50 border border-surface/40 rounded-lg">
+              <h2 className="text-lg sm:text-xl font-bold text-gray-100 mb-4 sm:mb-6">Profile Settings</h2>
 
               {/* Avatar Upload */}
-              <div className="mb-8">
-                <label className="block text-sm font-medium text-gray-300 mb-4">Profile Picture</label>
-                <div className="flex items-center gap-6">
+              <div className="mb-6 sm:mb-8">
+                <label className="block text-sm font-medium text-gray-300 mb-3 sm:mb-4">Profile Picture</label>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-6">
                   <div className="relative w-20 h-20 bg-gradient-to-br from-green-500 to-blue-500 rounded-full flex items-center justify-center">
                     <span className="text-2xl font-bold text-white">
                       {user?.name?.[0]?.toUpperCase() || "U"}
@@ -176,8 +181,8 @@ export default function SettingsPage() {
               </div>
 
               {/* Form Fields */}
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-4 sm:space-y-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-300 mb-2">Full Name</label>
                     <input
@@ -247,14 +252,14 @@ export default function SettingsPage() {
 
           {/* Security Tab */}
           {activeTab === "security" && (
-            <div className="p-6 bg-surface/50 border border-surface/40 rounded-lg space-y-8">
+            <div className="p-4 sm:p-6 bg-surface/50 border border-surface/40 rounded-lg space-y-6 sm:space-y-8">
               <div>
-                <h2 className="text-xl font-bold text-gray-100 mb-6">Security Settings</h2>
+                <h2 className="text-lg sm:text-xl font-bold text-gray-100 mb-4 sm:mb-6">Security Settings</h2>
 
                 {/* Change Password */}
-                <div className="mb-8">
-                  <h3 className="text-lg font-semibold text-gray-100 mb-4">Change Password</h3>
-                  <div className="space-y-4">
+                <div className="mb-6 sm:mb-8">
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-100 mb-3 sm:mb-4">Change Password</h3>
+                  <div className="space-y-3 sm:space-y-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-300 mb-2">Current Password</label>
                       <input
@@ -301,15 +306,15 @@ export default function SettingsPage() {
 
                 {/* 2FA */}
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-100 mb-4">Two-Factor Authentication</h3>
-                  <div className="flex items-center justify-between p-4 bg-deep border border-surface/30 rounded-lg mb-4">
-                    <div>
-                      <p className="text-gray-100 font-medium">Two-Factor Authentication</p>
-                      <p className="text-sm text-gray-400 mt-1">Protect your account with an authenticator app</p>
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-100 mb-3 sm:mb-4">Two-Factor Authentication</h3>
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 sm:p-4 bg-deep border border-surface/30 rounded-lg mb-4">
+                    <div className="mb-3 sm:mb-0">
+                      <p className="text-sm sm:text-base text-gray-100 font-medium">Two-Factor Authentication</p>
+                      <p className="text-xs sm:text-sm text-gray-400 mt-1">Protect your account with an authenticator app</p>
                     </div>
                     <a
                       href="/settings/mfa"
-                      className="px-4 py-2 bg-green-primary text-white rounded-lg hover:bg-green-600 transition-colors text-sm font-medium"
+                      className="px-4 py-2 bg-green-primary text-white text-xs sm:text-sm rounded-lg hover:bg-green-600 transition-colors font-medium whitespace-nowrap"
                     >
                       Set up 2FA
                     </a>
@@ -319,23 +324,23 @@ export default function SettingsPage() {
 
               {/* Active Sessions */}
               <div>
-                <h3 className="text-lg font-semibold text-gray-100 mb-4">Active Sessions</h3>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between p-4 bg-deep border border-surface/30 rounded-lg">
-                    <div>
-                      <p className="text-gray-100 font-medium">Current Session</p>
+                <h3 className="text-base sm:text-lg font-semibold text-gray-100 mb-3 sm:mb-4">Active Sessions</h3>
+                <div className="space-y-2 sm:space-y-3">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 sm:p-4 bg-deep border border-surface/30 rounded-lg">
+                    <div className="mb-3 sm:mb-0">
+                      <p className="text-sm sm:text-base text-gray-100 font-medium">Current Session</p>
                       <p className="text-xs text-gray-400 mt-1">Chrome on macOS • Last active now</p>
                     </div>
-                    <span className="px-2 py-1 bg-green-500/20 text-green-400 text-xs font-medium rounded">
+                    <span className="px-2 py-1 bg-green-500/20 text-green-400 text-xs font-medium rounded whitespace-nowrap">
                       CURRENT
                     </span>
                   </div>
-                  <div className="flex items-center justify-between p-4 bg-deep border border-surface/30 rounded-lg">
-                    <div>
-                      <p className="text-gray-100 font-medium">Safari on iPhone</p>
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 sm:p-4 bg-deep border border-surface/30 rounded-lg">
+                    <div className="mb-3 sm:mb-0">
+                      <p className="text-sm sm:text-base text-gray-100 font-medium">Safari on iPhone</p>
                       <p className="text-xs text-gray-400 mt-1">Last active 2 days ago</p>
                     </div>
-                    <button className="text-xs text-red-400 hover:text-red-300 font-medium">Sign Out</button>
+                    <button className="text-xs text-red-400 hover:text-red-300 font-medium whitespace-nowrap">Sign Out</button>
                   </div>
                 </div>
               </div>
@@ -344,107 +349,107 @@ export default function SettingsPage() {
 
           {/* Notifications Tab */}
           {activeTab === "notifications" && (
-            <div className="p-6 bg-surface/50 border border-surface/40 rounded-lg">
-              <h2 className="text-xl font-bold text-gray-100 mb-6">Notification Preferences</h2>
+            <div className="p-4 sm:p-6 bg-surface/50 border border-surface/40 rounded-lg">
+              <h2 className="text-lg sm:text-xl font-bold text-gray-100 mb-4 sm:mb-6">Notification Preferences</h2>
 
-              <div className="space-y-6">
+              <div className="space-y-4 sm:space-y-6">
                 {/* Notification Types */}
                 <div>
-                  <h3 className="text-sm font-semibold text-gray-300 mb-4">Case Updates</h3>
-                  <div className="space-y-3">
-                    <label className="flex items-center gap-3 p-3 bg-deep border border-surface/30 rounded-lg cursor-pointer hover:bg-surface/20 transition-colors">
+                  <h3 className="text-xs sm:text-sm font-semibold text-gray-300 mb-3 sm:mb-4">Case Updates</h3>
+                  <div className="space-y-2 sm:space-y-3">
+                    <label className="flex items-center gap-2 sm:gap-3 p-3 bg-deep border border-surface/30 rounded-lg cursor-pointer hover:bg-surface/20 transition-colors">
                       <input
                         type="checkbox"
                         checked={notificationSettings.emailCaseUpdates}
                         onChange={(e) => setNotificationSettings({ ...notificationSettings, emailCaseUpdates: e.target.checked })}
-                        className="w-4 h-4 accent-green-500 rounded"
+                        className="w-4 h-4 accent-green-500 rounded flex-shrink-0"
                       />
-                      <div>
-                        <p className="text-gray-200 font-medium">Email</p>
+                      <div className="min-w-0">
+                        <p className="text-sm sm:text-base text-gray-200 font-medium">Email</p>
                         <p className="text-xs text-gray-400">Get notified via email</p>
                       </div>
                     </label>
-                    <label className="flex items-center gap-3 p-3 bg-deep border border-surface/30 rounded-lg cursor-pointer hover:bg-surface/20 transition-colors">
+                    <label className="flex items-center gap-2 sm:gap-3 p-3 bg-deep border border-surface/30 rounded-lg cursor-pointer hover:bg-surface/20 transition-colors">
                       <input
                         type="checkbox"
                         checked={notificationSettings.smsCaseUpdates}
                         onChange={(e) => setNotificationSettings({ ...notificationSettings, smsCaseUpdates: e.target.checked })}
-                        className="w-4 h-4 accent-green-500 rounded"
+                        className="w-4 h-4 accent-green-500 rounded flex-shrink-0"
                       />
-                      <div>
-                        <p className="text-gray-200 font-medium">SMS</p>
+                      <div className="min-w-0">
+                        <p className="text-sm sm:text-base text-gray-200 font-medium">SMS</p>
                         <p className="text-xs text-gray-400">Get notified via text message</p>
                       </div>
                     </label>
                   </div>
                 </div>
 
-                <div className="border-t border-surface/30 pt-6">
-                  <h3 className="text-sm font-semibold text-gray-300 mb-4">Deadlines</h3>
-                  <div className="space-y-3">
-                    <label className="flex items-center gap-3 p-3 bg-deep border border-surface/30 rounded-lg cursor-pointer hover:bg-surface/20 transition-colors">
+                <div className="border-t border-surface/30 pt-4 sm:pt-6">
+                  <h3 className="text-xs sm:text-sm font-semibold text-gray-300 mb-3 sm:mb-4">Deadlines</h3>
+                  <div className="space-y-2 sm:space-y-3">
+                    <label className="flex items-center gap-2 sm:gap-3 p-3 bg-deep border border-surface/30 rounded-lg cursor-pointer hover:bg-surface/20 transition-colors">
                       <input
                         type="checkbox"
                         checked={notificationSettings.emailDeadlines}
                         onChange={(e) => setNotificationSettings({ ...notificationSettings, emailDeadlines: e.target.checked })}
-                        className="w-4 h-4 accent-green-500 rounded"
+                        className="w-4 h-4 accent-green-500 rounded flex-shrink-0"
                       />
-                      <div>
-                        <p className="text-gray-200 font-medium">Email</p>
+                      <div className="min-w-0">
+                        <p className="text-sm sm:text-base text-gray-200 font-medium">Email</p>
                         <p className="text-xs text-gray-400">Get notified via email</p>
                       </div>
                     </label>
-                    <label className="flex items-center gap-3 p-3 bg-deep border border-surface/30 rounded-lg cursor-pointer hover:bg-surface/20 transition-colors">
+                    <label className="flex items-center gap-2 sm:gap-3 p-3 bg-deep border border-surface/30 rounded-lg cursor-pointer hover:bg-surface/20 transition-colors">
                       <input
                         type="checkbox"
                         checked={notificationSettings.smsDeadlines}
                         onChange={(e) => setNotificationSettings({ ...notificationSettings, smsDeadlines: e.target.checked })}
-                        className="w-4 h-4 accent-green-500 rounded"
+                        className="w-4 h-4 accent-green-500 rounded flex-shrink-0"
                       />
-                      <div>
-                        <p className="text-gray-200 font-medium">SMS</p>
+                      <div className="min-w-0">
+                        <p className="text-sm sm:text-base text-gray-200 font-medium">SMS</p>
                         <p className="text-xs text-gray-400">Get notified via text message</p>
                       </div>
                     </label>
                   </div>
                 </div>
 
-                <div className="border-t border-surface/30 pt-6">
-                  <h3 className="text-sm font-semibold text-gray-300 mb-4">Other</h3>
-                  <div className="space-y-3">
-                    <label className="flex items-center gap-3 p-3 bg-deep border border-surface/30 rounded-lg cursor-pointer hover:bg-surface/20 transition-colors">
+                <div className="border-t border-surface/30 pt-4 sm:pt-6">
+                  <h3 className="text-xs sm:text-sm font-semibold text-gray-300 mb-3 sm:mb-4">Other</h3>
+                  <div className="space-y-2 sm:space-y-3">
+                    <label className="flex items-center gap-2 sm:gap-3 p-3 bg-deep border border-surface/30 rounded-lg cursor-pointer hover:bg-surface/20 transition-colors">
                       <input
                         type="checkbox"
                         checked={notificationSettings.emailDocuments}
                         onChange={(e) => setNotificationSettings({ ...notificationSettings, emailDocuments: e.target.checked })}
-                        className="w-4 h-4 accent-green-500 rounded"
+                        className="w-4 h-4 accent-green-500 rounded flex-shrink-0"
                       />
-                      <div>
-                        <p className="text-gray-200 font-medium">Document Requests</p>
+                      <div className="min-w-0">
+                        <p className="text-sm sm:text-base text-gray-200 font-medium">Document Requests</p>
                         <p className="text-xs text-gray-400">When new documents are needed</p>
                       </div>
                     </label>
-                    <label className="flex items-center gap-3 p-3 bg-deep border border-surface/30 rounded-lg cursor-pointer hover:bg-surface/20 transition-colors">
+                    <label className="flex items-center gap-2 sm:gap-3 p-3 bg-deep border border-surface/30 rounded-lg cursor-pointer hover:bg-surface/20 transition-colors">
                       <input
                         type="checkbox"
                         checked={notificationSettings.emailBilling}
                         onChange={(e) => setNotificationSettings({ ...notificationSettings, emailBilling: e.target.checked })}
-                        className="w-4 h-4 accent-green-500 rounded"
+                        className="w-4 h-4 accent-green-500 rounded flex-shrink-0"
                       />
-                      <div>
-                        <p className="text-gray-200 font-medium">Billing Updates</p>
+                      <div className="min-w-0">
+                        <p className="text-sm sm:text-base text-gray-200 font-medium">Billing Updates</p>
                         <p className="text-xs text-gray-400">Invoices and subscription changes</p>
                       </div>
                     </label>
-                    <label className="flex items-center gap-3 p-3 bg-deep border border-surface/30 rounded-lg cursor-pointer hover:bg-surface/20 transition-colors">
+                    <label className="flex items-center gap-2 sm:gap-3 p-3 bg-deep border border-surface/30 rounded-lg cursor-pointer hover:bg-surface/20 transition-colors">
                       <input
                         type="checkbox"
                         checked={notificationSettings.pushNotifications}
                         onChange={(e) => setNotificationSettings({ ...notificationSettings, pushNotifications: e.target.checked })}
-                        className="w-4 h-4 accent-green-500 rounded"
+                        className="w-4 h-4 accent-green-500 rounded flex-shrink-0"
                       />
-                      <div>
-                        <p className="text-gray-200 font-medium">Push Notifications</p>
+                      <div className="min-w-0">
+                        <p className="text-sm sm:text-base text-gray-200 font-medium">Push Notifications</p>
                         <p className="text-xs text-gray-400">Browser notifications</p>
                       </div>
                     </label>
@@ -463,55 +468,55 @@ export default function SettingsPage() {
 
           {/* Billing Tab */}
           {activeTab === "billing" && (
-            <div className="p-6 bg-surface/50 border border-surface/40 rounded-lg space-y-8">
+            <div className="p-4 sm:p-6 bg-surface/50 border border-surface/40 rounded-lg space-y-6 sm:space-y-8">
               <div>
-                <h2 className="text-xl font-bold text-gray-100 mb-6">Billing Settings</h2>
+                <h2 className="text-lg sm:text-xl font-bold text-gray-100 mb-4 sm:mb-6">Billing Settings</h2>
 
                 {/* Current Plan */}
-                <div className="p-6 bg-gradient-to-br from-green-500/10 to-blue-500/10 border border-green-500/30 rounded-lg mb-8">
-                  <h3 className="text-lg font-semibold text-gray-100 mb-2">Current Plan: Professional</h3>
-                  <p className="text-gray-400 mb-4">$99.99 per month • Renews on May 14, 2025</p>
-                  <div className="grid grid-cols-2 gap-4 mb-6">
+                <div className="p-4 sm:p-6 bg-gradient-to-br from-green-500/10 to-blue-500/10 border border-green-500/30 rounded-lg mb-6 sm:mb-8">
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-100 mb-2">Current Plan: Professional</h3>
+                  <p className="text-xs sm:text-sm text-gray-400 mb-3 sm:mb-4">$99.99 per month • Renews on May 14, 2025</p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-4 sm:mb-6">
                     <div>
-                      <p className="text-sm text-gray-400">Cases Included</p>
-                      <p className="text-lg font-bold text-green-400">Unlimited</p>
+                      <p className="text-xs text-gray-400">Cases Included</p>
+                      <p className="text-base sm:text-lg font-bold text-green-400">Unlimited</p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-400">Attorney Connections</p>
-                      <p className="text-lg font-bold text-green-400">5</p>
+                      <p className="text-xs text-gray-400">Attorney Connections</p>
+                      <p className="text-base sm:text-lg font-bold text-green-400">5</p>
                     </div>
                   </div>
-                  <div className="flex gap-3">
-                    <button className="px-6 py-2 bg-green-500 hover:bg-green-600 text-white font-medium rounded-lg transition-colors">
+                  <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                    <button className="px-4 sm:px-6 py-2 bg-green-500 hover:bg-green-600 text-white text-sm sm:text-base font-medium rounded-lg transition-colors">
                       Change Plan
                     </button>
-                    <button className="px-6 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 font-medium rounded-lg transition-colors border border-red-500/30">
+                    <button className="px-4 sm:px-6 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 text-sm sm:text-base font-medium rounded-lg transition-colors border border-red-500/30">
                       Cancel Subscription
                     </button>
                   </div>
                 </div>
 
                 {/* Payment Method */}
-                <div className="mb-8">
-                  <h3 className="text-lg font-semibold text-gray-100 mb-4">Payment Method</h3>
-                  <div className="flex items-center justify-between p-4 bg-deep border border-surface/30 rounded-lg mb-4">
+                <div className="mb-6 sm:mb-8">
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-100 mb-3 sm:mb-4">Payment Method</h3>
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 sm:p-4 bg-deep border border-surface/30 rounded-lg mb-3 sm:mb-4">
                     <div>
-                      <p className="text-gray-100 font-medium">Visa ending in 4242</p>
-                      <p className="text-sm text-gray-400 mt-1">Expires 12/2026</p>
+                      <p className="text-sm sm:text-base text-gray-100 font-medium">Visa ending in 4242</p>
+                      <p className="text-xs sm:text-sm text-gray-400 mt-1">Expires 12/2026</p>
                     </div>
-                    <button className="text-sm text-green-500 hover:text-green-400 font-medium">Update</button>
+                    <button className="text-xs sm:text-sm text-green-500 hover:text-green-400 font-medium mt-2 sm:mt-0">Update</button>
                   </div>
-                  <button className="text-sm text-blue-500 hover:text-blue-400 font-medium">Add another payment method</button>
+                  <button className="text-xs sm:text-sm text-blue-500 hover:text-blue-400 font-medium">Add another payment method</button>
                 </div>
 
                 {/* Usage */}
-                <div className="mb-8">
-                  <h3 className="text-lg font-semibold text-gray-100 mb-4">Usage This Month</h3>
-                  <div className="space-y-4">
+                <div className="mb-6 sm:mb-8">
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-100 mb-3 sm:mb-4">Usage This Month</h3>
+                  <div className="space-y-3 sm:space-y-4">
                     <div>
                       <div className="flex justify-between items-center mb-2">
-                        <p className="text-gray-300">API Requests</p>
-                        <p className="text-sm text-gray-400">2,450 / 10,000</p>
+                        <p className="text-xs sm:text-sm text-gray-300">API Requests</p>
+                        <p className="text-xs sm:text-sm text-gray-400">2,450 / 10,000</p>
                       </div>
                       <div className="w-full bg-surface/50 rounded-full h-2">
                         <div className="bg-green-500 h-2 rounded-full" style={{ width: "24.5%" }} />
@@ -519,8 +524,8 @@ export default function SettingsPage() {
                     </div>
                     <div>
                       <div className="flex justify-between items-center mb-2">
-                        <p className="text-gray-300">Document Storage</p>
-                        <p className="text-sm text-gray-400">3.2 GB / 50 GB</p>
+                        <p className="text-xs sm:text-sm text-gray-300">Document Storage</p>
+                        <p className="text-xs sm:text-sm text-gray-400">3.2 GB / 50 GB</p>
                       </div>
                       <div className="w-full bg-surface/50 rounded-full h-2">
                         <div className="bg-green-500 h-2 rounded-full" style={{ width: "6.4%" }} />
@@ -531,35 +536,35 @@ export default function SettingsPage() {
 
                 {/* Invoice History */}
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-100 mb-4">Invoice History</h3>
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-100 mb-3 sm:mb-4">Invoice History</h3>
+                  <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
+                    <table className="w-full text-xs sm:text-sm whitespace-nowrap">
                       <thead>
                         <tr className="border-b border-surface/30">
-                          <th className="px-4 py-3 text-left text-gray-400">Date</th>
-                          <th className="px-4 py-3 text-left text-gray-400">Amount</th>
-                          <th className="px-4 py-3 text-left text-gray-400">Status</th>
-                          <th className="px-4 py-3 text-left text-gray-400">Action</th>
+                          <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-gray-400">Date</th>
+                          <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-gray-400">Amount</th>
+                          <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-gray-400">Status</th>
+                          <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-gray-400">Action</th>
                         </tr>
                       </thead>
                       <tbody>
                         <tr className="border-b border-surface/20 hover:bg-surface/20">
-                          <td className="px-4 py-3 text-gray-300">April 14, 2025</td>
-                          <td className="px-4 py-3 text-gray-300">$99.99</td>
-                          <td className="px-4 py-3"><span className="px-2 py-1 bg-green-500/10 text-green-400 text-xs font-medium rounded">Paid</span></td>
-                          <td className="px-4 py-3"><button className="text-green-500 hover:text-green-400 text-xs font-medium">Download</button></td>
+                          <td className="px-2 sm:px-4 py-2 sm:py-3 text-gray-300">April 14, 2025</td>
+                          <td className="px-2 sm:px-4 py-2 sm:py-3 text-gray-300">$99.99</td>
+                          <td className="px-2 sm:px-4 py-2 sm:py-3"><span className="px-2 py-1 bg-green-500/10 text-green-400 text-xs font-medium rounded">Paid</span></td>
+                          <td className="px-2 sm:px-4 py-2 sm:py-3"><button className="text-green-500 hover:text-green-400 text-xs font-medium">Download</button></td>
                         </tr>
                         <tr className="border-b border-surface/20 hover:bg-surface/20">
-                          <td className="px-4 py-3 text-gray-300">March 14, 2025</td>
-                          <td className="px-4 py-3 text-gray-300">$99.99</td>
-                          <td className="px-4 py-3"><span className="px-2 py-1 bg-green-500/10 text-green-400 text-xs font-medium rounded">Paid</span></td>
-                          <td className="px-4 py-3"><button className="text-green-500 hover:text-green-400 text-xs font-medium">Download</button></td>
+                          <td className="px-2 sm:px-4 py-2 sm:py-3 text-gray-300">March 14, 2025</td>
+                          <td className="px-2 sm:px-4 py-2 sm:py-3 text-gray-300">$99.99</td>
+                          <td className="px-2 sm:px-4 py-2 sm:py-3"><span className="px-2 py-1 bg-green-500/10 text-green-400 text-xs font-medium rounded">Paid</span></td>
+                          <td className="px-2 sm:px-4 py-2 sm:py-3"><button className="text-green-500 hover:text-green-400 text-xs font-medium">Download</button></td>
                         </tr>
                         <tr className="border-b border-surface/20 hover:bg-surface/20">
-                          <td className="px-4 py-3 text-gray-300">February 14, 2025</td>
-                          <td className="px-4 py-3 text-gray-300">$99.99</td>
-                          <td className="px-4 py-3"><span className="px-2 py-1 bg-green-500/10 text-green-400 text-xs font-medium rounded">Paid</span></td>
-                          <td className="px-4 py-3"><button className="text-green-500 hover:text-green-400 text-xs font-medium">Download</button></td>
+                          <td className="px-2 sm:px-4 py-2 sm:py-3 text-gray-300">February 14, 2025</td>
+                          <td className="px-2 sm:px-4 py-2 sm:py-3 text-gray-300">$99.99</td>
+                          <td className="px-2 sm:px-4 py-2 sm:py-3"><span className="px-2 py-1 bg-green-500/10 text-green-400 text-xs font-medium rounded">Paid</span></td>
+                          <td className="px-2 sm:px-4 py-2 sm:py-3"><button className="text-green-500 hover:text-green-400 text-xs font-medium">Download</button></td>
                         </tr>
                       </tbody>
                     </table>
@@ -571,33 +576,33 @@ export default function SettingsPage() {
 
           {/* Data Tab */}
           {activeTab === "data" && (
-            <div className="p-6 bg-surface/50 border border-surface/40 rounded-lg">
-              <h2 className="text-xl font-bold text-gray-100 mb-6">Data Management</h2>
+            <div className="p-4 sm:p-6 bg-surface/50 border border-surface/40 rounded-lg">
+              <h2 className="text-lg sm:text-xl font-bold text-gray-100 mb-4 sm:mb-6">Data Management</h2>
 
-              <div className="space-y-6">
+              <div className="space-y-4 sm:space-y-6">
                 {/* Export Data */}
-                <div className="p-6 bg-blue-500/10 border border-blue-500/30 rounded-lg">
-                  <h3 className="text-lg font-semibold text-gray-100 mb-2">Export Your Data</h3>
-                  <p className="text-gray-400 mb-4">
+                <div className="p-4 sm:p-6 bg-blue-500/10 border border-blue-500/30 rounded-lg">
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-100 mb-2">Export Your Data</h3>
+                  <p className="text-xs sm:text-sm text-gray-400 mb-3 sm:mb-4">
                     Download a copy of all your data including cases, documents, and account information in a portable format.
                   </p>
                   <button
                     onClick={handleExportData}
-                    className="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg transition-colors"
+                    className="px-4 sm:px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm sm:text-base font-medium rounded-lg transition-colors"
                   >
                     Export Data
                   </button>
                 </div>
 
                 {/* Delete Account */}
-                <div className="p-6 bg-red-500/10 border border-red-500/30 rounded-lg">
-                  <h3 className="text-lg font-semibold text-gray-100 mb-2">Delete Account</h3>
-                  <p className="text-gray-400 mb-4">
+                <div className="p-4 sm:p-6 bg-red-500/10 border border-red-500/30 rounded-lg">
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-100 mb-2">Delete Account</h3>
+                  <p className="text-xs sm:text-sm text-gray-400 mb-3 sm:mb-4">
                     Permanently delete your account and all associated data. This action cannot be undone.
                   </p>
                   <button
                     onClick={handleDeleteAccount}
-                    className="px-6 py-2 bg-red-500 hover:bg-red-600 text-white font-medium rounded-lg transition-colors"
+                    className="px-4 sm:px-6 py-2 bg-red-500 hover:bg-red-600 text-white text-sm sm:text-base font-medium rounded-lg transition-colors"
                   >
                     Delete Account
                   </button>
@@ -610,26 +615,26 @@ export default function SettingsPage() {
 
       {/* Confirmation Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-surface border border-surface/40 rounded-lg p-6 max-w-sm w-full mx-4">
-            <h3 className="text-lg font-bold text-gray-100 mb-4">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
+          <div className="bg-surface border border-surface/40 rounded-lg p-4 sm:p-6 max-w-sm w-full">
+            <h3 className="text-base sm:text-lg font-bold text-gray-100 mb-3 sm:mb-4">
               {modalAction === "export" ? "Export Your Data?" : "Delete Your Account?"}
             </h3>
-            <p className="text-gray-400 mb-6">
+            <p className="text-xs sm:text-sm text-gray-400 mb-4 sm:mb-6">
               {modalAction === "export"
                 ? "We will prepare your data export and send it to your email address. This may take a few minutes."
                 : "This will permanently delete your account and all associated data. This action cannot be undone."}
             </p>
-            <div className="flex gap-3">
+            <div className="flex gap-2 sm:gap-3">
               <button
                 onClick={() => setShowModal(false)}
-                className="flex-1 px-4 py-2 bg-deep border border-surface/30 text-gray-300 font-medium rounded-lg hover:bg-surface/20 transition-colors"
+                className="flex-1 px-4 py-2 bg-deep border border-surface/30 text-xs sm:text-sm text-gray-300 font-medium rounded-lg hover:bg-surface/20 transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={confirmAction}
-                className={`flex-1 px-4 py-2 text-white font-medium rounded-lg transition-colors ${
+                className={`flex-1 px-4 py-2 text-white text-xs sm:text-sm font-medium rounded-lg transition-colors ${
                   modalAction === "export"
                     ? "bg-blue-500 hover:bg-blue-600"
                     : "bg-red-500 hover:bg-red-600"
@@ -641,6 +646,9 @@ export default function SettingsPage() {
           </div>
         </div>
       )}
+    </div>
+      </main>
+      <Footer />
     </div>
   );
 }

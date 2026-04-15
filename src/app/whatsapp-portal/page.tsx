@@ -1,4 +1,5 @@
 'use client';
+import { useTranslation } from '@/i18n';
 import React, { useState } from 'react';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
@@ -18,6 +19,7 @@ import {
 } from 'lucide-react';
 
 export default function WhatsAppPortalPage() {
+  const { t } = useTranslation();
   const [activeFeature, setActiveFeature] = useState<number | null>(null);
 
   return (

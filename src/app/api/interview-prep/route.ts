@@ -137,7 +137,9 @@ export async function POST(request: NextRequest): Promise<Response> {
 
     return NextResponse.json(response);
   } catch (error) {
-    return safeErrorResponse(error, "Interview prep generation failed. Please try again."
+    return safeErrorResponse(
+      error,
+      "Interview prep generation failed. Please try again."
     );
   }
 }

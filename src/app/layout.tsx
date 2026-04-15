@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import { Analytics } from "@/components/Analytics";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
+import { I18nProvider } from "@/i18n";
 import "./globals.css";
 
 const inter = Inter({
@@ -87,9 +88,11 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} bg-white text-slate-900 antialiased`}>
-        {children}
-        <Analytics />
-        <WhatsAppButton />
+        <I18nProvider>
+          {children}
+          <Analytics />
+          <WhatsAppButton />
+        </I18nProvider>
       </body>
     </html>
   );

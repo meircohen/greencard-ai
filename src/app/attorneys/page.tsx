@@ -43,7 +43,7 @@ export default function AttorneysPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-midnight via-deep to-midnight">
+    <div className="min-h-screen bg-white">
       <Navbar />
 
       {/* Hero Section */}
@@ -52,13 +52,13 @@ export default function AttorneysPage() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             {/* Left: Content */}
             <div>
-              <h1 className="text-5xl md:text-6xl font-bold text-primary mb-6">
+              <h1 className="text-5xl md:text-6xl font-bold text-blue-900 mb-6">
                 {PARTNER_FIRM.name}
               </h1>
-              <p className="text-xl text-secondary mb-8">
+              <p className="text-xl text-slate-600 mb-8">
                 {PARTNER_FIRM.attorney} • {PARTNER_FIRM.firm}
               </p>
-              <p className="text-lg text-secondary leading-relaxed mb-8">
+              <p className="text-lg text-slate-600 leading-relaxed mb-8">
                 {PARTNER_FIRM.bio}
               </p>
 
@@ -66,20 +66,20 @@ export default function AttorneysPage() {
               <div className="space-y-3 mb-8">
                 <a
                   href={`tel:${PARTNER_FIRM.phone}`}
-                  className="flex items-center gap-3 text-secondary hover:text-primary transition-colors"
+                  className="flex items-center gap-3 text-slate-600 hover:text-blue-900 transition-colors"
                 >
-                  <Phone className="w-5 h-5 text-green-primary" />
+                  <Phone className="w-5 h-5 text-blue-900" />
                   {PARTNER_FIRM.phone}
                 </a>
                 <a
                   href={`mailto:${PARTNER_FIRM.email}`}
-                  className="flex items-center gap-3 text-secondary hover:text-primary transition-colors"
+                  className="flex items-center gap-3 text-slate-600 hover:text-blue-900 transition-colors"
                 >
-                  <Mail className="w-5 h-5 text-green-primary" />
+                  <Mail className="w-5 h-5 text-blue-900" />
                   {PARTNER_FIRM.email}
                 </a>
-                <div className="flex items-center gap-3 text-secondary">
-                  <MapPin className="w-5 h-5 text-green-primary" />
+                <div className="flex items-center gap-3 text-slate-600">
+                  <MapPin className="w-5 h-5 text-blue-900" />
                   {PARTNER_FIRM.address}
                 </div>
               </div>
@@ -97,14 +97,14 @@ export default function AttorneysPage() {
 
             {/* Right: Attorney Initials Badge */}
             <div>
-              <div className="bg-gradient-to-br from-green-primary/20 to-blue-primary/20 rounded-lg h-96 flex items-center justify-center border border-white/10">
+              <div className="bg-gradient-to-br from-blue-900/10 to-blue-800/10 rounded-lg h-96 flex items-center justify-center border border-blue-900/30">
                 <div className="text-center">
-                  <div className="w-40 h-40 mx-auto rounded-full bg-gradient-to-br from-green-primary to-blue-primary flex items-center justify-center mb-4 shadow-lg">
+                  <div className="w-40 h-40 mx-auto rounded-full bg-gradient-to-br from-blue-900 to-blue-800 flex items-center justify-center mb-4 shadow-lg">
                     <span className="text-6xl font-bold text-white">
                       {PARTNER_FIRM.attorney.split(' ').map((n: string) => n[0]).join('')}
                     </span>
                   </div>
-                  <p className="text-secondary text-lg">
+                  <p className="text-slate-600 text-lg">
                     {PARTNER_FIRM.attorney}
                   </p>
                 </div>
@@ -115,12 +115,12 @@ export default function AttorneysPage() {
       </section>
 
       {/* Why We Partnered */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-surface/30">
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-50">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl font-bold text-primary mb-6">
+          <h2 className="text-4xl font-bold text-blue-900 mb-6">
             Why We Partnered
           </h2>
-          <p className="text-lg text-secondary mb-12">
+          <p className="text-lg text-slate-600 mb-12">
             GreenCard.ai combines powerful technology with expert legal
             review. Instead of searching through dozens of attorneys, you get
             matched with our trusted partner who understands our process and is
@@ -130,10 +130,10 @@ export default function AttorneysPage() {
           <div className="grid md:grid-cols-3 gap-6">
             <Card className="p-6 text-left">
               <div className="text-3xl mb-4">🤖</div>
-              <h3 className="text-lg font-semibold text-primary mb-2">
+              <h3 className="text-lg font-semibold text-blue-900 mb-2">
                 Professional Efficiency
               </h3>
-              <p className="text-secondary text-sm">
+              <p className="text-slate-600 text-sm">
                 Our platform handles form filling, document preparation, and case
                 assessment—freeing your attorney to focus on strategy.
               </p>
@@ -141,10 +141,10 @@ export default function AttorneysPage() {
 
             <Card className="p-6 text-left">
               <div className="text-3xl mb-4">⚖️</div>
-              <h3 className="text-lg font-semibold text-primary mb-2">
+              <h3 className="text-lg font-semibold text-blue-900 mb-2">
                 Expert Review
               </h3>
-              <p className="text-secondary text-sm">
+              <p className="text-slate-600 text-sm">
                 Every case gets a final review from a licensed attorney before
                 filing. The best of both worlds.
               </p>
@@ -152,10 +152,10 @@ export default function AttorneysPage() {
 
             <Card className="p-6 text-left">
               <div className="text-3xl mb-4">💰</div>
-              <h3 className="text-lg font-semibold text-primary mb-2">
+              <h3 className="text-lg font-semibold text-blue-900 mb-2">
                 Transparent Pricing
               </h3>
-              <p className="text-secondary text-sm">
+              <p className="text-slate-600 text-sm">
                 No marketplace markups. One trusted partner. Simple pricing you
                 can understand.
               </p>
@@ -165,9 +165,9 @@ export default function AttorneysPage() {
       </section>
 
       {/* How It Works */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8">
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-4xl font-bold text-primary mb-12 text-center">
+          <h2 className="text-4xl font-bold text-blue-900 mb-12 text-center">
             How It Works
           </h2>
 
@@ -194,15 +194,15 @@ export default function AttorneysPage() {
             ].map((step) => (
               <div key={step.number} className="flex gap-6">
                 <div className="flex-shrink-0">
-                  <div className="flex items-center justify-center h-12 w-12 rounded-lg bg-green-primary text-white font-bold text-lg">
+                  <div className="flex items-center justify-center h-12 w-12 rounded-lg bg-blue-900 text-white font-bold text-lg">
                     {step.number}
                   </div>
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-xl font-semibold text-primary mb-2">
+                  <h3 className="text-xl font-semibold text-blue-900 mb-2">
                     {step.title}
                   </h3>
-                  <p className="text-secondary">{step.description}</p>
+                  <p className="text-slate-600">{step.description}</p>
                 </div>
               </div>
             ))}
@@ -211,11 +211,11 @@ export default function AttorneysPage() {
       </section>
 
       {/* Specialties & Languages */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-surface/30">
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-50">
         <div className="max-w-4xl mx-auto">
           <div className="grid md:grid-cols-2 gap-12">
             <div>
-              <h3 className="text-2xl font-bold text-primary mb-6">
+              <h3 className="text-2xl font-bold text-blue-900 mb-6">
                 Specialties
               </h3>
               <div className="flex flex-wrap gap-3">
@@ -228,7 +228,7 @@ export default function AttorneysPage() {
             </div>
 
             <div>
-              <h3 className="text-2xl font-bold text-primary mb-6">Languages</h3>
+              <h3 className="text-2xl font-bold text-blue-900 mb-6">Languages</h3>
               <div className="flex flex-wrap gap-3">
                 {PARTNER_FIRM.languages.map((language) => (
                   <Badge key={language} variant="green" >
@@ -242,24 +242,24 @@ export default function AttorneysPage() {
       </section>
 
       {/* Trust Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8">
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl font-bold text-primary mb-6">
+          <h2 className="text-4xl font-bold text-blue-900 mb-6">
             Trusted by Families Across America
           </h2>
-          <p className="text-lg text-secondary leading-relaxed">
+          <p className="text-lg text-slate-600 leading-relaxed">
             We're building a track record of successful cases filed by licensed attorneys with transparent pricing. As we grow, client stories will appear here.
           </p>
         </div>
       </section>
 
       {/* Contact Form CTA */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-green-primary/10">
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-blue-900/5">
         <div className="max-w-2xl mx-auto">
-          <h2 className="text-4xl font-bold text-primary mb-4 text-center">
+          <h2 className="text-4xl font-bold text-blue-900 mb-4 text-center">
             Schedule a Free Consultation
           </h2>
-          <p className="text-center text-secondary mb-12">
+          <p className="text-center text-slate-600 mb-12">
             Let's discuss your immigration case and create a path forward
             together.
           </p>
@@ -268,7 +268,7 @@ export default function AttorneysPage() {
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-primary mb-2">
+                  <label className="block text-sm font-medium text-slate-900 mb-2">
                     Full Name
                   </label>
                   <input
@@ -277,13 +277,13 @@ export default function AttorneysPage() {
                     value={formData.name}
                     onChange={handleFormChange}
                     required
-                    className="w-full px-4 py-2 bg-surface/50 border border-white/10 rounded-lg text-primary placeholder-secondary focus:outline-none focus:border-green-primary transition-colors"
+                    className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg text-slate-900 placeholder-slate-500 focus:outline-none focus:border-blue-900 transition-colors"
                     placeholder="Your name"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-primary mb-2">
+                  <label className="block text-sm font-medium text-slate-900 mb-2">
                     Email
                   </label>
                   <input
@@ -292,14 +292,14 @@ export default function AttorneysPage() {
                     value={formData.email}
                     onChange={handleFormChange}
                     required
-                    className="w-full px-4 py-2 bg-surface/50 border border-white/10 rounded-lg text-primary placeholder-secondary focus:outline-none focus:border-green-primary transition-colors"
+                    className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg text-slate-900 placeholder-slate-500 focus:outline-none focus:border-blue-900 transition-colors"
                     placeholder="your@email.com"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-primary mb-2">
+                <label className="block text-sm font-medium text-slate-900 mb-2">
                   Phone
                 </label>
                 <input
@@ -308,13 +308,13 @@ export default function AttorneysPage() {
                   value={formData.phone}
                   onChange={handleFormChange}
                   required
-                  className="w-full px-4 py-2 bg-surface/50 border border-white/10 rounded-lg text-primary placeholder-secondary focus:outline-none focus:border-green-primary transition-colors"
+                  className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg text-slate-900 placeholder-slate-500 focus:outline-none focus:border-blue-900 transition-colors"
                   placeholder="(555) 123-4567"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-primary mb-2">
+                <label className="block text-sm font-medium text-slate-900 mb-2">
                   Brief Case Description
                 </label>
                 <textarea
@@ -323,7 +323,7 @@ export default function AttorneysPage() {
                   onChange={handleFormChange}
                   required
                   rows={4}
-                  className="w-full px-4 py-2 bg-surface/50 border border-white/10 rounded-lg text-primary placeholder-secondary focus:outline-none focus:border-green-primary transition-colors resize-none"
+                  className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg text-slate-900 placeholder-slate-500 focus:outline-none focus:border-blue-900 transition-colors resize-none"
                   placeholder="Tell us about your immigration situation..."
                 />
               </div>
@@ -339,7 +339,7 @@ export default function AttorneysPage() {
             </form>
           </Card>
 
-          <p className="text-center text-secondary text-sm mt-6">
+          <p className="text-center text-slate-600 text-sm mt-6">
             We'll reach out within 24 hours to confirm your consultation.
           </p>
         </div>

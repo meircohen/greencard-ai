@@ -62,15 +62,15 @@ function FormFieldInput({
           type="checkbox"
           checked={!!value}
           onChange={(e) => onChange(field.id, e.target.checked)}
-          className="mt-1 w-5 h-5 rounded border-white/20 bg-surface/50 text-green-500 focus:ring-green-500/30"
+          className="mt-1 w-5 h-5 rounded border-white/20 bg-white text-blue-900 focus:ring-blue-900/30"
         />
         <div className="flex-1">
-          <span className="text-sm text-primary group-hover:text-green-400 transition-colors">
+          <span className="text-sm text-blue-900 group-hover:text-blue-800 transition-colors">
             {displayLabel}
           </span>
           <RfeIndicator risk={field.rfeRisk || "low"} />
-          {displayHelpText && <p className="text-xs text-muted mt-1">{displayHelpText}</p>}
-          {showSpanish && !translation && <p className="text-xs text-muted mt-1 italic">{field.helpText}</p>}
+          {displayHelpText && <p className="text-xs text-slate-500 mt-1">{displayHelpText}</p>}
+          {showSpanish && !translation && <p className="text-xs text-slate-500 mt-1 italic">{field.helpText}</p>}
         </div>
       </label>
     );
@@ -79,7 +79,7 @@ function FormFieldInput({
   if (field.type === "select" && field.options) {
     return (
       <div>
-        <label className="block text-sm font-medium text-secondary mb-1.5">
+        <label className="block text-sm font-medium text-slate-600 mb-1.5">
           {displayLabel}
           {field.required && <span className="text-red-400 ml-1">*</span>}
           <RfeIndicator risk={field.rfeRisk || "low"} />
@@ -87,7 +87,7 @@ function FormFieldInput({
         <select
           value={(value as string) || ""}
           onChange={(e) => onChange(field.id, e.target.value)}
-          className="w-full px-4 py-2.5 rounded-lg bg-surface/50 border border-white/10 text-primary focus:outline-none focus:border-green-500/50 text-sm"
+          className="w-full px-4 py-2.5 rounded-lg bg-white border border-gray-300 text-blue-900 focus:outline-none focus:border-blue-900/50 text-sm"
         >
           <option value="">Select...</option>
           {field.options.map((opt) => (
@@ -96,8 +96,8 @@ function FormFieldInput({
             </option>
           ))}
         </select>
-        {displayHelpText && <p className="text-xs text-muted mt-1">{displayHelpText}</p>}
-        {showSpanish && !translation && field.helpText && <p className="text-xs text-muted mt-1 italic">{field.helpText}</p>}
+        {displayHelpText && <p className="text-xs text-slate-500 mt-1">{displayHelpText}</p>}
+        {showSpanish && !translation && field.helpText && <p className="text-xs text-slate-500 mt-1 italic">{field.helpText}</p>}
       </div>
     );
   }
@@ -105,7 +105,7 @@ function FormFieldInput({
   if (field.type === "textarea") {
     return (
       <div>
-        <label className="block text-sm font-medium text-secondary mb-1.5">
+        <label className="block text-sm font-medium text-slate-600 mb-1.5">
           {displayLabel}
           {field.required && <span className="text-red-400 ml-1">*</span>}
           <RfeIndicator risk={field.rfeRisk || "low"} />
@@ -115,17 +115,17 @@ function FormFieldInput({
           onChange={(e) => onChange(field.id, e.target.value)}
           placeholder={field.placeholder || ""}
           rows={3}
-          className="w-full px-4 py-2.5 rounded-lg bg-surface/50 border border-white/10 text-primary placeholder-muted focus:outline-none focus:border-green-500/50 text-sm"
+          className="w-full px-4 py-2.5 rounded-lg bg-white border border-gray-300 text-blue-900 placeholder-muted focus:outline-none focus:border-blue-900/50 text-sm"
         />
-        {displayHelpText && <p className="text-xs text-muted mt-1">{displayHelpText}</p>}
-        {showSpanish && !translation && field.helpText && <p className="text-xs text-muted mt-1 italic">{field.helpText}</p>}
+        {displayHelpText && <p className="text-xs text-slate-500 mt-1">{displayHelpText}</p>}
+        {showSpanish && !translation && field.helpText && <p className="text-xs text-slate-500 mt-1 italic">{field.helpText}</p>}
       </div>
     );
   }
 
   return (
     <div>
-      <label className="block text-sm font-medium text-secondary mb-1.5">
+      <label className="block text-sm font-medium text-slate-600 mb-1.5">
         {displayLabel}
         {field.required && <span className="text-red-400 ml-1">*</span>}
         <RfeIndicator risk={field.rfeRisk || "low"} />
@@ -136,8 +136,8 @@ function FormFieldInput({
         placeholder={field.placeholder || ""}
         type={field.type === "date" ? "date" : field.type === "phone" ? "tel" : "text"}
       />
-      {displayHelpText && <p className="text-xs text-muted mt-1">{displayHelpText}</p>}
-      {showSpanish && !translation && field.helpText && <p className="text-xs text-muted mt-1 italic">{field.helpText}</p>}
+      {displayHelpText && <p className="text-xs text-slate-500 mt-1">{displayHelpText}</p>}
+      {showSpanish && !translation && field.helpText && <p className="text-xs text-slate-500 mt-1 italic">{field.helpText}</p>}
     </div>
   );
 }
@@ -249,7 +249,7 @@ function I485FormContent({ caseId }: { caseId: string }) {
   );
 
   return (
-    <div className="min-h-screen bg-midnight pt-24 pb-12">
+    <div className="min-h-screen bg-white pt-24 pb-12">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Draft Watermark Banner */}
         {formStatus === "DRAFT" && <DraftWatermark formName="I-485" />}
@@ -258,19 +258,19 @@ function I485FormContent({ caseId }: { caseId: string }) {
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h1 className="text-3xl font-bold text-primary">Form I-485</h1>
-              <p className="text-secondary text-sm mt-1">
+              <h1 className="text-3xl font-bold text-slate-900">Form I-485</h1>
+              <p className="text-slate-600 text-sm mt-1">
                 Application to Register Permanent Residence or Adjust Status
               </p>
             </div>
             <div className="flex items-center gap-3">
               {saving ? (
-                <span className="text-xs text-muted flex items-center gap-1">
+                <span className="text-xs text-slate-600 flex items-center gap-1">
                   <Loader2 size={12} className="animate-spin" /> Saving...
                 </span>
               ) : lastSaved ? (
-                <span className="text-xs text-muted flex items-center gap-1">
-                  <CheckCircle2 size={12} className="text-green-400" />
+                <span className="text-xs text-slate-600 flex items-center gap-1">
+                  <CheckCircle2 size={12} className="text-green-600" />
                   Saved {new Date(lastSaved).toLocaleTimeString()}
                 </span>
               ) : null}
@@ -294,13 +294,13 @@ function I485FormContent({ caseId }: { caseId: string }) {
           </div>
 
           {/* Overall progress bar */}
-          <div className="bg-surface/30 rounded-full h-3 overflow-hidden">
+          <div className="bg-gray-200 rounded-full h-3 overflow-hidden">
             <div
-              className="h-full bg-gradient-to-r from-green-500 to-emerald-400 transition-all duration-500"
+              className="h-full bg-gradient-to-r from-blue-600 to-blue-500 transition-all duration-500"
               style={{ width: `${overallProgress}%` }}
             />
           </div>
-          <p className="text-xs text-muted mt-1.5">
+          <p className="text-xs text-slate-600 mt-1.5">
             {overallProgress}% complete ({totalFilled}/{totalRequired} required fields)
           </p>
         </div>
@@ -319,10 +319,10 @@ function I485FormContent({ caseId }: { caseId: string }) {
                 }}
                 className={`flex-shrink-0 px-3 py-2 rounded-lg text-xs font-medium transition-all border ${
                   idx === currentStep
-                    ? "bg-green-500/20 border-green-500/50 text-green-400"
+                    ? "bg-blue-900/20 border-blue-900/50 text-blue-900"
                     : complete
-                      ? "bg-green-500/5 border-green-500/20 text-green-400/70"
-                      : "bg-surface/30 border-white/5 text-secondary hover:border-white/20"
+                      ? "bg-blue-900/5 border-blue-900/20 text-blue-900/70"
+                      : "bg-gray-100 border-gray-300 text-slate-600 hover:border-gray-400"
                 }`}
               >
                 {complete && <CheckCircle2 size={10} className="inline mr-1" />}
@@ -336,8 +336,8 @@ function I485FormContent({ caseId }: { caseId: string }) {
         <Card className="p-8 mb-6">
           <div className="flex items-start justify-between mb-6">
             <div>
-              <h2 className="text-xl font-semibold text-primary">{currentSection.title}</h2>
-              <p className="text-sm text-secondary mt-1">{currentSection.description}</p>
+              <h2 className="text-xl font-semibold text-slate-900">{currentSection.title}</h2>
+              <p className="text-sm text-slate-600 mt-1">{currentSection.description}</p>
             </div>
             <Badge variant={sectionFilled === sectionTotal ? "green" : "gray"}>
               {sectionFilled}/{sectionTotal}
@@ -347,10 +347,10 @@ function I485FormContent({ caseId }: { caseId: string }) {
           {/* RFE Warning */}
           {highRfeFields.length > 0 && (
             <div className="flex items-start gap-3 p-4 rounded-lg bg-amber-500/10 border border-amber-500/30 mb-6">
-              <AlertTriangle size={18} className="text-amber-400 flex-shrink-0 mt-0.5" />
+              <AlertTriangle size={18} className="text-amber-600 flex-shrink-0 mt-0.5" />
               <div>
-                <p className="text-sm font-medium text-amber-400">High RFE Risk Fields</p>
-                <p className="text-xs text-secondary mt-1">
+                <p className="text-sm font-medium text-amber-600">High RFE Risk Fields</p>
+                <p className="text-xs text-slate-600 mt-1">
                   {highRfeFields.length} required high-risk field{highRfeFields.length > 1 ? "s" : ""} not
                   yet completed. Missing these commonly triggers Requests for Evidence.
                 </p>
@@ -373,9 +373,9 @@ function I485FormContent({ caseId }: { caseId: string }) {
         </Card>
 
         {/* Legal Disclaimer */}
-        <div className="flex items-start gap-3 p-4 rounded-lg bg-blue-500/5 border border-blue-500/20 mb-6">
-          <Shield size={16} className="text-blue-400 flex-shrink-0 mt-0.5" />
-          <p className="text-xs text-muted">
+        <div className="flex items-start gap-3 p-4 rounded-lg bg-blue-50 border border-blue-200 mb-6">
+          <Shield size={16} className="text-blue-600 flex-shrink-0 mt-0.5" />
+          <p className="text-xs text-slate-700">
             This tool assists with form preparation only. It does not constitute legal advice.
             Consult a licensed immigration attorney before filing. All data is encrypted at rest.
           </p>
@@ -393,19 +393,19 @@ function I485FormContent({ caseId }: { caseId: string }) {
             Previous
           </Button>
 
-          <span className="text-sm text-muted">
+          <span className="text-sm text-slate-600">
             Step {currentStep + 1} of {sections.length}
           </span>
 
           {currentStep < sections.length - 1 ? (
-            <Button onClick={goNext} className="flex items-center gap-2 bg-green-500 hover:bg-green-600">
+            <Button onClick={goNext} className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700">
               Next
               <ChevronRight size={16} />
             </Button>
           ) : (
             <Button
               onClick={handleFinalizeClick}
-              className="flex items-center gap-2 bg-green-500 hover:bg-green-600"
+              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700"
             >
               <CheckCircle2 size={16} />
               Complete Draft
@@ -423,10 +423,10 @@ function I485FormContent({ caseId }: { caseId: string }) {
       >
         <div className="space-y-4">
           <div className="flex items-start gap-3 p-4 rounded-lg bg-amber-500/10 border border-amber-500/30">
-            <AlertTriangle size={20} className="text-amber-400 flex-shrink-0 mt-0.5" />
+            <AlertTriangle size={20} className="text-amber-600 flex-shrink-0 mt-0.5" />
             <div>
-              <p className="text-sm font-semibold text-amber-400">Attorney Review Required</p>
-              <p className="text-xs text-secondary mt-2">
+              <p className="text-sm font-semibold text-amber-600">Attorney Review Required</p>
+              <p className="text-xs text-slate-700 mt-2">
                 Your Form I-485 has been saved as a draft. An immigration attorney must review and
                 approve your form before it can be filed with USCIS. This is a critical requirement to
                 ensure compliance with all immigration regulations and to maximize your application's
@@ -435,23 +435,23 @@ function I485FormContent({ caseId }: { caseId: string }) {
             </div>
           </div>
 
-          <div className="bg-surface/30 rounded-lg p-4 border border-white/10">
-            <p className="text-sm text-primary font-medium mb-3">Your Next Steps:</p>
-            <ul className="space-y-2 text-sm text-secondary">
+          <div className="bg-gray-50 rounded-lg p-4 border border-gray-300">
+            <p className="text-sm text-slate-900 font-medium mb-3">Your Next Steps:</p>
+            <ul className="space-y-2 text-sm text-slate-700">
               <li className="flex items-start gap-2">
-                <span className="text-green-400 flex-shrink-0 mt-0.5">1.</span>
+                <span className="text-blue-600 flex-shrink-0 mt-0.5">1.</span>
                 <span>Your form has been securely saved as a draft</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-green-400 flex-shrink-0 mt-0.5">2.</span>
+                <span className="text-blue-600 flex-shrink-0 mt-0.5">2.</span>
                 <span>Continue editing your form as needed</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-green-400 flex-shrink-0 mt-0.5">3.</span>
+                <span className="text-blue-600 flex-shrink-0 mt-0.5">3.</span>
                 <span>Upgrade to Attorney-Backed for professional attorney review</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-green-400 flex-shrink-0 mt-0.5">4.</span>
+                <span className="text-blue-600 flex-shrink-0 mt-0.5">4.</span>
                 <span>Your attorney will approve and file the form with USCIS</span>
               </li>
             </ul>
@@ -460,7 +460,7 @@ function I485FormContent({ caseId }: { caseId: string }) {
           <div className="space-y-3">
             <Button
               onClick={() => setShowAttorneyGateModal(false)}
-              className="w-full bg-green-500 hover:bg-green-600 text-white font-medium"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium"
             >
               Continue Editing
             </Button>
@@ -476,7 +476,7 @@ function I485FormContent({ caseId }: { caseId: string }) {
             </Button>
           </div>
 
-          <p className="text-xs text-muted text-center">
+          <p className="text-xs text-slate-700 text-center">
             Your draft is automatically saved and encrypted. You can come back to edit it anytime.
           </p>
         </div>

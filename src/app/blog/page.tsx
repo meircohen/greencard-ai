@@ -130,20 +130,20 @@ export default function BlogPage() {
   const otherPosts = filteredPosts.filter((p) => !p.featured);
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-midnight via-deep to-surface">
+    <div className="min-h-screen flex flex-col bg-white">
       <Navbar />
 
       <main className="flex-1 pt-24 pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
           <div className="text-center mb-12">
-            <div className="inline-block px-4 py-1 rounded-full bg-green-500/10 border border-green-500/30 mb-4">
-              <span className="text-green-400 text-sm font-semibold">IMMIGRATION INSIGHTS</span>
+            <div className="inline-block px-4 py-1 rounded-full bg-blue-900/10 border border-blue-900/30 mb-4">
+              <span className="text-blue-900 text-sm font-semibold">IMMIGRATION INSIGHTS</span>
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+            <h1 className="text-4xl md:text-5xl font-bold text-blue-900 mb-4">
               Immigration Insights & Guides
             </h1>
-            <p className="text-lg text-slate-400 max-w-2xl mx-auto">
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
               Expert guides, USCIS updates, and immigration news to help you navigate every step of your journey.
             </p>
           </div>
@@ -158,7 +158,7 @@ export default function BlogPage() {
                 placeholder="Search articles..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 rounded-lg bg-surface-2 border border-white/[0.06] text-white placeholder-slate-500 focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500"
+                className="w-full pl-12 pr-4 py-3 rounded-lg bg-gray-50 border border-gray-300 text-slate-900 placeholder-slate-500 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600"
               />
             </div>
 
@@ -170,8 +170,8 @@ export default function BlogPage() {
                   onClick={() => setSelectedCategory(cat.value)}
                   className={`px-4 py-2 rounded-full transition-all text-sm font-medium ${
                     selectedCategory === cat.value
-                      ? "bg-green-500/20 border border-green-500 text-green-400"
-                      : "bg-surface-2 border border-white/[0.06] text-slate-400 hover:border-green-500/50"
+                      ? "bg-blue-900/20 border border-blue-900 text-blue-900"
+                      : "bg-gray-100 border border-gray-300 text-slate-600 hover:border-blue-900/50"
                   }`}
                 >
                   {cat.label}
@@ -184,22 +184,22 @@ export default function BlogPage() {
           {featuredPost && selectedCategory === "all" && (
             <div className="mb-12">
               <Link href={`/blog/${featuredPost.slug}`}>
-                <div className="relative rounded-lg overflow-hidden h-96 bg-gradient-to-br from-green-600/20 to-green-500/10 border border-green-500/30 hover:border-green-500/60 transition-all group cursor-pointer">
+                <div className="relative rounded-lg overflow-hidden h-96 bg-gradient-to-br from-blue-900/20 to-blue-800/10 border border-blue-900/30 hover:border-blue-900/60 transition-all group cursor-pointer">
                   {/* Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-midnight via-transparent to-transparent"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent"></div>
 
                   {/* Content */}
                   <div className="absolute inset-0 p-8 flex flex-col justify-end">
                     <div className="inline-block w-fit mb-3">
-                      <span className="px-3 py-1 bg-green-500/30 border border-green-500 text-green-400 text-sm font-semibold rounded-full capitalize">
+                      <span className="px-3 py-1 bg-blue-900/30 border border-blue-900 text-blue-900 text-sm font-semibold rounded-full capitalize">
                         {featuredPost.category}
                       </span>
                     </div>
-                    <h2 className="text-3xl md:text-4xl font-bold text-white mb-3 group-hover:text-green-400 transition-colors">
+                    <h2 className="text-3xl md:text-4xl font-bold text-blue-900 mb-3 group-hover:text-blue-700 transition-colors">
                       {featuredPost.title}
                     </h2>
-                    <p className="text-slate-300 text-lg mb-4 line-clamp-2">{featuredPost.excerpt}</p>
-                    <div className="flex items-center gap-4 text-slate-400 text-sm">
+                    <p className="text-slate-700 text-lg mb-4 line-clamp-2">{featuredPost.excerpt}</p>
+                    <div className="flex items-center gap-4 text-slate-600 text-sm">
                       <span className="flex items-center gap-1">
                         <Calendar className="w-4 h-4" />
                         {featuredPost.date}
@@ -219,21 +219,21 @@ export default function BlogPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
             {otherPosts.map((post) => (
               <Link key={post.id} href={`/blog/${post.slug}`}>
-                <Card className="bg-surface-2/50 border-white/[0.06] hover:border-green-500/50 hover:bg-surface-2 transition-all h-full group cursor-pointer overflow-hidden">
+                <Card className="bg-gray-50 border-gray-300 hover:border-blue-900/50 hover:bg-gray-100 transition-all h-full group cursor-pointer overflow-hidden">
                   <div className="p-6 h-full flex flex-col">
                     <div className="inline-block w-fit mb-3">
-                      <span className="px-3 py-1 bg-green-500/10 border border-green-500/30 text-green-400 text-xs font-semibold rounded-full capitalize">
+                      <span className="px-3 py-1 bg-blue-900/10 border border-blue-900/30 text-blue-900 text-xs font-semibold rounded-full capitalize">
                         {post.category}
                       </span>
                     </div>
 
-                    <h3 className="text-lg font-bold text-white mb-2 group-hover:text-green-400 transition-colors line-clamp-2">
+                    <h3 className="text-lg font-bold text-blue-900 mb-2 group-hover:text-blue-700 transition-colors line-clamp-2">
                       {post.title}
                     </h3>
 
-                    <p className="text-slate-400 text-sm mb-4 line-clamp-2 flex-1">{post.excerpt}</p>
+                    <p className="text-slate-600 text-sm mb-4 line-clamp-2 flex-1">{post.excerpt}</p>
 
-                    <div className="flex items-center justify-between text-slate-500 text-xs border-t border-white/[0.06] pt-4">
+                    <div className="flex items-center justify-between text-slate-600 text-xs border-t border-gray-300 pt-4">
                       <div className="flex items-center gap-4">
                         <span>{post.date}</span>
                         <span className="flex items-center gap-1">
@@ -251,15 +251,15 @@ export default function BlogPage() {
 
           {/* No Results */}
           {filteredPosts.length === 0 && (
-            <Card className="bg-surface-2/50 border-white/[0.06]">
+            <Card className="bg-gray-50 border-gray-300">
               <div className="p-12 text-center">
-                <p className="text-slate-400 text-lg">No articles found matching your search.</p>
+                <p className="text-slate-600 text-lg">No articles found matching your search.</p>
                 <button
                   onClick={() => {
                     setSearchQuery("");
                     setSelectedCategory("all");
                   }}
-                  className="mt-4 text-green-400 hover:text-green-300 text-sm font-medium"
+                  className="mt-4 text-blue-900 hover:text-blue-700 text-sm font-medium"
                 >
                   Clear filters
                 </button>
@@ -268,13 +268,13 @@ export default function BlogPage() {
           )}
 
           {/* Sidebar CTA */}
-          <div className="bg-gradient-to-r from-green-600/20 to-blue-600/20 border border-green-500/30 rounded-lg p-8 text-center">
-            <h3 className="text-xl font-bold text-white mb-2">Get Your Free Case Assessment</h3>
-            <p className="text-slate-400 mb-6">
+          <div className="bg-gradient-to-r from-blue-900/20 to-blue-800/20 border border-blue-900/30 rounded-lg p-8 text-center">
+            <h3 className="text-xl font-bold text-blue-900 mb-2">Get Your Free Case Assessment</h3>
+            <p className="text-slate-600 mb-6">
               Our platform will provide personalized recommendations based on your specific immigration situation.
             </p>
             <Link href="/assessment">
-              <Button className="bg-green-600 hover:bg-green-700 text-white">
+              <Button className="bg-blue-900 hover:bg-blue-800 text-white">
                 Start Assessment
               </Button>
             </Link>
