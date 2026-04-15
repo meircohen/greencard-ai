@@ -1,23 +1,10 @@
-import type { Metadata } from "next";
+"use client";
+
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
-
-export const metadata: Metadata = {
-  title: "Immigration Guides & Resources | GreenCard.ai",
-  description: "Comprehensive guides on green card applications, visa petitions, fees, processing times, and immigration timelines. Learn about I-130, I-485, I-765, N-400, and more.",
-  keywords: [
-    "immigration guides",
-    "green card guide",
-    "visa petition",
-    "I-130 guide",
-    "I-485 guide",
-    "immigration timeline",
-    "USCIS fees",
-    "naturalization guide",
-    "marriage green card",
-  ],
-};
+import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
 
 interface GuideCard {
   slug: string;
@@ -89,7 +76,9 @@ const categories = Array.from(new Set(guides.map((g) => g.category)));
 
 export default function GuidesPage() {
   return (
-    <main className="min-h-screen bg-white">
+    <>
+      <Navbar />
+      <main className="min-h-screen bg-white pt-20">
       <div className="max-w-4xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
         {/* Header Section */}
         <div className="mb-12">
@@ -160,5 +149,7 @@ export default function GuidesPage() {
         </div>
       </div>
     </main>
+      <Footer />
+    </>
   );
 }

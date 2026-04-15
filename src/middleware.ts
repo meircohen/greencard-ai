@@ -32,6 +32,13 @@ const publicPageRoutes = [
   "/referral",
   "/reset-password",
   "/tracker",
+  "/whatsapp-portal",
+  "/guarantee",
+  "/verify",
+  "/emergency",
+  "/familia",
+  "/attorney-os",
+  "/rescue",
 ];
 
 // Public API routes (no auth required)

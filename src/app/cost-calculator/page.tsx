@@ -2,6 +2,8 @@
 
 import React, { useState, useMemo } from "react";
 import { DollarSign, Users } from "lucide-react";
+import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
 
 interface FeeStructure {
   name: string;
@@ -132,7 +134,8 @@ export default function CostCalculator() {
   const incomeRequirement = povertyGuidelines[householdSize as keyof typeof povertyGuidelines] || 63200;
 
   return (
-    <div className="min-h-screen bg-midnight text-primary">
+    <div className="min-h-screen bg-midnight text-primary flex flex-col">
+      <Navbar />
       {/* Page Header */}
       <div className="pt-32 pb-12 px-4 sm:px-6 lg:px-8 border-b border-white/10">
         <div className="max-w-7xl mx-auto">
@@ -289,6 +292,7 @@ export default function CostCalculator() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

@@ -13,9 +13,20 @@ const servicesLinks = [
 const resourceLinks = [
   { label: "Visa Bulletin", href: "/visa-bulletin" },
   { label: "Cost Calculator", href: "/cost-calculator" },
+  { label: "Case Tracker", href: "/tracker" },
   { label: "Immigration Guides", href: "/guides" },
+  { label: "Scam Verification", href: "/verify" },
   { label: "Blog", href: "/blog" },
-  { label: "FAQ", href: "/#faq" },
+];
+
+const programLinks = [
+  { label: "Filing Guarantee", href: "/guarantee" },
+  { label: "WhatsApp Portal", href: "/whatsapp-portal" },
+  { label: "Familia Plan", href: "/familia" },
+  { label: "Case Rescue", href: "/rescue" },
+  { label: "Emergency Help", href: "/emergency" },
+  { label: "Refer a Friend", href: "/referral" },
+  { label: "For Attorneys", href: "/attorney-os" },
 ];
 
 const contactLinks = [
@@ -39,13 +50,13 @@ export const Footer: React.FC = () => {
     <footer className="bg-blue-900 border-t border-blue-800 text-white">
       {/* Main footer content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-12">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-8 md:gap-10">
           {/* Brand section */}
-          <div className="space-y-4">
+          <div className="col-span-2 md:col-span-1 space-y-4">
             <div className="text-2xl font-bold text-white">
               GreenCard.ai
             </div>
-            <p className="text-blue-100 text-sm">
+            <p className="text-blue-200 text-sm leading-relaxed">
               Modern immigration legal services for families across America. Expert attorneys, transparent pricing, and a process designed around you.
             </p>
           </div>
@@ -53,12 +64,29 @@ export const Footer: React.FC = () => {
           {/* Services links */}
           <div>
             <h3 className="font-semibold text-white mb-4">Services</h3>
-            <ul className="space-y-3">
+            <ul className="space-y-2.5">
               {servicesLinks.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-blue-100 hover:text-white transition-colors duration-200"
+                    className="text-blue-200 hover:text-white transition-colors duration-200 text-sm"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Programs links */}
+          <div>
+            <h3 className="font-semibold text-white mb-4">Programs</h3>
+            <ul className="space-y-2.5">
+              {programLinks.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="text-blue-200 hover:text-white transition-colors duration-200 text-sm"
                   >
                     {link.label}
                   </Link>
@@ -70,12 +98,12 @@ export const Footer: React.FC = () => {
           {/* Resources links */}
           <div>
             <h3 className="font-semibold text-white mb-4">Resources</h3>
-            <ul className="space-y-3">
+            <ul className="space-y-2.5">
               {resourceLinks.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-blue-100 hover:text-white transition-colors duration-200"
+                    className="text-blue-200 hover:text-white transition-colors duration-200 text-sm"
                   >
                     {link.label}
                   </Link>
@@ -87,22 +115,22 @@ export const Footer: React.FC = () => {
           {/* Contact links */}
           <div>
             <h3 className="font-semibold text-white mb-4">Contact</h3>
-            <ul className="space-y-3">
+            <ul className="space-y-2.5">
               {contactLinks.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-blue-100 hover:text-white transition-colors duration-200"
+                    className="text-blue-200 hover:text-white transition-colors duration-200 text-sm"
                   >
                     {link.label}
                   </Link>
                 </li>
               ))}
-              <li className="text-blue-100 text-sm pt-2">
+              <li className="text-blue-200 text-sm pt-2">
                 Fort Lauderdale, FL 33312
               </li>
-              <li className="text-blue-100 text-sm">
-                Office hours: Monday through Friday, 9am-6pm EST
+              <li className="text-blue-200 text-sm">
+                Mon-Fri, 9am-6pm EST
               </li>
             </ul>
           </div>

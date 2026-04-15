@@ -16,6 +16,8 @@ import {
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
+import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
 
 interface RfeIssue {
   category: string;
@@ -97,8 +99,10 @@ export default function RfeDecoderPage() {
   };
 
   return (
-    <div className="min-h-screen bg-midnight pt-24 pb-12">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-midnight flex flex-col">
+      <Navbar />
+      <div className="flex-1 pt-20">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-3">
@@ -364,7 +368,9 @@ export default function RfeDecoderPage() {
             </div>
           </div>
         )}
+        </div>
       </div>
+      <Footer />
     </div>
   );
 }

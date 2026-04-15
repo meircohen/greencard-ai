@@ -18,6 +18,8 @@ import {
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
+import { Navbar } from '@/components/Navbar';
+import { Footer } from '@/components/Footer';
 
 interface AssessmentData {
   score: number;
@@ -114,30 +116,38 @@ export default function AssessmentPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-midnight flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <div className="w-12 h-12 rounded-full border-2 border-green-brand border-t-transparent animate-spin mx-auto" />
-          <p className="text-secondary">Generating your assessment...</p>
+      <div className="flex flex-col min-h-screen bg-midnight">
+        <Navbar />
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center space-y-4">
+            <div className="w-12 h-12 rounded-full border-2 border-green-brand border-t-transparent animate-spin mx-auto" />
+            <p className="text-secondary">Generating your assessment...</p>
+          </div>
         </div>
+        <Footer />
       </div>
     );
   }
 
   if (!assessmentData) {
     return (
-      <div className="min-h-screen bg-midnight flex flex-col items-center justify-center px-4">
-        <div className="text-center space-y-6 max-w-md">
-          <AlertCircle className="w-12 h-12 text-amber-500 mx-auto" />
-          <h1 className="text-2xl font-bold text-primary">No Assessment Found</h1>
-          <p className="text-secondary">
-            Start a conversation to get your personalized assessment.
-          </p>
-          <Link href="/chat">
-            <Button variant="primary" size="lg">
-              Start Chat <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
-          </Link>
+      <div className="flex flex-col min-h-screen bg-midnight">
+        <Navbar />
+        <div className="flex-1 flex items-center justify-center px-4">
+          <div className="text-center space-y-6 max-w-md">
+            <AlertCircle className="w-12 h-12 text-amber-500 mx-auto" />
+            <h1 className="text-2xl font-bold text-primary">No Assessment Found</h1>
+            <p className="text-secondary">
+              Start a conversation to get your personalized assessment.
+            </p>
+            <Link href="/chat">
+              <Button variant="primary" size="lg">
+                Start Chat <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </Link>
+          </div>
         </div>
+        <Footer />
       </div>
     );
   }
@@ -163,9 +173,10 @@ export default function AssessmentPage() {
   };
 
   return (
-    <div className="min-h-screen bg-midnight">
+    <div className="flex flex-col min-h-screen bg-midnight">
+      <Navbar />
       {/* Header */}
-      <div className="border-b border-white/10 bg-surface/30 backdrop-blur-md sticky top-0 z-10">
+      <div className="border-b border-white/10 bg-surface/30 backdrop-blur-md sticky top-20 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div>
@@ -181,7 +192,7 @@ export default function AssessmentPage() {
       </div>
 
       {/* Main content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-12 pt-20">
         <motion.div
           variants={containerVariants}
           initial="hidden"
@@ -447,6 +458,7 @@ export default function AssessmentPage() {
           </motion.div>
         </motion.div>
       </div>
+      <Footer />
     </div>
   );
 }

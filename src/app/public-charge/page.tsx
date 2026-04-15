@@ -7,6 +7,8 @@ import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { Badge } from "@/components/ui/Badge";
 import { AlertCircle, TrendingUp } from "lucide-react";
+import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
 
 const federalPovertyGuidelines: { [key: number]: number } = {
   2: 20440,
@@ -165,6 +167,7 @@ export default function PublicChargeSimulator() {
 
   return (
     <div className="min-h-screen bg-white text-slate-900">
+      <Navbar />
       <div className="pt-32 pb-12 px-4 sm:px-6 lg:px-8 border-b border-gray-200">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center gap-2 mb-4">
@@ -423,6 +426,7 @@ export default function PublicChargeSimulator() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

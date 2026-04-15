@@ -95,15 +95,17 @@ export default function AttorneysPage() {
               </div>
             </div>
 
-            {/* Right: Placeholder for Photo */}
+            {/* Right: Attorney Initials Badge */}
             <div>
               <div className="bg-gradient-to-br from-green-primary/20 to-blue-primary/20 rounded-lg h-96 flex items-center justify-center border border-white/10">
                 <div className="text-center">
-                  <div className="text-6xl font-bold text-primary mb-4">
-                    Attorney Photo
+                  <div className="w-40 h-40 mx-auto rounded-full bg-gradient-to-br from-green-primary to-blue-primary flex items-center justify-center mb-4 shadow-lg">
+                    <span className="text-6xl font-bold text-white">
+                      {PARTNER_FIRM.attorney.split(' ').map((n: string) => n[0]).join('')}
+                    </span>
                   </div>
-                  <p className="text-secondary">
-                    Professional photo placeholder
+                  <p className="text-secondary text-lg">
+                    {PARTNER_FIRM.attorney}
                   </p>
                 </div>
               </div>
@@ -239,48 +241,15 @@ export default function AttorneysPage() {
         </div>
       </section>
 
-      {/* Testimonials */}
+      {/* Trust Section */}
       <section className="py-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-4xl font-bold text-primary mb-12 text-center">
-            What Our Clients Say
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-4xl font-bold text-primary mb-6">
+            Trusted by Families Across America
           </h2>
-
-          <div className="grid md:grid-cols-3 gap-6">
-            {testimonials.map((testimonial, idx) => (
-              <Card key={idx} className="p-6 flex flex-col">
-                {/* Stars */}
-                <div className="flex gap-1 mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className="w-5 h-5 fill-yellow-400 text-yellow-400"
-                    />
-                  ))}
-                </div>
-
-                {/* Quote */}
-                <p className="text-secondary mb-6 flex-1 italic">
-                  "{testimonial.content}"
-                </p>
-
-                {/* Author */}
-                <div className="flex items-center gap-3 pt-6 border-t border-white/10">
-                  <div
-                    className={`${testimonial.avatarColor} w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm`}
-                  >
-                    {testimonial.avatar}
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-primary">
-                      {testimonial.name}
-                    </p>
-                    <p className="text-xs text-secondary">{testimonial.role}</p>
-                  </div>
-                </div>
-              </Card>
-            ))}
-          </div>
+          <p className="text-lg text-secondary leading-relaxed">
+            We're building a track record of successful cases filed by licensed attorneys with transparent pricing. As we grow, client stories will appear here.
+          </p>
         </div>
       </section>
 
