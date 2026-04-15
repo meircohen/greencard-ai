@@ -552,6 +552,28 @@ export const processedWebhookEvents = pgTable(
   })
 );
 
+export const auditEvents = pgTable(
+  'audit_events',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    action: varchar('action', { length: 100 }).notNull(),
+    userId: uuid('user_id').references(() => users.id, { onDelete: 'set null' }),
+    targetId: varchar('target_id', { length: 255 }),
+    ip: varchar('ip', { length: 45 }),
+    userAgent: text('user_agent'),
+    metadata: jsonb('metadata'),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => ({
+    actionIdx: index('idx_audit_events_action').on(table.action),
+    userIdIdx: index('idx_audit_events_user_id').on(table.userId),
+    createdAtIdx: index('idx_audit_events_created_at').on(table.createdAt),
+  })
+);
+
+export type AuditEvent = typeof auditEvents.$inferSelect;
+export type NewAuditEvent = typeof auditEvents.$inferInsert;
+
 // Type exports for new tables
 export type MfaSetting = typeof mfaSettings.$inferSelect;
 export type RevokedToken = typeof revokedTokens.$inferSelect;

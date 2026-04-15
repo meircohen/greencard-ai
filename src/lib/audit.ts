@@ -74,15 +74,43 @@ export function audit(entry: AuditEntry): void {
     `audit:${entry.action}`
   );
 
+  // Store in memory for dev queryability
+  auditStore.push({
+    ...entry,
+    timestamp: new Date().toISOString(),
+    id: `audit_${Date.now()}_${++auditIdCounter}`,
+  });
+  if (auditStore.length > MAX_AUDIT_STORE) {
+    auditStore.splice(0, auditStore.length - MAX_AUDIT_STORE);
+  }
+
   // TODO: Write to audit_events DB table for persistent history
-  // await db.insert(auditEvents).values({
-  //   action: entry.action,
-  //   userId: entry.userId,
-  //   targetId: entry.targetId,
-  //   ip: entry.ip,
-  //   metadata: entry.metadata,
-  //   createdAt: new Date(),
-  // });
+  // await db.insert(auditEvents).values({ ... });
+}
+
+// In-memory audit store for development queries
+const auditStore: Array<AuditEntry & { timestamp: string; id: string }> = [];
+const MAX_AUDIT_STORE = 5000;
+let auditIdCounter = 0;
+
+/**
+ * Query recent audit events (in-memory, for dev/admin).
+ */
+export function queryAuditLog(filters?: {
+  userId?: string;
+  action?: AuditAction;
+  limit?: number;
+}): Array<AuditEntry & { timestamp: string; id: string }> {
+  let results = [...auditStore];
+  if (filters?.userId) results = results.filter((e) => e.userId === filters.userId);
+  if (filters?.action) results = results.filter((e) => e.action === filters.action);
+  results.sort((a, b) => b.timestamp.localeCompare(a.timestamp));
+  return results.slice(0, filters?.limit || 100);
+}
+
+/** Clear audit store (for testing) */
+export function clearAuditStore(): void {
+  auditStore.length = 0;
 }
 
 /**
