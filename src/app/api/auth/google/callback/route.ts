@@ -17,13 +17,15 @@ import { audit, getClientInfo } from "@/lib/audit";
  * - Sets JWT cookie
  */
 export async function GET(request: NextRequest) {
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || new URL(request.url).origin;
+
   try {
     // Rate limiting: 30 attempts per 15 minutes per IP
     const clientIp = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
     const rl = await rateLimit(`google_callback:${clientIp}`, AUTH_TIER.limit, AUTH_TIER.window);
     if (!rl.success) {
       return NextResponse.redirect(
-        `/login?error=too_many_requests`
+        `${baseUrl}/login?error=too_many_requests`
       );
     }
 
@@ -36,7 +38,7 @@ export async function GET(request: NextRequest) {
     if (error) {
       console.error("Google OAuth error:", error);
       return NextResponse.redirect(
-        `/login?error=google_auth_failed`
+        `${baseUrl}/login?error=google_auth_failed`
       );
     }
 
@@ -44,7 +46,7 @@ export async function GET(request: NextRequest) {
     if (!code || !state) {
       console.error("Missing code or state in callback");
       return NextResponse.redirect(
-        `/login?error=google_auth_failed`
+        `${baseUrl}/login?error=google_auth_failed`
       );
     }
 
@@ -59,7 +61,7 @@ export async function GET(request: NextRequest) {
         userAgent: client.userAgent,
       });
       return NextResponse.redirect(
-        `/login?error=google_auth_failed`
+        `${baseUrl}/login?error=google_auth_failed`
       );
     }
 
@@ -76,7 +78,7 @@ export async function GET(request: NextRequest) {
         userAgent: client.userAgent,
       });
       return NextResponse.redirect(
-        `/login?error=google_auth_failed`
+        `${baseUrl}/login?error=google_auth_failed`
       );
     }
 
@@ -93,14 +95,14 @@ export async function GET(request: NextRequest) {
         userAgent: client.userAgent,
       });
       return NextResponse.redirect(
-        `/login?error=google_auth_failed`
+        `${baseUrl}/login?error=google_auth_failed`
       );
     }
 
     if (!googleProfile.email) {
       console.error("No email in Google profile");
       return NextResponse.redirect(
-        `/login?error=google_auth_failed`
+        `${baseUrl}/login?error=google_auth_failed`
       );
     }
 
@@ -135,7 +137,7 @@ export async function GET(request: NextRequest) {
       });
 
       // Create response
-      const response = NextResponse.redirect("/dashboard");
+      const response = NextResponse.redirect(`${baseUrl}/dashboard`);
 
       // Set httpOnly cookie with secure defaults
       response.cookies.set(COOKIE_NAME, token, {
@@ -177,7 +179,7 @@ export async function GET(request: NextRequest) {
           metadata: { email: emailLower },
         });
         return NextResponse.redirect(
-          `/login?error=google_auth_failed`
+          `${baseUrl}/login?error=google_auth_failed`
         );
       }
 
@@ -197,7 +199,7 @@ export async function GET(request: NextRequest) {
       });
 
       // Create response - redirect to onboarding or dashboard
-      const response = NextResponse.redirect("/dashboard");
+      const response = NextResponse.redirect(`${baseUrl}/dashboard`);
 
       // Set httpOnly cookie with secure defaults
       response.cookies.set(COOKIE_NAME, token, {
