@@ -209,7 +209,7 @@ export default {
     messages: "Mensajes",
     resources: "Recursos",
     settings: "Configuración",
-    payments: "pagos",
+    payments: "Pagos",
     interviewPrep: "Preparación para Entrevista",
     logout: "Cerrar Sesión",
     loading: "Cargando...",
