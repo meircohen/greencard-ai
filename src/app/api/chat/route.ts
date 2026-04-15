@@ -5,6 +5,7 @@ import { INTAKE_SYSTEM_PROMPT } from "@/lib/ai/prompts";
 import * as uscisData from "@/lib/uscis-data";
 import { safeErrorResponse } from "@/lib/errors";
 import { getModelForMode } from "@/lib/ai/models";
+import { withRetry } from "@/lib/ai/retry";
 
 const messageSchema = z.object({
   role: z.enum(["user", "assistant"]),
@@ -169,13 +170,15 @@ export async function POST(request: NextRequest): Promise<Response> {
     const stream = new ReadableStream({
       async start(controller) {
         try {
-          const response = await client.messages.create({
-            model: getModelForMode(body.mode),
-            max_tokens: 2048,
-            system: systemPrompt,
-            messages: messages,
-            stream: true,
-          });
+          const response = await withRetry(() =>
+            client.messages.create({
+              model: getModelForMode(body.mode),
+              max_tokens: 2048,
+              system: systemPrompt,
+              messages: messages,
+              stream: true,
+            })
+          );
 
           let fullResponse = "";
 

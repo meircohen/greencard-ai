@@ -5,6 +5,10 @@ import * as uscisData from "@/lib/uscis-data";
 import { z } from "zod";
 import { safeErrorResponse } from "@/lib/errors";
 import { getModel } from "@/lib/ai/models";
+import { withRetry } from "@/lib/ai/retry";
+import { parseStructuredOutput, assessmentOutputSchema } from "@/lib/ai/structured-output";
+import { cacheGet, cacheSet } from "@/lib/cache";
+import crypto from "crypto";
 
 const assessSchema = z.object({
   intakeData: z.record(z.string(), z.unknown()).refine((v) => Object.keys(v).length > 0, {
@@ -13,47 +17,10 @@ const assessSchema = z.object({
   conversationHistory: z.string().max(50000).optional(),
 });
 
-interface AssessmentResult {
-  eligiblePaths: Array<{
-    visaType: string;
-    probability: number;
-    estimatedCost: number;
-    estimatedTimeline: string;
-    keyRisks: string[];
-    keyStrengths: string[];
-  }>;
-  recommendedPath: {
-    visaType: string;
-    rationale: string;
-    nextSteps: string[];
-  };
-  overallScore: number;
-  warnings: string[];
-  dataUsed: string[];
-}
-
-function extractJsonFromText(text: string): Record<string, unknown> | null {
-  // Try to find JSON in code blocks first
-  const codeBlockMatch = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
-  if (codeBlockMatch) {
-    try {
-      return JSON.parse(codeBlockMatch[1]);
-    } catch {
-      // Continue to next attempt
-    }
-  }
-
-  // Try to find JSON object in the text
-  const jsonMatch = text.match(/\{[\s\S]*\}/);
-  if (jsonMatch) {
-    try {
-      return JSON.parse(jsonMatch[0]);
-    } catch {
-      // Continue to fallback
-    }
-  }
-
-  return null;
+/** Generate a cache key from intake data for assessment caching. */
+function assessmentCacheKey(intakeData: Record<string, unknown>): string {
+  const hash = crypto.createHash("sha256").update(JSON.stringify(intakeData)).digest("hex").slice(0, 16);
+  return `assessment:${hash}`;
 }
 
 function buildAssessmentPrompt(intakeData: Record<string, unknown>): string {
@@ -143,22 +110,31 @@ export async function POST(request: NextRequest): Promise<Response> {
     }
     const body = parsed.data;
 
+    // Check cache first (assessments for the same intake data are idempotent)
+    const cacheKey = assessmentCacheKey(body.intakeData);
+    const cached = cacheGet<{ assessment: unknown; usage: { inputTokens: number; outputTokens: number } }>(cacheKey);
+    if (cached) {
+      return NextResponse.json({ ...cached, cached: true });
+    }
+
     const client = new Anthropic({ apiKey });
 
     const systemPrompt = buildAssessmentPrompt(body.intakeData);
 
-    const response = await client.messages.create({
-      model: getModel("advanced"),
-      max_tokens: 4096,
-      system: systemPrompt,
-      messages: [
-        {
-          role: "user",
-          content:
-            "Please provide a comprehensive assessment of this applicant's immigration case based on the intake data and USCIS data provided above. Return the assessment as valid JSON.",
-        },
-      ],
-    });
+    const response = await withRetry(() =>
+      client.messages.create({
+        model: getModel("advanced"),
+        max_tokens: 4096,
+        system: systemPrompt,
+        messages: [
+          {
+            role: "user",
+            content:
+              "Please provide a comprehensive assessment of this applicant's immigration case based on the intake data and USCIS data provided above. Return the assessment as valid JSON.",
+          },
+        ],
+      })
+    );
 
     // Extract text from response
     let responseText = "";
@@ -168,33 +144,35 @@ export async function POST(request: NextRequest): Promise<Response> {
       }
     }
 
-    // Parse JSON from response
-    let assessment = extractJsonFromText(responseText);
+    // Parse and validate against schema
+    const validated = parseStructuredOutput(responseText, assessmentOutputSchema, "assessment");
 
-    if (!assessment) {
-      // Fallback parsing if JSON extraction fails
-      assessment = {
-        eligiblePaths: [],
-        recommendedPath: {
-          visaType: "Unable to determine",
-          rationale: "Assessment parsing failed",
-          nextSteps: ["Consult with an immigration attorney"],
-        },
-        overallScore: 0,
-        warnings: ["Assessment could not be properly parsed"],
-        dataUsed: [],
-      };
-    }
+    const assessment = validated ?? {
+      eligiblePaths: [],
+      recommendedPath: {
+        visaType: "Unable to determine",
+        rationale: "Assessment parsing failed",
+        nextSteps: ["Consult with an immigration attorney"],
+      },
+      overallScore: 0,
+      warnings: ["Assessment could not be properly parsed"],
+      dataUsed: [],
+    };
 
     const usage = response.usage || { input_tokens: 0, output_tokens: 0 };
 
-    return NextResponse.json({
+    const result = {
       assessment,
       usage: {
         inputTokens: usage.input_tokens,
         outputTokens: usage.output_tokens,
       },
-    });
+    };
+
+    // Cache for 1 hour (assessments are expensive)
+    cacheSet(cacheKey, result, 3600);
+
+    return NextResponse.json(result);
   } catch (error) {
     return safeErrorResponse(error, "Assessment failed. Please try again.");
   }
