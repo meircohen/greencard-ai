@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Rate limit: 10 uploads per 5 minutes
-    const rl = rateLimit(`upload:${actorId}`, UPLOAD_TIER.limit, UPLOAD_TIER.window);
+    const rl = await rateLimit(`upload:${actorId}`, UPLOAD_TIER.limit, UPLOAD_TIER.window);
     if (!rl.success) {
       return NextResponse.json(
         { error: "Too many uploads. Please wait a few minutes." },

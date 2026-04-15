@@ -62,7 +62,7 @@ export async function POST(request: NextRequest): Promise<Response> {
 
     // Rate limit: 3 resets per hour per IP
     const clientIp = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
-    const rl = rateLimit(`reset:${clientIp}`, PASSWORD_RESET_TIER.limit, PASSWORD_RESET_TIER.window);
+    const rl = await rateLimit(`reset:${clientIp}`, PASSWORD_RESET_TIER.limit, PASSWORD_RESET_TIER.window);
     if (!rl.success) {
       // Still return 200 to prevent enumeration
       return NextResponse.json({

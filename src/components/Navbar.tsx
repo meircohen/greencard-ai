@@ -8,13 +8,9 @@ import { LanguageSwitcher } from "./LanguageSwitcher";
 import { useAuthStore } from "@/lib/store";
 
 const baseNavLinks = [
-  { label: "Home", href: "/" },
-  { label: "Chat", href: "/chat" },
-  { label: "Assessment", href: "/assessment" },
-  { label: "RFE Decoder", href: "/rfe-decoder" },
-  { label: "Visa Bulletin", href: "/visa-bulletin" },
+  { label: "How it Works", href: "/#how-it-works" },
   { label: "Pricing", href: "/pricing" },
-  { label: "Dashboard", href: "/dashboard" },
+  { label: "Login", href: "/login" },
 ];
 
 export const Navbar: React.FC = () => {
@@ -24,6 +20,9 @@ export const Navbar: React.FC = () => {
 
   const navLinks = [
     ...baseNavLinks,
+    ...(user
+      ? [{ label: "Dashboard", href: "/dashboard" }]
+      : []),
     ...(user?.role === "attorney" || user?.role === "admin"
       ? [{ label: "Attorney Dashboard", href: "/attorney/dashboard" }]
       : []),
@@ -83,9 +82,11 @@ export const Navbar: React.FC = () => {
           {/* Desktop Language Switcher & CTA Button */}
           <div className="hidden md:flex items-center gap-4">
             <LanguageSwitcher />
-            <Button variant="primary" size="md">
-              Get Started
-            </Button>
+            <Link href="/assessment">
+              <Button variant="primary" size="md">
+                Start Free Assessment
+              </Button>
+            </Link>
           </div>
 
           {/* Mobile Menu Button */}
@@ -117,9 +118,11 @@ export const Navbar: React.FC = () => {
             ))}
             <div className="px-4 py-2 flex items-center justify-between">
               <LanguageSwitcher />
-              <Button variant="primary" size="md" className="flex-1 ml-4">
-                Get Started
-              </Button>
+              <Link href="/assessment" className="flex-1 ml-4">
+                <Button variant="primary" size="md">
+                  Start Free Assessment
+                </Button>
+              </Link>
             </div>
           </div>
         )}

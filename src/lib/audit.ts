@@ -43,7 +43,8 @@ export type AuditAction =
   | "billing.subscription_updated"
   | "billing.subscription_canceled"
   | "billing.payment_failed"
-  | "rate_limit.exceeded";
+  | "rate_limit.exceeded"
+  | "pii.detected_and_redacted";
 
 export interface AuditEntry {
   action: AuditAction;

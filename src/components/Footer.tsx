@@ -2,14 +2,16 @@ import React from "react";
 import Link from "next/link";
 
 const platformLinks = [
-  { label: "Document Assistant", href: "/chat" },
   { label: "Assessment Tool", href: "/assessment" },
-  { label: "Visa Bulletin", href: "/visa-bulletin" },
-  { label: "Cost Calculator", href: "/cost-calculator" },
+  { label: "Document Assistant", href: "/chat" },
   { label: "Our Attorney", href: "/attorneys" },
 ];
 
 const resourceLinks = [
+  { label: "Visa Bulletin", href: "/visa-bulletin" },
+  { label: "Cost Calculator", href: "/cost-calculator" },
+  { label: "RFE Decoder", href: "/rfe-decoder" },
+  { label: "Chat", href: "/chat" },
   { label: "Blog", href: "/blog" },
 ];
 

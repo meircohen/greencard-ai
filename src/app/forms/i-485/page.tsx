@@ -10,15 +10,20 @@ import {
   Info,
   Loader2,
   Shield,
+  Globe,
 } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Input } from "@/components/ui/Input";
+import { Modal } from "@/components/ui/Modal";
+import { DraftWatermark } from "@/components/DraftWatermark";
 import { i485FormDefinition } from "@/lib/forms/i-485";
+import { i485Translations } from "@/lib/forms/translations/i-485-es";
 import type { FormField } from "@/lib/forms/i-130";
 
 type FormValues = Record<string, string | boolean>;
+type FormStatus = "DRAFT" | "SUBMITTED" | "APPROVED" | "REJECTED";
 
 function fieldCompletionCount(fields: FormField[], values: FormValues): { filled: number; total: number } {
   const required = fields.filter((f) => f.required);
@@ -39,11 +44,17 @@ function FormFieldInput({
   field,
   value,
   onChange,
+  showSpanish = false,
 }: {
   field: FormField;
   value: string | boolean;
   onChange: (id: string, value: string | boolean) => void;
+  showSpanish?: boolean;
 }) {
+  const translation = i485Translations[field.id as keyof typeof i485Translations];
+  const displayLabel = showSpanish && translation ? translation.label : field.label;
+  const displayHelpText = showSpanish && translation ? translation.helpText : field.helpText;
+
   if (field.type === "checkbox") {
     return (
       <label className="flex items-start gap-3 cursor-pointer group">
@@ -55,10 +66,11 @@ function FormFieldInput({
         />
         <div className="flex-1">
           <span className="text-sm text-primary group-hover:text-green-400 transition-colors">
-            {field.label}
+            {displayLabel}
           </span>
           <RfeIndicator risk={field.rfeRisk || "low"} />
-          {field.helpText && <p className="text-xs text-muted mt-1">{field.helpText}</p>}
+          {displayHelpText && <p className="text-xs text-muted mt-1">{displayHelpText}</p>}
+          {showSpanish && !translation && <p className="text-xs text-muted mt-1 italic">{field.helpText}</p>}
         </div>
       </label>
     );
@@ -68,7 +80,7 @@ function FormFieldInput({
     return (
       <div>
         <label className="block text-sm font-medium text-secondary mb-1.5">
-          {field.label}
+          {displayLabel}
           {field.required && <span className="text-red-400 ml-1">*</span>}
           <RfeIndicator risk={field.rfeRisk || "low"} />
         </label>
@@ -84,7 +96,8 @@ function FormFieldInput({
             </option>
           ))}
         </select>
-        {field.helpText && <p className="text-xs text-muted mt-1">{field.helpText}</p>}
+        {displayHelpText && <p className="text-xs text-muted mt-1">{displayHelpText}</p>}
+        {showSpanish && !translation && field.helpText && <p className="text-xs text-muted mt-1 italic">{field.helpText}</p>}
       </div>
     );
   }
@@ -93,7 +106,7 @@ function FormFieldInput({
     return (
       <div>
         <label className="block text-sm font-medium text-secondary mb-1.5">
-          {field.label}
+          {displayLabel}
           {field.required && <span className="text-red-400 ml-1">*</span>}
           <RfeIndicator risk={field.rfeRisk || "low"} />
         </label>
@@ -104,7 +117,8 @@ function FormFieldInput({
           rows={3}
           className="w-full px-4 py-2.5 rounded-lg bg-surface/50 border border-white/10 text-primary placeholder-muted focus:outline-none focus:border-green-500/50 text-sm"
         />
-        {field.helpText && <p className="text-xs text-muted mt-1">{field.helpText}</p>}
+        {displayHelpText && <p className="text-xs text-muted mt-1">{displayHelpText}</p>}
+        {showSpanish && !translation && field.helpText && <p className="text-xs text-muted mt-1 italic">{field.helpText}</p>}
       </div>
     );
   }
@@ -112,7 +126,7 @@ function FormFieldInput({
   return (
     <div>
       <label className="block text-sm font-medium text-secondary mb-1.5">
-        {field.label}
+        {displayLabel}
         {field.required && <span className="text-red-400 ml-1">*</span>}
         <RfeIndicator risk={field.rfeRisk || "low"} />
       </label>
@@ -122,7 +136,8 @@ function FormFieldInput({
         placeholder={field.placeholder || ""}
         type={field.type === "date" ? "date" : field.type === "phone" ? "tel" : "text"}
       />
-      {field.helpText && <p className="text-xs text-muted mt-1">{field.helpText}</p>}
+      {displayHelpText && <p className="text-xs text-muted mt-1">{displayHelpText}</p>}
+      {showSpanish && !translation && field.helpText && <p className="text-xs text-muted mt-1 italic">{field.helpText}</p>}
     </div>
   );
 }
@@ -133,10 +148,14 @@ function I485FormContent({ caseId }: { caseId: string }) {
   const [values, setValues] = useState<FormValues>({});
   const [saving, setSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState<string | null>(null);
+  const [formStatus, setFormStatus] = useState<FormStatus>("DRAFT");
+  const [showAttorneyGateModal, setShowAttorneyGateModal] = useState(false);
+  const [showSpanish, setShowSpanish] = useState(false);
   const autoSaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const sections = i485FormDefinition.sections;
   const currentSection = sections[currentStep];
+  const isLastStep = currentStep === sections.length - 1;
 
   // Load saved data on mount
   useEffect(() => {
@@ -149,6 +168,7 @@ function I485FormContent({ caseId }: { caseId: string }) {
             setValues(data.formData as FormValues);
           }
           if (data.updatedAt) setLastSaved(data.updatedAt);
+          if (data.status) setFormStatus(data.status as FormStatus);
         }
       } catch {
         // Silently fail on load, user starts fresh
@@ -163,7 +183,7 @@ function I485FormContent({ caseId }: { caseId: string }) {
       const res = await fetch(`/api/forms/${caseId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ formNumber: "I-485", formData: data }),
+        body: JSON.stringify({ formNumber: "I-485", formData: data, status: "DRAFT" }),
       });
       if (res.ok) {
         const result = await res.json();
@@ -204,6 +224,13 @@ function I485FormContent({ caseId }: { caseId: string }) {
     }
   };
 
+  const handleFinalizeClick = () => {
+    // Save the current form data
+    saveForm(values);
+    // Show the attorney gate modal instead of submitting
+    setShowAttorneyGateModal(true);
+  };
+
   // Overall progress
   const totalRequired = sections.reduce((acc, s) => acc + s.fields.filter((f) => f.required).length, 0);
   const totalFilled = sections.reduce((acc, s) => {
@@ -224,6 +251,9 @@ function I485FormContent({ caseId }: { caseId: string }) {
   return (
     <div className="min-h-screen bg-midnight pt-24 pb-12">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Draft Watermark Banner */}
+        {formStatus === "DRAFT" && <DraftWatermark formName="I-485" />}
+
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
@@ -244,6 +274,14 @@ function I485FormContent({ caseId }: { caseId: string }) {
                   Saved {new Date(lastSaved).toLocaleTimeString()}
                 </span>
               ) : null}
+              <Button
+                variant={showSpanish ? "primary" : "secondary"}
+                onClick={() => setShowSpanish(!showSpanish)}
+                className="flex items-center gap-2"
+              >
+                <Globe size={16} />
+                {showSpanish ? "ES" : "EN"}
+              </Button>
               <Button
                 variant="secondary"
                 onClick={() => saveForm(values)}
@@ -328,6 +366,7 @@ function I485FormContent({ caseId }: { caseId: string }) {
                 field={field}
                 value={values[field.id] ?? (field.type === "checkbox" ? false : "")}
                 onChange={handleFieldChange}
+                showSpanish={showSpanish}
               />
             ))}
           </div>
@@ -365,7 +404,7 @@ function I485FormContent({ caseId }: { caseId: string }) {
             </Button>
           ) : (
             <Button
-              onClick={() => saveForm(values)}
+              onClick={handleFinalizeClick}
               className="flex items-center gap-2 bg-green-500 hover:bg-green-600"
             >
               <CheckCircle2 size={16} />
@@ -374,6 +413,74 @@ function I485FormContent({ caseId }: { caseId: string }) {
           )}
         </div>
       </div>
+
+      {/* Attorney Gate Modal */}
+      <Modal
+        isOpen={showAttorneyGateModal}
+        onClose={() => setShowAttorneyGateModal(false)}
+        title="Form Saved as Draft"
+        size="lg"
+      >
+        <div className="space-y-4">
+          <div className="flex items-start gap-3 p-4 rounded-lg bg-amber-500/10 border border-amber-500/30">
+            <AlertTriangle size={20} className="text-amber-400 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-semibold text-amber-400">Attorney Review Required</p>
+              <p className="text-xs text-secondary mt-2">
+                Your Form I-485 has been saved as a draft. An immigration attorney must review and
+                approve your form before it can be filed with USCIS. This is a critical requirement to
+                ensure compliance with all immigration regulations and to maximize your application's
+                chances of approval.
+              </p>
+            </div>
+          </div>
+
+          <div className="bg-surface/30 rounded-lg p-4 border border-white/10">
+            <p className="text-sm text-primary font-medium mb-3">Your Next Steps:</p>
+            <ul className="space-y-2 text-sm text-secondary">
+              <li className="flex items-start gap-2">
+                <span className="text-green-400 flex-shrink-0 mt-0.5">1.</span>
+                <span>Your form has been securely saved as a draft</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-green-400 flex-shrink-0 mt-0.5">2.</span>
+                <span>Continue editing your form as needed</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-green-400 flex-shrink-0 mt-0.5">3.</span>
+                <span>Upgrade to Attorney-Backed for professional attorney review</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-green-400 flex-shrink-0 mt-0.5">4.</span>
+                <span>Your attorney will approve and file the form with USCIS</span>
+              </li>
+            </ul>
+          </div>
+
+          <div className="space-y-3">
+            <Button
+              onClick={() => setShowAttorneyGateModal(false)}
+              className="w-full bg-green-500 hover:bg-green-600 text-white font-medium"
+            >
+              Continue Editing
+            </Button>
+            <Button
+              variant="secondary"
+              className="w-full"
+              onClick={() => {
+                // Navigate to pricing/upgrade page
+                window.location.href = "/pricing?plan=attorney";
+              }}
+            >
+              Upgrade to Attorney-Backed ($149/mo)
+            </Button>
+          </div>
+
+          <p className="text-xs text-muted text-center">
+            Your draft is automatically saved and encrypted. You can come back to edit it anytime.
+          </p>
+        </div>
+      </Modal>
     </div>
   );
 }

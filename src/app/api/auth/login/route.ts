@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
   try {
     // Brute force protection: 5 attempts per 15 minutes per IP
     const clientIp = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
-    const rl = rateLimit(`login:${clientIp}`, AUTH_TIER.limit, AUTH_TIER.window);
+    const rl = await rateLimit(`login:${clientIp}`, AUTH_TIER.limit, AUTH_TIER.window);
     if (!rl.success) {
       return NextResponse.json(
         { error: "Too many login attempts. Please try again later." },

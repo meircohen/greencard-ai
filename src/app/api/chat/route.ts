@@ -8,6 +8,7 @@ import { getModelForMode } from "@/lib/ai/models";
 import { withRetry } from "@/lib/ai/retry";
 import { rateLimit, CHAT_TIER } from "@/lib/rate-limit";
 import { audit, getClientInfo } from "@/lib/audit";
+import { sanitizePII, detectPII } from "@/lib/pii-sanitizer";
 
 const messageSchema = z.object({
   role: z.enum(["user", "assistant"]),
@@ -38,7 +39,9 @@ function sanitizeMessage(content: string): string {
   // Truncate overly long messages (Zod enforces 4000 but defense in depth)
   const truncated = content.slice(0, 4000);
   // Strip null bytes and control characters (keep newlines/tabs)
-  return truncated.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, "");
+  const sanitized = truncated.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, "");
+  // Strip PII before sending to Claude API (CCPA compliance)
+  return sanitizePII(sanitized);
 }
 
 function containsInjection(content: string): boolean {
@@ -135,8 +138,25 @@ export async function POST(request: NextRequest): Promise<Response> {
       });
     }
 
+    // Detect and log PII before sending to Anthropic API
+    // CCPA Compliance: Until Zero Data Retention agreement is signed, we must not send PII to Claude
+    const originalLastUserMsg = body.messages.filter((m) => m.role === "user").pop();
+    if (originalLastUserMsg) {
+      const detectedPII = detectPII(originalLastUserMsg.content);
+      if (detectedPII.length > 0) {
+        const { ip, userAgent } = getClientInfo(request.headers);
+        audit({
+          action: "pii.detected_and_redacted",
+          userId: clientId,
+          ip,
+          userAgent,
+          metadata: { piiTypes: detectedPII },
+        });
+      }
+    }
+
     // Rate limiting check
-    const rateResult = rateLimit(clientId, CHAT_TIER.limit, CHAT_TIER.window);
+    const rateResult = await rateLimit(clientId, CHAT_TIER.limit, CHAT_TIER.window);
     if (!rateResult.success) {
       audit({ action: "rate_limit.exceeded", userId: clientId, metadata: { endpoint: "chat" } });
       return NextResponse.json(
