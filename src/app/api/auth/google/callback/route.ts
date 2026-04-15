@@ -215,10 +215,11 @@ export async function GET(request: NextRequest) {
 
       return response;
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error("Google OAuth callback error:", error);
+    const errorMsg = encodeURIComponent(error?.message || "unknown_error");
     return NextResponse.redirect(
-      `/login?error=google_auth_failed`
+      `${baseUrl}/login?error=google_auth_failed&detail=${errorMsg}`
     );
   }
 }
