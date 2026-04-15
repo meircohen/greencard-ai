@@ -142,7 +142,7 @@ export default function Home() {
       </section>
 
       {/* ═══════════════ SERVICES SECTION ═══════════════ */}
-      <section className="py-24 sm:py-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-slate-50/50 to-white">
+      <section id="services" className="py-24 sm:py-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-slate-50/50 to-white">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900">
@@ -160,36 +160,42 @@ export default function Home() {
                 title: 'Marriage-Based Green Cards',
                 description: 'I-485, I-130, I-864. We guide married couples through immediate relative sponsorship.',
                 color: 'text-rose-600',
+                href: '/guides/marriage-green-card',
               },
               {
                 icon: Users,
                 title: 'Family Sponsorship',
                 description: 'Adult children, siblings, parents. Navigate family preference categories and priority dates.',
                 color: 'text-blue-600',
+                href: '/guides/i-130-guide',
               },
               {
                 icon: CheckCircle2,
                 title: 'Adjustment of Status',
                 description: 'Stay in the US while your green card processes. Complete I-485 with expert review.',
                 color: 'text-emerald-600',
+                href: '/guides/i-485-guide',
               },
               {
                 icon: Briefcase,
                 title: 'Work Permits',
                 description: 'I-765 for EAD. Get authorization to work while your case is pending.',
                 color: 'text-amber-600',
+                href: '/guides/i-765-guide',
               },
               {
                 icon: Award,
                 title: 'Citizenship and Naturalization',
                 description: 'N-400 preparation and filing. Become a US citizen with confidence.',
                 color: 'text-purple-600',
+                href: '/guides/n-400-guide',
               },
               {
                 icon: Globe,
                 title: 'Consular Processing',
                 description: 'DS-260, medical exams, consulate interviews. Complete support for overseas processing.',
                 color: 'text-cyan-600',
+                href: '/guides/green-card-timeline',
               },
             ].map((service, i) => {
               const Icon = service.icon;
@@ -205,10 +211,10 @@ export default function Home() {
                   <p className="text-sm text-slate-600 mb-4 leading-relaxed">
                     {service.description}
                   </p>
-                  <button className="text-emerald-600 hover:text-emerald-700 font-medium text-sm flex items-center gap-1.5 transition-colors">
+                  <Link href={service.href} className="text-emerald-600 hover:text-emerald-700 font-medium text-sm flex items-center gap-1.5 transition-colors">
                     Learn more
                     <ChevronRight className="w-4 h-4" />
-                  </button>
+                  </Link>
                 </div>
               );
             })}
@@ -516,7 +522,7 @@ export default function Home() {
       </section>
 
       {/* ═══════════════ FAQ SECTION ═══════════════ */}
-      <section className="py-24 sm:py-32 px-4 sm:px-6 lg:px-8">
+      <section id="faq" className="py-24 sm:py-32 px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900">

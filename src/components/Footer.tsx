@@ -2,12 +2,12 @@ import React from "react";
 import Link from "next/link";
 
 const servicesLinks = [
-  { label: "Marriage Green Cards", href: "/services/marriage" },
-  { label: "Family Sponsorship", href: "/services/family-sponsorship" },
-  { label: "Adjustment of Status", href: "/services/adjustment-of-status" },
-  { label: "Work Permits", href: "/services/work-permits" },
-  { label: "Citizenship", href: "/services/citizenship" },
-  { label: "Consular Processing", href: "/services/consular-processing" },
+  { label: "Marriage Green Cards", href: "/guides/marriage-green-card" },
+  { label: "Family Sponsorship", href: "/guides/i-130-guide" },
+  { label: "Adjustment of Status", href: "/guides/i-485-guide" },
+  { label: "Work Permits", href: "/guides/i-765-guide" },
+  { label: "Citizenship", href: "/guides/n-400-guide" },
+  { label: "Consular Processing", href: "/guides/green-card-timeline" },
 ];
 
 const resourceLinks = [
@@ -15,11 +15,11 @@ const resourceLinks = [
   { label: "Cost Calculator", href: "/cost-calculator" },
   { label: "Immigration Guides", href: "/guides" },
   { label: "Blog", href: "/blog" },
-  { label: "FAQ", href: "/faq" },
+  { label: "FAQ", href: "/#faq" },
 ];
 
 const contactLinks = [
-  { label: "Schedule Consultation", href: "/schedule-consultation" },
+  { label: "Schedule Consultation", href: "/assessment" },
   { label: "Contact", href: "/contact" },
   { label: "Phone", href: "tel:+19547776678", isPhone: true },
   { label: "Email", href: "mailto:hello@greencard.ai", isEmail: true },
@@ -28,8 +28,8 @@ const contactLinks = [
 const legalLinks = [
   { label: "Privacy Policy", href: "/privacy" },
   { label: "Terms of Service", href: "/terms" },
-  { label: "Attorney Advertising Disclaimer", href: "/disclaimer" },
-  { label: "Accessibility", href: "/accessibility" },
+  { label: "Attorney Advertising Disclaimer", href: "/terms" },
+  { label: "Accessibility", href: "/terms" },
 ];
 
 export const Footer: React.FC = () => {

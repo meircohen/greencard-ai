@@ -11,8 +11,8 @@ const baseNavLinks = [
   { label: "Services", href: "/#services" },
   { label: "How It Works", href: "/#how-it-works" },
   { label: "Pricing", href: "/pricing" },
-  { label: "Resources", href: "/resources" },
-  { label: "Contact", href: "/#contact" },
+  { label: "Resources", href: "/guides" },
+  { label: "Contact", href: "/contact" },
 ];
 
 export const Navbar: React.FC = () => {
@@ -85,7 +85,7 @@ export const Navbar: React.FC = () => {
           {/* Desktop Language Switcher & CTA Button */}
           <div className="hidden md:flex items-center gap-4">
             <LanguageSwitcher />
-            <Link href="/evaluation">
+            <Link href="/assessment">
               <Button variant="primary" size="md">
                 Free Case Evaluation
               </Button>
@@ -121,7 +121,7 @@ export const Navbar: React.FC = () => {
             ))}
             <div className="px-4 py-2 flex items-center justify-between">
               <LanguageSwitcher />
-              <Link href="/evaluation" className="flex-1 ml-4">
+              <Link href="/assessment" className="flex-1 ml-4">
                 <Button variant="primary" size="md">
                   Free Case Evaluation
                 </Button>
