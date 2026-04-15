@@ -24,6 +24,9 @@ const publicPageRoutes = [
   "/privacy",
   "/terms",
   "/blog",
+  "/rfe-decoder",
+  "/forms/i-485",
+  "/interview-prep",
 ];
 
 // Public API routes (no auth required)
@@ -38,6 +41,9 @@ const publicApiRoutes = [
   "/api/contact",
   "/api/billing/webhook", // Stripe webhooks verify their own signature
   "/api/chat",            // Chat OPTIONS endpoint for health check
+  "/api/health",          // Health check endpoint
+  "/api/assess",          // Assessment endpoint (public)
+  "/api/rfe-decoder",     // RFE decoder endpoint (public)
 ];
 
 export async function middleware(request: NextRequest) {

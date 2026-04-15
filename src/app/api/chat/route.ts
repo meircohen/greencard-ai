@@ -6,7 +6,7 @@ import * as uscisData from "@/lib/uscis-data";
 import { safeErrorResponse } from "@/lib/errors";
 import { getModelForMode } from "@/lib/ai/models";
 import { withRetry } from "@/lib/ai/retry";
-import { InMemoryRateLimiter, CHAT_TIER } from "@/lib/rate-limit";
+import { rateLimit, CHAT_TIER } from "@/lib/rate-limit";
 import { audit, getClientInfo } from "@/lib/audit";
 
 const messageSchema = z.object({
@@ -45,8 +45,7 @@ function containsInjection(content: string): boolean {
   return INJECTION_PATTERNS.some((pattern) => pattern.test(content));
 }
 
-// Token bucket rate limiter (shared instance)
-const chatLimiter = new InMemoryRateLimiter(CHAT_TIER);
+// Uses shared singleton rate limiter from @/lib/rate-limit
 
 function buildContextualSystemPrompt(
   mode: string = "intake",
@@ -137,11 +136,11 @@ export async function POST(request: NextRequest): Promise<Response> {
     }
 
     // Rate limiting check
-    const rateResult = chatLimiter.consume(clientId);
-    if (!rateResult.allowed) {
+    const rateResult = rateLimit(clientId, CHAT_TIER.limit, CHAT_TIER.window);
+    if (!rateResult.success) {
       audit({ action: "rate_limit.exceeded", userId: clientId, metadata: { endpoint: "chat" } });
       return NextResponse.json(
-        { error: "Rate limit exceeded. Please wait before sending more messages.", retryAfterMs: rateResult.retryAfterMs },
+        { error: "Rate limit exceeded. Please wait before sending more messages.", retryAfterMs: (rateResult.reset * 1000) - Date.now() },
         { status: 429 }
       );
     }

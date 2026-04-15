@@ -1,7 +1,5 @@
-import crypto from "crypto";
-import { getDb } from "./db";
-import { revokedTokens, userRevocations as userRevocationsTable } from "./db/schema";
-import { eq } from "drizzle-orm";
+// Dynamic imports for DB to avoid pulling drizzle-orm into Edge middleware bundle
+// Node crypto replaced with Web Crypto API for Edge compatibility
 
 /**
  * JWT session denylist for token revocation.
@@ -19,7 +17,7 @@ function useDb(): boolean {
 }
 
 export function generateJti(): string {
-  return crypto.randomUUID();
+  return globalThis.crypto.randomUUID();
 }
 
 /**
@@ -27,6 +25,8 @@ export function generateJti(): string {
  */
 export async function revokeToken(jti: string, tokenExpiresAt: Date): Promise<void> {
   if (useDb()) {
+    const { getDb } = await import("./db");
+    const { revokedTokens } = await import("./db/schema");
     const db = getDb();
     await db.insert(revokedTokens).values({
       jti,
@@ -42,6 +42,9 @@ export async function revokeToken(jti: string, tokenExpiresAt: Date): Promise<vo
  */
 export async function revokeAllUserTokens(userId: string): Promise<void> {
   if (useDb()) {
+    const { getDb } = await import("./db");
+    const { userRevocations: userRevocationsTable } = await import("./db/schema");
+    const { eq: _eq } = await import("drizzle-orm");
     const db = getDb();
     await db
       .insert(userRevocationsTable)
@@ -60,6 +63,9 @@ export async function revokeAllUserTokens(userId: string): Promise<void> {
  */
 export async function isTokenRevoked(jti: string): Promise<boolean> {
   if (useDb()) {
+    const { getDb } = await import("./db");
+    const { revokedTokens } = await import("./db/schema");
+    const { eq } = await import("drizzle-orm");
     const db = getDb();
     const [row] = await db.select({ jti: revokedTokens.jti }).from(revokedTokens).where(eq(revokedTokens.jti, jti)).limit(1);
     return !!row;
@@ -72,6 +78,9 @@ export async function isTokenRevoked(jti: string): Promise<boolean> {
  */
 export async function isUserTokenRevoked(userId: string, issuedAt: number): Promise<boolean> {
   if (useDb()) {
+    const { getDb } = await import("./db");
+    const { userRevocations: userRevocationsTable } = await import("./db/schema");
+    const { eq } = await import("drizzle-orm");
     const db = getDb();
     const [row] = await db.select({ revokedAt: userRevocationsTable.revokedAt }).from(userRevocationsTable).where(eq(userRevocationsTable.userId, userId)).limit(1);
     if (!row) return false;

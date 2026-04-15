@@ -278,7 +278,7 @@ export default function Dashboard() {
     fetchCases();
   }, [user?.id]);
 
-  const displayName = user?.fullName?.split(" ")[0] || "there";
+  const displayName = user?.name?.split(" ")[0] || "there";
 
   return (
     <div className="min-h-screen bg-midnight text-primary">

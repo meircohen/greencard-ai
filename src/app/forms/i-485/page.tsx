@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useState, useCallback, useEffect, useRef } from "react";
-import { useSearchParams } from "next/navigation";
+import React, { useState, useCallback, useEffect, useRef, Suspense } from "react";
 import {
   ChevronLeft,
   ChevronRight,
@@ -128,9 +127,7 @@ function FormFieldInput({
   );
 }
 
-export default function I485FormPage() {
-  const searchParams = useSearchParams();
-  const caseId = searchParams.get("caseId") || "draft";
+function I485FormContent({ caseId }: { caseId: string }) {
 
   const [currentStep, setCurrentStep] = useState(0);
   const [values, setValues] = useState<FormValues>({});
@@ -379,4 +376,13 @@ export default function I485FormPage() {
       </div>
     </div>
   );
+}
+
+export default function I485FormPage() {
+  // Use a simple default caseId; the form auto-saves per caseId
+  const caseId = typeof window !== "undefined"
+    ? new URLSearchParams(window.location.search).get("caseId") || "draft"
+    : "draft";
+
+  return <I485FormContent caseId={caseId} />;
 }

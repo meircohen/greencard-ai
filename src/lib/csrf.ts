@@ -1,4 +1,3 @@
-import crypto from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 
 const CSRF_COOKIE_NAME = "gc-csrf";
@@ -18,7 +17,10 @@ const CSRF_TOKEN_LENGTH = 32;
  */
 
 export function generateCsrfToken(): string {
-  return crypto.randomBytes(CSRF_TOKEN_LENGTH).toString("hex");
+  // Use Web Crypto API (Edge-compatible) instead of Node crypto
+  const bytes = new Uint8Array(CSRF_TOKEN_LENGTH);
+  globalThis.crypto.getRandomValues(bytes);
+  return Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
 }
 
 export function getCsrfTokenFromRequest(request: NextRequest): {
@@ -43,9 +45,17 @@ export function validateCsrf(request: NextRequest): boolean {
     return false;
   }
 
-  const a = Buffer.from(cookieToken);
-  const b = Buffer.from(headerToken);
-  return crypto.timingSafeEqual(a, b);
+  // Edge-compatible constant-time compare
+  const encoder = new TextEncoder();
+  const a = encoder.encode(cookieToken);
+  const b = encoder.encode(headerToken);
+  if (a.byteLength !== b.byteLength) return false;
+  // Use subtle crypto if available, else fallback to basic XOR compare
+  let result = 0;
+  for (let i = 0; i < a.length; i++) {
+    result |= a[i] ^ b[i];
+  }
+  return result === 0;
 }
 
 export function setCsrfCookie(response: NextResponse, token: string): void {
