@@ -2,7 +2,6 @@
 
 import React, { useState, useRef } from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
 import {
   ArrowRight,
   Play,
@@ -22,16 +21,6 @@ import {
 } from 'lucide-react';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
-
-/* ─── animation helpers ─── */
-const fadeIn = {
-  hidden: { opacity: 0, y: 24 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.5, delay: i * 0.08, ease: "easeOut" as const },
-  }),
-};
 
 export default function Home() {
   const [videoOpen, setVideoOpen] = useState(false);
@@ -61,12 +50,8 @@ export default function Home() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             {/* Left: Copy */}
-            <motion.div
-              initial="hidden"
-              animate="visible"
-              className="space-y-8"
-            >
-              <motion.div variants={fadeIn} custom={0}>
+            <div className="space-y-8">
+              <div className="animate-fade-up">
                 <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide uppercase bg-emerald-50 text-emerald-700 border border-emerald-200/80">
                   <span className="relative flex h-1.5 w-1.5">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
@@ -74,29 +59,21 @@ export default function Home() {
                   </span>
                   Trusted by families across the US
                 </span>
-              </motion.div>
+              </div>
 
-              <motion.h1
-                variants={fadeIn}
-                custom={1}
-                className="text-4xl sm:text-5xl lg:text-[3.5rem] font-extrabold tracking-tight leading-[1.1] text-slate-900"
-              >
+              <h1 className="animate-fade-up-d1 text-4xl sm:text-5xl lg:text-[3.5rem] font-extrabold tracking-tight leading-[1.1] text-slate-900">
                 Your green card,{' '}
                 <span className="bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">
                   without the guesswork
                 </span>
-              </motion.h1>
+              </h1>
 
-              <motion.p
-                variants={fadeIn}
-                custom={2}
-                className="text-lg sm:text-xl text-slate-600 leading-relaxed max-w-lg"
-              >
+              <p className="animate-fade-up-d2 text-lg sm:text-xl text-slate-600 leading-relaxed max-w-lg">
                 AI-powered document preparation reviewed by licensed immigration attorneys.
                 From first question to filed application, in one place.
-              </motion.p>
+              </p>
 
-              <motion.div variants={fadeIn} custom={3} className="flex flex-col sm:flex-row gap-3">
+              <div className="animate-fade-up-d3 flex flex-col sm:flex-row gap-3">
                 <Link href="/assessment">
                   <button className="w-full sm:w-auto px-7 py-3.5 rounded-xl text-[15px] font-semibold text-white bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-700 hover:to-emerald-600 transition-all duration-200 shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/30 flex items-center justify-center gap-2">
                     Start Free Assessment
@@ -108,10 +85,10 @@ export default function Home() {
                     View Pricing
                   </button>
                 </Link>
-              </motion.div>
+              </div>
 
               {/* Trust bar */}
-              <motion.div variants={fadeIn} custom={4} className="flex flex-wrap gap-x-6 gap-y-2 text-[13px] text-slate-500 pt-2">
+              <div className="animate-fade-up-d4 flex flex-wrap gap-x-6 gap-y-2 text-[13px] text-slate-500 pt-2">
                 <span className="flex items-center gap-1.5">
                   <Lock className="w-3.5 h-3.5 text-slate-400" />
                   256-bit encryption
@@ -124,16 +101,11 @@ export default function Home() {
                   <Globe className="w-3.5 h-3.5 text-slate-400" />
                   English &amp; Espa&ntilde;ol
                 </span>
-              </motion.div>
-            </motion.div>
+              </div>
+            </div>
 
             {/* Right: Video Player */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.96 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" as const }}
-              className="relative"
-            >
+            <div className="animate-fade-up-d2 relative">
               <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-slate-900/10 border border-slate-200/60 bg-slate-900 aspect-video cursor-pointer group" onClick={openVideo}>
                 {/* Video thumbnail / poster */}
                 <video
@@ -159,7 +131,7 @@ export default function Home() {
 
               {/* Decorative glow */}
               <div className="absolute -inset-4 bg-gradient-to-r from-emerald-500/10 via-teal-500/5 to-blue-500/10 rounded-3xl blur-2xl -z-10" />
-            </motion.div>
+            </div>
           </div>
         </div>
       </section>
@@ -187,18 +159,12 @@ export default function Home() {
       {/* ═══════════════ HOW IT WORKS ═══════════════ */}
       <section id="how-it-works" className="py-24 sm:py-32 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
-          <motion.div
-            className="text-center mb-16"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
+          <div className="text-center mb-16">
             <p className="text-emerald-600 font-semibold text-sm tracking-wide uppercase mb-3">How it works</p>
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900">
               From first question to filed application
             </h2>
-          </motion.div>
+          </div>
 
           <div className="grid md:grid-cols-4 gap-0">
             {[
@@ -209,12 +175,8 @@ export default function Home() {
             ].map((item, i) => {
               const Icon = item.icon;
               return (
-                <motion.div
+                <div
                   key={i}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: i * 0.1 }}
                   className="relative px-6 py-8"
                 >
                   {/* Connector line */}
@@ -229,7 +191,7 @@ export default function Home() {
                     <h3 className="text-lg font-semibold text-slate-900 mt-1 mb-2">{item.title}</h3>
                     <p className="text-sm text-slate-500 leading-relaxed">{item.desc}</p>
                   </div>
-                </motion.div>
+                </div>
               );
             })}
           </div>
@@ -239,13 +201,7 @@ export default function Home() {
       {/* ═══════════════ FEATURES ═══════════════ */}
       <section className="py-24 sm:py-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-slate-50 to-white">
         <div className="max-w-6xl mx-auto">
-          <motion.div
-            className="text-center mb-16"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
+          <div className="text-center mb-16">
             <p className="text-emerald-600 font-semibold text-sm tracking-wide uppercase mb-3">Platform</p>
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900">
               Everything you need, nothing you don&apos;t
@@ -253,7 +209,7 @@ export default function Home() {
             <p className="mt-4 text-lg text-slate-500 max-w-2xl mx-auto">
               Purpose-built for family-based immigration. Every feature designed to reduce errors and save time.
             </p>
-          </motion.div>
+          </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {[
@@ -263,6 +219,7 @@ export default function Home() {
                 desc: 'AI trained on real USCIS data answers your questions instantly, in English or Spanish.',
                 gradient: 'from-emerald-500 to-teal-500',
                 bg: 'bg-emerald-50',
+                color: 'text-emerald-600',
               },
               {
                 icon: Clock,
@@ -270,6 +227,7 @@ export default function Home() {
                 desc: 'Real-time priority dates with historical trends and wait time predictions for every category.',
                 gradient: 'from-blue-500 to-indigo-500',
                 bg: 'bg-blue-50',
+                color: 'text-blue-600',
               },
               {
                 icon: FileText,
@@ -277,6 +235,7 @@ export default function Home() {
                 desc: 'AI pre-fills I-485, I-130, I-765 and more. Built-in validation catches errors before USCIS does.',
                 gradient: 'from-violet-500 to-purple-500',
                 bg: 'bg-violet-50',
+                color: 'text-violet-600',
               },
               {
                 icon: Shield,
@@ -284,6 +243,7 @@ export default function Home() {
                 desc: 'Paste any Request for Evidence. Get a plain-English breakdown with a response strategy.',
                 gradient: 'from-amber-500 to-orange-500',
                 bg: 'bg-amber-50',
+                color: 'text-amber-600',
               },
               {
                 icon: Calculator,
@@ -291,6 +251,7 @@ export default function Home() {
                 desc: 'Transparent fee breakdowns for every form type, including filing fees and premium processing.',
                 gradient: 'from-rose-500 to-pink-500',
                 bg: 'bg-rose-50',
+                color: 'text-rose-600',
               },
               {
                 icon: Users,
@@ -298,25 +259,22 @@ export default function Home() {
                 desc: 'Licensed immigration attorneys review your AI-prepared forms and file on your behalf.',
                 gradient: 'from-cyan-500 to-sky-500',
                 bg: 'bg-cyan-50',
+                color: 'text-cyan-600',
               },
             ].map((feature, i) => {
               const Icon = feature.icon;
               return (
-                <motion.div
+                <div
                   key={i}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: i * 0.06 }}
                   className="group relative rounded-2xl bg-white border border-slate-200/80 p-7 hover:border-slate-300 hover:shadow-lg hover:shadow-slate-100 transition-all duration-300"
                 >
                   <div className={`inline-flex p-2.5 rounded-xl ${feature.bg} mb-5`}>
-                    <Icon className={`w-5 h-5 bg-gradient-to-br ${feature.gradient} bg-clip-text`} style={{ color: `var(--tw-gradient-from)` }} />
+                    <Icon className={`w-5 h-5 ${feature.color}`} />
                   </div>
                   <h3 className="text-[17px] font-semibold text-slate-900 mb-2">{feature.title}</h3>
                   <p className="text-sm text-slate-500 leading-relaxed">{feature.desc}</p>
                   <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-emerald-500 group-hover:translate-x-1 transition-all duration-200 absolute top-7 right-6" />
-                </motion.div>
+                </div>
               );
             })}
           </div>
@@ -326,26 +284,14 @@ export default function Home() {
       {/* ═══════════════ VIDEO SECTION ═══════════════ */}
       <section className="py-24 sm:py-32 px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto">
-          <motion.div
-            className="text-center mb-12"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
+          <div className="text-center mb-12">
             <p className="text-emerald-600 font-semibold text-sm tracking-wide uppercase mb-3">See it in action</p>
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900">
               Watch how it works
             </h2>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="relative rounded-2xl overflow-hidden shadow-2xl shadow-slate-900/10 border border-slate-200/60 bg-slate-900"
-          >
+          <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-slate-900/10 border border-slate-200/60 bg-slate-900">
             <video
               className="w-full"
               src="/demo.mp4"
@@ -354,25 +300,19 @@ export default function Home() {
               preload="metadata"
               poster=""
             />
-          </motion.div>
+          </div>
         </div>
       </section>
 
       {/* ═══════════════ TRUST / WHY US ═══════════════ */}
       <section className="py-24 sm:py-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-slate-50 to-white">
         <div className="max-w-6xl mx-auto">
-          <motion.div
-            className="text-center mb-16"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
+          <div className="text-center mb-16">
             <p className="text-emerald-600 font-semibold text-sm tracking-wide uppercase mb-3">Why GreenCard.ai</p>
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900">
               Built for trust. Designed for clarity.
             </h2>
-          </motion.div>
+          </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {[
@@ -399,12 +339,8 @@ export default function Home() {
             ].map((item, i) => {
               const Icon = item.icon;
               return (
-                <motion.div
+                <div
                   key={i}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: i * 0.08 }}
                   className="text-center px-4 py-8"
                 >
                   <div className="w-12 h-12 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center mx-auto mb-4">
@@ -412,7 +348,7 @@ export default function Home() {
                   </div>
                   <h3 className="text-base font-semibold text-slate-900 mb-2">{item.title}</h3>
                   <p className="text-sm text-slate-500 leading-relaxed">{item.desc}</p>
-                </motion.div>
+                </div>
               );
             })}
           </div>
@@ -422,13 +358,7 @@ export default function Home() {
       {/* ═══════════════ PRICING TEASER ═══════════════ */}
       <section className="py-24 sm:py-32 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="relative rounded-3xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-10 sm:p-14 text-center overflow-hidden"
-          >
+          <div className="relative rounded-3xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-10 sm:p-14 text-center overflow-hidden">
             {/* Gradient orbs */}
             <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl" />
             <div className="absolute bottom-0 left-0 w-60 h-60 bg-blue-500/10 rounded-full blur-3xl" />
@@ -454,35 +384,28 @@ export default function Home() {
                 </Link>
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
 
       {/* ═══════════════ BOTTOM CTA ═══════════════ */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 border-t border-slate-100">
         <div className="max-w-3xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
-            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-4">
-              Ready to take the first step?
-            </h2>
-            <p className="text-base text-slate-500 max-w-lg mx-auto mb-6">
-              Get your personalized immigration assessment in under 5 minutes. Free, confidential, no credit card required.
-            </p>
-            <Link href="/assessment" className="group inline-flex">
-              <button className="px-8 py-3.5 rounded-xl text-[15px] font-semibold text-white bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-700 hover:to-emerald-600 transition-all duration-200 shadow-lg shadow-emerald-500/20 flex items-center gap-2">
-                Check Your Eligibility
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-              </button>
-            </Link>
-            <p className="mt-8 text-xs text-slate-400 max-w-lg mx-auto">
-              GreenCard.ai is not a law firm and does not provide legal advice. Legal services are provided by Partner Immigration Law, PLLC. All AI-generated content is for informational purposes only.
-            </p>
-          </motion.div>
+          <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-4">
+            Ready to take the first step?
+          </h2>
+          <p className="text-base text-slate-500 max-w-lg mx-auto mb-6">
+            Get your personalized immigration assessment in under 5 minutes. Free, confidential, no credit card required.
+          </p>
+          <Link href="/assessment" className="group inline-flex">
+            <button className="px-8 py-3.5 rounded-xl text-[15px] font-semibold text-white bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-700 hover:to-emerald-600 transition-all duration-200 shadow-lg shadow-emerald-500/20 flex items-center gap-2">
+              Check Your Eligibility
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+            </button>
+          </Link>
+          <p className="mt-8 text-xs text-slate-400 max-w-lg mx-auto">
+            GreenCard.ai is not a law firm and does not provide legal advice. Legal services are provided by Partner Immigration Law, PLLC. All AI-generated content is for informational purposes only.
+          </p>
         </div>
       </section>
 
