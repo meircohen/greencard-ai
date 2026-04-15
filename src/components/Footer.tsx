@@ -21,7 +21,7 @@ const resourceLinks = [
 const contactLinks = [
   { label: "Schedule Consultation", href: "/schedule-consultation" },
   { label: "Contact", href: "/contact" },
-  { label: "Phone", href: "tel:1-888-GREEN-01", isPhone: true },
+  { label: "Phone", href: "tel:+19547776678", isPhone: true },
   { label: "Email", href: "mailto:hello@greencard.ai", isEmail: true },
 ];
 

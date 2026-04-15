@@ -274,6 +274,97 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ═══════════════ MEET YOUR ATTORNEY ═══════════════ */}
+      <section className="py-24 sm:py-32 px-4 sm:px-6 lg:px-8 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900">
+              Meet Your Attorney
+            </h2>
+            <p className="mt-4 text-lg text-slate-600 max-w-2xl mx-auto">
+              Your case is personally overseen by a licensed Florida attorney.
+            </p>
+          </div>
+
+          <div className="rounded-xl border border-slate-200/80 bg-white p-8 sm:p-12 shadow-lg shadow-slate-900/5">
+            <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
+              {/* Left: Attorney Photo */}
+              <div className="flex justify-center md:justify-start">
+                <img
+                  src="https://cdn.prod.website-files.com/6681cdb84a6659ab5132cb36/6683331414ceebad8b64c1f4_5f0d3ad7-b4ad-43c8-8a73-21f121226082.JPG"
+                  alt="Jeremy Knight, Esq."
+                  className="w-full max-w-md rounded-lg shadow-md"
+                />
+              </div>
+
+              {/* Right: Attorney Info */}
+              <div className="space-y-6">
+                <div>
+                  <h3 className="text-2xl sm:text-3xl font-bold text-slate-900">
+                    Jeremy "Yirmi" Knight, Esq.
+                  </h3>
+                  <p className="text-lg text-emerald-600 font-semibold mt-1">
+                    Lead Immigration Attorney
+                  </p>
+                </div>
+
+                <div className="space-y-4">
+                  <div>
+                    <p className="text-sm font-semibold text-slate-700 uppercase tracking-wide mb-1">
+                      Law Firm
+                    </p>
+                    <p className="text-slate-600">Partner Immigration Law, PLLC</p>
+                  </div>
+
+                  <div>
+                    <p className="text-sm font-semibold text-slate-700 uppercase tracking-wide mb-1">
+                      Bar Admission
+                    </p>
+                    <p className="text-slate-600">Florida Bar; Trial Lawyers Section, Business Law Section</p>
+                  </div>
+
+                  <div>
+                    <p className="text-sm font-semibold text-slate-700 uppercase tracking-wide mb-1">
+                      Education
+                    </p>
+                    <p className="text-slate-600">Florida International University College of Law; Award-Winning Graduate</p>
+                  </div>
+
+                  <div>
+                    <p className="text-sm font-semibold text-slate-700 uppercase tracking-wide mb-1">
+                      Practice Areas
+                    </p>
+                    <p className="text-slate-600">Immigration Law, International Law, Commercial Litigation, Business Law</p>
+                  </div>
+                </div>
+
+                <div className="pt-2 border-t border-slate-200">
+                  <p className="text-slate-600 leading-relaxed">
+                    Highly-regarded and award-winning attorney with extensive experience in immigration and international law. Known for strong client relationships and a track record of success. Court-appointed fiduciary with experience overseeing complex legal matters.
+                  </p>
+                </div>
+
+                <div className="space-y-3 pt-4">
+                  <div>
+                    <p className="text-sm font-semibold text-slate-700 uppercase tracking-wide mb-1">
+                      Contact
+                    </p>
+                    <div className="space-y-2">
+                      <p className="text-slate-600">
+                        <span className="font-medium">Phone:</span> <a href="tel:+19547776678" className="text-emerald-600 hover:text-emerald-700">(954) 777-6678</a>
+                      </p>
+                      <p className="text-slate-600">
+                        <span className="font-medium">Email:</span> <a href="mailto:Yirmi@LadyLibertyLawyers.com" className="text-emerald-600 hover:text-emerald-700">Yirmi@LadyLibertyLawyers.com</a>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ═══════════════ COMPARISON TABLE ═══════════════ */}
       <section className="py-24 sm:py-32 px-4 sm:px-6 lg:px-8 bg-slate-50">
         <div className="max-w-5xl mx-auto">
