@@ -79,10 +79,10 @@ const PRIORITY_BADGE_COLORS: Record<string, "red" | "amber" | "blue"> = {
 };
 
 const REVIEW_STATUS_COLORS: Record<string, string> = {
-  needs_review: "bg-red-500/20 text-red-300",
-  rfe_response: "bg-amber-500/20 text-amber-300",
-  ready_to_file: "bg-emerald-500/20 text-emerald-300",
-  interview_prep: "bg-blue-500/20 text-blue-300",
+  needs_review: "bg-red-50 text-red-700 border border-red-200",
+  rfe_response: "bg-amber-50 text-amber-700 border border-amber-200",
+  ready_to_file: "bg-emerald-50 text-emerald-700 border border-emerald-200",
+  interview_prep: "bg-blue-50 text-blue-700 border border-blue-200",
 };
 
 const REVIEW_STATUS_LABELS: Record<string, string> = {
@@ -397,13 +397,13 @@ export default function AttorneyDashboard() {
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center space-y-4">
           <div className="w-12 h-12 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin mx-auto" />
-          <p className="text-slate-300">Loading attorney dashboard...</p>
+          <p className="text-slate-600">Loading attorney dashboard...</p>
           {/* Loading skeleton cards */}
           <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl">
             {[1, 2, 3, 4].map((i) => (
               <div key={i} className="bg-slate-50 rounded-lg p-6 animate-pulse">
-                <div className="h-4 bg-slate-800 rounded mb-4 w-3/4"></div>
-                <div className="h-8 bg-slate-800 rounded w-1/2"></div>
+                <div className="h-4 bg-slate-200 rounded mb-4 w-3/4"></div>
+                <div className="h-8 bg-slate-200 rounded w-1/2"></div>
               </div>
             ))}
           </div>
@@ -415,7 +415,7 @@ export default function AttorneyDashboard() {
   if (error && !isDemoMode) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center px-4">
-        <Card className="p-8 text-center space-y-4 max-w-md bg-slate-50 border-slate-700">
+        <Card className="p-8 text-center space-y-4 max-w-md bg-white border-slate-200">
           <AlertCircle className="mx-auto h-12 w-12 text-red-500" />
           <p className="text-red-600 font-medium">{error}</p>
           <Button onClick={loadData} variant="primary">
@@ -430,11 +430,11 @@ export default function AttorneyDashboard() {
     <div className="flex min-h-screen bg-white flex-col">
       {/* Demo Mode Banner */}
       {isDemoMode && (
-        <div className="bg-amber-900/30 border-b border-amber-700/30 px-8 py-3 flex items-center gap-3">
+        <div className="bg-amber-50 border-b border-amber-200 px-8 py-3 flex items-center gap-3">
           <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0" />
           <div>
-            <p className="text-amber-300 font-semibold text-sm">Demo Mode Active</p>
-            <p className="text-amber-200/70 text-xs">Using sample data - API server not available</p>
+            <p className="text-amber-900 font-semibold text-sm">Demo Mode Active</p>
+            <p className="text-amber-700 text-xs">Using sample data - API server not available</p>
           </div>
         </div>
       )}
@@ -449,7 +449,7 @@ export default function AttorneyDashboard() {
             </div>
             <div>
               <h1 className="text-lg font-bold text-slate-900">GreenCard.ai</h1>
-              <p className="text-xs text-slate-400">Attorney Portal</p>
+              <p className="text-xs text-emerald-600">Attorney Portal</p>
             </div>
           </div>
         </div>
@@ -496,9 +496,9 @@ export default function AttorneyDashboard() {
         </nav>
 
         <div className="p-3 sm:p-4 border-t border-slate-200 space-y-3">
-          <div className="bg-slate-800/50 rounded-lg p-3 text-sm text-slate-300">
+          <div className="bg-emerald-50 rounded-lg p-3 text-sm text-slate-700">
             <p className="font-semibold text-slate-900 mb-1">Attorney: Jeremy Knight</p>
-            <p className="text-xs text-slate-400">Federal Bar License # NY-2015</p>
+            <p className="text-xs text-slate-500">Federal Bar License # NY-2015</p>
           </div>
         </div>
       </aside>
@@ -518,15 +518,15 @@ export default function AttorneyDashboard() {
             </h2>
           </div>
           <div className="flex items-center gap-3 sm:gap-4 w-full sm:w-auto">
-            <div className="hidden md:flex items-center bg-slate-800 rounded-lg px-3 py-2">
-              <Search className="w-4 h-4 text-slate-400" />
+            <div className="hidden md:flex items-center bg-slate-100 rounded-lg px-3 py-2 border border-slate-200">
+              <Search className="w-4 h-4 text-slate-500" />
               <input
                 type="text"
                 placeholder="Search cases..."
-                className="bg-transparent ml-2 outline-none text-sm text-slate-900 placeholder-slate-500 w-48"
+                className="bg-transparent ml-2 outline-none text-sm text-slate-900 placeholder-slate-400 w-48"
               />
             </div>
-            <button className="relative p-2 text-slate-400 hover:text-slate-900 transition-colors">
+            <button className="relative p-2 text-slate-500 hover:text-slate-900 transition-colors">
               <Bell className="w-5 h-5" />
               <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
             </button>
@@ -567,13 +567,13 @@ function SidebarLink({
     <button
       onClick={onClick}
       className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg transition-colors ${
-        active ? "bg-emerald-600/20 text-emerald-400 border border-emerald-600/30" : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"
+        active ? "bg-emerald-50 text-emerald-700 border border-emerald-200" : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
       }`}
     >
       {icon}
       <span className="flex-1 text-left text-sm font-medium">{label}</span>
       {badge !== undefined && badge > 0 && (
-        <span className="bg-red-600 text-slate-900 text-xs font-bold px-2 py-0.5 rounded-full">{badge}</span>
+        <span className="bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">{badge}</span>
       )}
     </button>
   );
@@ -635,14 +635,14 @@ function DashboardView({
                 Priority Case Queue
               </h3>
               <Link href="#" onClick={() => alert("Navigate to full queue")}>
-                <button className="text-sm text-emerald-400 hover:text-emerald-300">View All</button>
+                <button className="text-sm text-emerald-600 hover:text-emerald-700">View All</button>
               </Link>
             </div>
 
             <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
               <table className="w-full text-xs sm:text-sm whitespace-nowrap">
                 <thead>
-                  <tr className="border-b border-slate-200 text-slate-400">
+                  <tr className="border-b border-slate-200 text-slate-500">
                     <th className="px-6 py-3 text-left font-semibold">Client / Case</th>
                     <th className="px-6 py-3 text-left font-semibold">Type</th>
                     <th className="px-6 py-3 text-left font-semibold">Status</th>
@@ -651,24 +651,24 @@ function DashboardView({
                     <th className="px-6 py-3 text-right font-semibold">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800">
+                <tbody className="divide-y divide-slate-100">
                   {priorityCases.slice(0, 5).map((c) => (
-                    <tr key={c.id} className="hover:bg-slate-800/30 transition-colors">
+                    <tr key={c.id} className="hover:bg-slate-50 transition-colors">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
-                          <div className="w-8 h-8 bg-slate-800 rounded-full flex items-center justify-center text-xs font-bold text-slate-300">
+                          <div className="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center text-xs font-bold text-emerald-700">
                             {c.clientName?.charAt(0)}
                           </div>
                           <div>
                             <p className="font-medium text-slate-900">{c.clientName}</p>
-                            <p className="text-xs text-slate-400">#{c.receiptNumber || "Pending"}</p>
+                            <p className="text-xs text-slate-500">#{c.receiptNumber || "Pending"}</p>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex flex-col">
                           <span className="text-slate-900 font-medium">{c.caseType}</span>
-                          <span className="text-xs text-slate-400">{CASE_TYPES[c.caseType]}</span>
+                          <span className="text-xs text-slate-500">{CASE_TYPES[c.caseType]}</span>
                         </div>
                       </td>
                       <td className="px-6 py-4">
@@ -681,14 +681,14 @@ function DashboardView({
                           {c.priority.charAt(0).toUpperCase() + c.priority.slice(1)}
                         </Badge>
                       </td>
-                      <td className="px-6 py-4 text-slate-400 text-xs">
+                      <td className="px-6 py-4 text-slate-500 text-xs">
                         {c.dueDate.toLocaleDateString()}
                       </td>
                       <td className="px-6 py-4 text-right space-x-2 flex justify-end">
-                        <button className="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-slate-900 text-xs font-medium rounded transition-colors">
+                        <button className="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium rounded transition-colors">
                           Review
                         </button>
-                        <button className="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium rounded transition-colors">
+                        <button className="px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-medium rounded transition-colors border border-slate-200">
                           <Flag className="w-3 h-3 inline" />
                         </button>
                       </td>
@@ -705,19 +705,19 @@ function DashboardView({
           <Card className="bg-slate-50 border-slate-200 p-4 sm:p-6">
             <h3 className="text-base sm:text-lg font-semibold text-slate-900 mb-4">Quick Actions</h3>
             <div className="space-y-2 sm:space-y-3">
-              <Button className="w-full bg-emerald-600 hover:bg-emerald-700 text-slate-900 font-semibold" size="lg">
+              <Button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold" size="lg">
                 <Zap className="w-4 h-4 mr-2" />
                 Review Next Case
               </Button>
-              <Button variant="secondary" className="w-full border-slate-700 text-slate-300 hover:bg-slate-800">
+              <Button variant="secondary" className="w-full border-slate-200 text-slate-700 hover:bg-slate-50">
                 <Search className="w-4 h-4 mr-2" />
                 Search Cases
               </Button>
-              <Button variant="secondary" className="w-full border-slate-700 text-slate-300 hover:bg-slate-800">
+              <Button variant="secondary" className="w-full border-slate-200 text-slate-700 hover:bg-slate-50">
                 <BarChart3 className="w-4 h-4 mr-2" />
                 Generate Report
               </Button>
-              <Button variant="secondary" className="w-full border-slate-700 text-slate-300 hover:bg-slate-800">
+              <Button variant="secondary" className="w-full border-slate-200 text-slate-700 hover:bg-slate-50">
                 <Calendar className="w-4 h-4 mr-2" />
                 View Calendar
               </Button>
@@ -730,12 +730,12 @@ function DashboardView({
             <div className="space-y-3 sm:space-y-4">
               {activities.slice(0, 3).map((event) => (
                 <div key={event.id} className="flex gap-3 text-sm border-b border-slate-200 pb-3 last:border-0 last:pb-0">
-                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-300">
+                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600">
                     {event.icon}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-slate-900">{event.title}</p>
-                    <p className="text-xs text-slate-400">{event.description}</p>
+                    <p className="text-xs text-slate-500">{event.description}</p>
                     <p className="text-xs text-slate-500 mt-1">{formatTimeAgo(event.timestamp)}</p>
                   </div>
                 </div>
@@ -770,7 +770,7 @@ function CaseQueueView({ cases }: { cases: PriorityCase[] }) {
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as any)}
-            className="bg-slate-800 text-slate-900 text-xs sm:text-sm rounded px-3 py-2 border border-slate-700 hover:border-slate-600 flex-1 sm:flex-none"
+            className="bg-white text-slate-900 text-xs sm:text-sm rounded px-3 py-2 border border-slate-200 hover:border-slate-300 flex-1 sm:flex-none"
           >
             <option value="priority">Sort by Priority</option>
             <option value="dueDate">Sort by Due Date</option>
@@ -782,7 +782,7 @@ function CaseQueueView({ cases }: { cases: PriorityCase[] }) {
       <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
         <table className="w-full text-xs sm:text-sm whitespace-nowrap">
           <thead>
-            <tr className="border-b border-slate-200 text-slate-400">
+            <tr className="border-b border-slate-200 text-slate-500">
               <th className="px-6 py-3 text-left font-semibold">Client Name</th>
               <th className="px-6 py-3 text-left font-semibold">Case Type</th>
               <th className="px-6 py-3 text-left font-semibold">Status</th>
@@ -792,12 +792,12 @@ function CaseQueueView({ cases }: { cases: PriorityCase[] }) {
               <th className="px-6 py-3 text-right font-semibold">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-800">
+          <tbody className="divide-y divide-slate-100">
             {sortedCases.map((c) => (
-              <tr key={c.id} className="hover:bg-slate-800/30 transition-colors">
+              <tr key={c.id} className="hover:bg-slate-50 transition-colors">
                 <td className="px-6 py-4">
                   <p className="font-medium text-slate-900">{c.clientName}</p>
-                  <p className="text-xs text-slate-400">{c.clientEmail}</p>
+                  <p className="text-xs text-slate-500">{c.clientEmail}</p>
                 </td>
                 <td className="px-6 py-4">
                   <span className="text-slate-900">{c.caseType}</span>
@@ -812,15 +812,15 @@ function CaseQueueView({ cases }: { cases: PriorityCase[] }) {
                     {c.priority.charAt(0).toUpperCase() + c.priority.slice(1)}
                   </Badge>
                 </td>
-                <td className="px-6 py-4 text-slate-400">{c.dueDate.toLocaleDateString()}</td>
+                <td className="px-6 py-4 text-slate-500">{c.dueDate.toLocaleDateString()}</td>
                 <td className="px-6 py-4">
-                  <div className="w-16 bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                  <div className="w-16 bg-slate-200 rounded-full h-1.5 overflow-hidden">
                     <div
                       className="bg-emerald-500 h-full"
                       style={{ width: `${parseInt(c.score || "0")}%` }}
                     ></div>
                   </div>
-                  <p className="text-xs text-slate-400 mt-1">{c.score}%</p>
+                  <p className="text-xs text-slate-500 mt-1">{c.score}%</p>
                 </td>
                 <td className="px-6 py-4 text-right">
                   <Button variant="primary" size="sm">
@@ -844,17 +844,17 @@ function ReviewsView({ cases }: { cases: PriorityCase[] }) {
   return (
     <div className="space-y-4 sm:space-y-6">
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-        <Card className="bg-red-900/20 border border-red-700/30 p-6">
-          <p className="text-red-600 text-sm font-semibold">Needs Review</p>
-          <p className="text-3xl font-bold text-red-300 mt-2">{needsReview.length}</p>
+        <Card className="bg-red-50 border border-red-200 p-6">
+          <p className="text-red-700 text-sm font-semibold">Needs Review</p>
+          <p className="text-3xl font-bold text-red-600 mt-2">{needsReview.length}</p>
         </Card>
-        <Card className="bg-amber-900/20 border border-amber-700/30 p-6">
-          <p className="text-amber-600 text-sm font-semibold">RFE Response</p>
-          <p className="text-3xl font-bold text-amber-300 mt-2">{rfeResponse.length}</p>
+        <Card className="bg-amber-50 border border-amber-200 p-6">
+          <p className="text-amber-700 text-sm font-semibold">RFE Response</p>
+          <p className="text-3xl font-bold text-amber-600 mt-2">{rfeResponse.length}</p>
         </Card>
-        <Card className="bg-emerald-900/20 border border-emerald-700/30 p-6">
-          <p className="text-emerald-400 text-sm font-semibold">Ready to File</p>
-          <p className="text-3xl font-bold text-emerald-300 mt-2">{readyToFile.length}</p>
+        <Card className="bg-emerald-50 border border-emerald-200 p-6">
+          <p className="text-emerald-700 text-sm font-semibold">Ready to File</p>
+          <p className="text-3xl font-bold text-emerald-600 mt-2">{readyToFile.length}</p>
         </Card>
       </div>
 
@@ -862,27 +862,27 @@ function ReviewsView({ cases }: { cases: PriorityCase[] }) {
         <div className="p-4 sm:p-6 border-b border-slate-200">
           <h3 className="text-base sm:text-lg font-semibold text-slate-900">Cases Requiring Attention</h3>
         </div>
-        <div className="divide-y divide-slate-800">
+        <div className="divide-y divide-slate-100">
           {needsReview.map((c) => (
-            <div key={c.id} className="p-4 sm:p-6 hover:bg-slate-800/30 transition-colors">
+            <div key={c.id} className="p-4 sm:p-6 hover:bg-slate-50 transition-colors">
               <div className="flex flex-col sm:flex-row items-start sm:items-start justify-between gap-3 sm:gap-0">
                 <div className="flex-1 min-w-0">
                   <h4 className="font-semibold text-slate-900 truncate">{c.clientName}</h4>
-                  <p className="text-xs sm:text-sm text-slate-400 mt-1 truncate">{c.caseType} - {c.category}</p>
+                  <p className="text-xs sm:text-sm text-slate-500 mt-1 truncate">{c.caseType} - {c.category}</p>
                   <p className="text-xs text-slate-500 mt-2">Assigned: {new Date(c.createdAt).toLocaleDateString()}</p>
                 </div>
                 <div className="text-right">
                   <Badge variant="red" size="md">
                     {c.priority === "urgent" ? "URGENT" : "High"}
                   </Badge>
-                  <p className="text-xs text-slate-400 mt-2">Due: {c.dueDate.toLocaleDateString()}</p>
+                  <p className="text-xs text-slate-500 mt-2">Due: {c.dueDate.toLocaleDateString()}</p>
                 </div>
               </div>
               <div className="mt-3 sm:mt-4 flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                 <Button variant="primary" size="sm">
                   Start Review
                 </Button>
-                <Button variant="secondary" size="sm" className="border-slate-700 text-slate-300">
+                <Button variant="secondary" size="sm" className="border-slate-200 text-slate-700">
                   View Details
                 </Button>
               </div>
@@ -902,14 +902,14 @@ function CalendarView({ activities }: { activities: ActivityEvent[] }) {
         {activities.map((event, idx) => (
           <div key={event.id} className="flex gap-4">
             <div className="flex flex-col items-center">
-              <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-300">
+              <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600">
                 {event.icon}
               </div>
-              {idx !== activities.length - 1 && <div className="w-0.5 h-12 bg-slate-800 mt-2"></div>}
+              {idx !== activities.length - 1 && <div className="w-0.5 h-12 bg-slate-200 mt-2"></div>}
             </div>
             <div className="pb-6 flex-1">
               <p className="font-semibold text-slate-900">{event.title}</p>
-              <p className="text-sm text-slate-400">{event.description}</p>
+              <p className="text-sm text-slate-500">{event.description}</p>
               <p className="text-xs text-slate-500 mt-2">{event.timestamp.toLocaleString()}</p>
             </div>
           </div>
@@ -929,7 +929,7 @@ function AnalyticsView({ stats }: { stats: DashboardStats | null }) {
             {stats &&
               Object.entries(stats.byStatus).map(([status, count]) => (
                 <div key={status} className="flex items-center justify-between">
-                  <span className="text-sm text-slate-400 capitalize">{status}</span>
+                  <span className="text-sm text-slate-500 capitalize">{status}</span>
                   <span className="font-semibold text-slate-900">{count}</span>
                 </div>
               ))}
@@ -940,16 +940,16 @@ function AnalyticsView({ stats }: { stats: DashboardStats | null }) {
           <h3 className="text-lg font-semibold text-slate-900 mb-4">Performance Metrics</h3>
           <div className="space-y-3">
             <div>
-              <p className="text-sm text-slate-400">Avg Review Time</p>
+              <p className="text-sm text-slate-500">Avg Review Time</p>
               <p className="text-2xl font-bold text-slate-900 mt-1">2.4 hours</p>
             </div>
             <div>
-              <p className="text-sm text-slate-400">Monthly Cases Filed</p>
+              <p className="text-sm text-slate-500">Monthly Cases Filed</p>
               <p className="text-2xl font-bold text-slate-900 mt-1">12</p>
             </div>
             <div>
-              <p className="text-sm text-slate-400">Approval Rate</p>
-              <p className="text-2xl font-bold text-emerald-400 mt-1">94%</p>
+              <p className="text-sm text-slate-500">Approval Rate</p>
+              <p className="text-2xl font-bold text-emerald-600 mt-1">94%</p>
             </div>
           </div>
         </Card>
@@ -959,24 +959,24 @@ function AnalyticsView({ stats }: { stats: DashboardStats | null }) {
         <h3 className="text-lg font-semibold text-slate-900 mb-4">Workload Distribution</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="text-center">
-            <p className="text-3xl font-bold text-emerald-400">{stats?.totalAssigned || 0}</p>
-            <p className="text-sm text-slate-400 mt-2">Total Assigned</p>
+            <p className="text-3xl font-bold text-emerald-600">{stats?.totalAssigned || 0}</p>
+            <p className="text-sm text-slate-500 mt-2">Total Assigned</p>
           </div>
           <div className="text-center">
             <p className="text-3xl font-bold text-blue-600">
               {(stats?.byStatus?.processing ?? 0) + (stats?.byStatus?.submitted ?? 0)}
             </p>
-            <p className="text-sm text-slate-400 mt-2">Active Cases</p>
+            <p className="text-sm text-slate-500 mt-2">Active Cases</p>
           </div>
           <div className="text-center">
-            <p className="text-3xl font-bold text-emerald-400">
+            <p className="text-3xl font-bold text-emerald-600">
               {(stats?.byStatus?.approved ?? 0) + (stats?.byStatus?.completed ?? 0)}
             </p>
-            <p className="text-sm text-slate-400 mt-2">Completed</p>
+            <p className="text-sm text-slate-500 mt-2">Completed</p>
           </div>
           <div className="text-center">
-            <p className="text-3xl font-bold text-yellow-400">{stats?.availableToClaim || 0}</p>
-            <p className="text-sm text-slate-400 mt-2">Available</p>
+            <p className="text-3xl font-bold text-amber-600">{stats?.availableToClaim || 0}</p>
+            <p className="text-sm text-slate-500 mt-2">Available</p>
           </div>
         </div>
       </Card>
@@ -991,27 +991,27 @@ function SettingsView() {
         <h3 className="text-lg font-semibold text-slate-900 mb-6">Account Settings</h3>
         <div className="space-y-4">
           <div>
-            <label className="text-sm font-medium text-slate-300">Full Name</label>
+            <label className="text-sm font-medium text-slate-700">Full Name</label>
             <input
               type="text"
               defaultValue="Jeremy Knight"
-              className="mt-1 w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-slate-900"
+              className="mt-1 w-full bg-white border border-slate-200 rounded px-3 py-2 text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none"
             />
           </div>
           <div>
-            <label className="text-sm font-medium text-slate-300">Email</label>
+            <label className="text-sm font-medium text-slate-700">Email</label>
             <input
               type="email"
               defaultValue="jeremy@greencard.ai"
-              className="mt-1 w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-slate-900"
+              className="mt-1 w-full bg-white border border-slate-200 rounded px-3 py-2 text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none"
             />
           </div>
           <div>
-            <label className="text-sm font-medium text-slate-300">Bar License</label>
+            <label className="text-sm font-medium text-slate-700">Bar License</label>
             <input
               type="text"
               defaultValue="NY-2015"
-              className="mt-1 w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-slate-900"
+              className="mt-1 w-full bg-white border border-slate-200 rounded px-3 py-2 text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none"
             />
           </div>
         </div>
@@ -1037,7 +1037,7 @@ function SettingsView() {
 
       <div className="flex gap-3">
         <Button variant="primary">Save Settings</Button>
-        <Button variant="secondary" className="border-slate-700 text-slate-300">
+        <Button variant="secondary" className="border-slate-200 text-slate-700">
           Cancel
         </Button>
       </div>
@@ -1061,18 +1061,18 @@ function StatCard({
   color: "red" | "emerald" | "blue";
 }) {
   const colorClasses = {
-    red: "bg-red-900/20 border-red-700/30 text-red-600 text-red-300",
-    emerald: "bg-emerald-900/20 border-emerald-700/30 text-emerald-400 text-emerald-300",
-    blue: "bg-blue-900/20 border-blue-700/30 text-blue-600 text-blue-300",
+    red: { bg: "bg-red-50", border: "border-red-200", icon: "text-red-500", accent: "text-red-600" },
+    emerald: { bg: "bg-emerald-50", border: "border-emerald-200", icon: "text-emerald-500", accent: "text-emerald-600" },
+    blue: { bg: "bg-blue-50", border: "border-blue-200", icon: "text-blue-500", accent: "text-blue-600" },
   };
 
-  const [bg, border, textColor, accentColor] = colorClasses[color].split(" ");
+  const colors = colorClasses[color];
 
   return (
-    <Card className={`${bg} border ${border} p-6`}>
+    <Card className={`${colors.bg} border ${colors.border} p-6`}>
       <div className="flex items-start justify-between mb-4">
-        <div className={`w-10 h-10 rounded-lg bg-current ${textColor} opacity-20 flex items-center justify-center`}>
-          <div className={textColor}>{icon}</div>
+        <div className={`w-10 h-10 rounded-lg ${colors.bg} flex items-center justify-center`}>
+          <div className={colors.icon}>{icon}</div>
         </div>
         {badge !== undefined && badgeLabel && (
           <Badge variant="red" size="sm">
@@ -1080,8 +1080,8 @@ function StatCard({
           </Badge>
         )}
       </div>
-      <p className="text-slate-400 text-sm font-medium">{title}</p>
-      <p className={`text-3xl font-bold mt-2 ${accentColor}`}>{value}</p>
+      <p className="text-slate-600 text-sm font-medium">{title}</p>
+      <p className={`text-3xl font-bold mt-2 ${colors.accent}`}>{value}</p>
     </Card>
   );
 }

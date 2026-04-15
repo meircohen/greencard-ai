@@ -117,6 +117,7 @@ export default function Dashboard() {
         setUserInfo(meData.user);
 
         // Fetch cases
+        let fetchedCases: CaseData[] = [];
         const casesResponse = await fetch("/api/cases?page=1&limit=10", {
           credentials: "include",
         });
@@ -125,7 +126,8 @@ export default function Dashboard() {
           console.error("Failed to fetch cases");
         } else {
           const casesData = await casesResponse.json();
-          setCases(casesData.cases || []);
+          fetchedCases = casesData.cases || [];
+          setCases(fetchedCases);
         }
 
         // Fetch notifications
@@ -143,8 +145,8 @@ export default function Dashboard() {
           setNotifications(notificationsData.data || []);
         }
 
-        // If no cases, show demo mode
-        if (!cases || cases.length === 0) {
+        // If no cases returned, show demo mode
+        if (fetchedCases.length === 0) {
           setIsDemo(true);
         }
       } catch (err) {
@@ -392,7 +394,13 @@ export default function Dashboard() {
                 </p>
               </div>
             </div>
-            <button className="w-full flex items-center gap-3 px-4 py-2 text-emerald-700 hover:bg-emerald-50 rounded-lg transition-colors">
+            <button
+              onClick={async () => {
+                await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+                router.push('/login');
+              }}
+              className="w-full flex items-center gap-3 px-4 py-2 text-emerald-700 hover:bg-emerald-50 rounded-lg transition-colors"
+            >
               <LogOut className="w-5 h-5" />
               <span className="text-sm font-medium">{t('auth.signOut')}</span>
             </button>
@@ -557,7 +565,7 @@ export default function Dashboard() {
                     {t('dashboard.documentsReady')}
                   </p>
                   <p className="text-sm text-emerald-700">
-                    {documentStatuses.uploaded} of {documentStatuses.total}
+                    {documentStatuses.uploaded} of {documentStatuses.total}{' '}
                     {t('dashboard.uploaded')}
                   </p>
                 </div>
@@ -754,7 +762,7 @@ export default function Dashboard() {
                       {t('dashboard.nextPaymentDue')}
                     </p>
                     <p className="text-sm text-blue-800">
-                      ${paymentInfo.nextPayment.toFixed(2)} on{" "}
+                      ${paymentInfo.nextPayment.toFixed(2)} {t('common.on')}{' '}
                       {paymentInfo.nextPaymentDate}
                     </p>
                   </div>

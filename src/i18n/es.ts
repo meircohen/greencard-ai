@@ -358,6 +358,8 @@ export default {
     filter: "Filtrar",
     sortBy: "Ordenar por",
     noResults: "No se encontraron resultados",
+    on: "el",
+    uploading: "Subiendo",
   },
 
   footer: {
