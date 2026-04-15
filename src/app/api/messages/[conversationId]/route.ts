@@ -3,6 +3,7 @@ import { getSession } from "@/lib/auth";
 import { getDb } from "@/lib/db";
 import { conversations, messages, cases, users, notifications } from "@/lib/db/schema";
 import { eq, desc, and } from "drizzle-orm";
+import { sendEmail, newMessageEmail } from "@/lib/email";
 
 interface Message {
   id: string;
@@ -216,7 +217,7 @@ export async function POST(
       })
       .where(eq(conversations.id, conversationId));
 
-    // Create notification for other participants
+    // Create notification for other participants and send email
     if (caseData) {
       const recipientId =
         userId === caseData.userId ? caseData.attorneyId : caseData.userId;
@@ -226,6 +227,11 @@ export async function POST(
           .select()
           .from(users)
           .where(eq(users.id, userId));
+
+        const [recipient] = await db
+          .select()
+          .from(users)
+          .where(eq(users.id, recipientId));
 
         await db
           .insert(notifications)
@@ -242,6 +248,17 @@ export async function POST(
               senderRole: userRole,
             },
           });
+
+        // Send email notification (non-blocking)
+        if (recipient) {
+          const emailPayload = newMessageEmail(
+            recipient.fullName || "User",
+            sender?.fullName || "Unknown",
+            content
+          );
+          emailPayload.to = recipient.email;
+          sendEmail(emailPayload).catch(err => console.error("Message email failed:", err));
+        }
       }
     }
 

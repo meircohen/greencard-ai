@@ -5,6 +5,7 @@ import { subscriptions, payments, users } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { audit } from "@/lib/audit";
 import { logger } from "@/lib/logger";
+import { sendEmail, paymentConfirmationEmail } from "@/lib/email";
 
 /**
  * Idempotency: track processed Stripe event IDs to prevent duplicate handling.
@@ -86,12 +87,14 @@ export async function POST(request: NextRequest) {
             ? session.subscription
             : session.subscription.id;
 
+          const planType = (planId === "guided" ? "professional" : "starter") as "free" | "starter" | "professional" | "enterprise";
+
           await db
             .insert(subscriptions)
             .values({
               userId,
               stripeSubscriptionId: subscriptionId,
-              plan: (planId === "guided" ? "professional" : "starter") as "free" | "starter" | "professional" | "enterprise",
+              plan: planType,
               status: "active",
               currentPeriodStart: new Date(),
               currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
@@ -99,7 +102,7 @@ export async function POST(request: NextRequest) {
             .onConflictDoUpdate({
               target: subscriptions.stripeSubscriptionId,
               set: {
-                plan: (planId === "guided" ? "professional" : "starter") as "free" | "starter" | "professional" | "enterprise",
+                plan: planType,
                 status: "active",
                 updatedAt: new Date(),
               },
@@ -115,6 +118,28 @@ export async function POST(request: NextRequest) {
               status: "completed",
               description: `Subscription: ${planId}`,
             });
+
+            // Send payment confirmation email (non-blocking)
+            try {
+              const [user] = await db
+                .select({ email: users.email, fullName: users.fullName })
+                .from(users)
+                .where(eq(users.id, userId));
+
+              if (user) {
+                const amount = `$${(session.amount_total / 100).toFixed(2)}`;
+                const planName = planId === "guided" ? "Professional" : "Starter";
+                const emailPayload = paymentConfirmationEmail(
+                  user.fullName || "User",
+                  amount,
+                  planName
+                );
+                emailPayload.to = user.email;
+                sendEmail(emailPayload).catch(err => console.error("Payment confirmation email failed:", err));
+              }
+            } catch (emailError) {
+              logger.error({ userId, error: emailError }, "Failed to send payment confirmation email");
+            }
           }
 
           audit({

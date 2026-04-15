@@ -6,7 +6,7 @@ import { users } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import crypto from "crypto";
 import { createVerificationToken } from "@/app/api/auth/verify-email/route";
-import { sendEmail, emailVerificationEmail } from "@/lib/email";
+import { sendEmail, emailVerificationEmail, welcomeEmail } from "@/lib/email";
 
 const signupSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -84,6 +84,11 @@ export async function POST(request: NextRequest) {
     const emailPayload = emailVerificationEmail(verifyUrl);
     emailPayload.to = newUser.email;
     await sendEmail(emailPayload);
+
+    // Send welcome email (non-blocking)
+    const welcomeEmailPayload = welcomeEmail(newUser.fullName || parsedData.name);
+    welcomeEmailPayload.to = newUser.email;
+    sendEmail(welcomeEmailPayload).catch(err => console.error("Welcome email failed:", err));
 
     // Create JWT token (user can use the app, but some features may require verification)
     const token = await createJWT({

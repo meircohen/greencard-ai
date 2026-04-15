@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
-import { caseDocuments, cases } from '@/lib/db/schema';
+import { caseDocuments, cases, users } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { uploadDocument } from '@/lib/storage';
+import { sendEmail, documentUploadConfirmEmail } from '@/lib/email';
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 const ALLOWED_MIME_TYPES = ['application/pdf', 'image/jpeg', 'image/png', 'image/heic'];
@@ -118,6 +119,25 @@ export async function POST(request: NextRequest) {
         status: 'uploaded',
       })
       .returning();
+
+    // Send confirmation email (non-blocking)
+    try {
+      const [caseUser] = await db
+        .select({ email: users.email, fullName: users.fullName })
+        .from(users)
+        .where(eq(users.id, userId));
+
+      if (caseUser) {
+        const emailPayload = documentUploadConfirmEmail(
+          caseUser.fullName || "User",
+          file.name
+        );
+        emailPayload.to = caseUser.email;
+        sendEmail(emailPayload).catch(err => console.error("Document upload email failed:", err));
+      }
+    } catch (emailError) {
+      console.error("Failed to send document upload email:", emailError);
+    }
 
     return NextResponse.json(newDocument[0], { status: 201 });
   } catch (error) {

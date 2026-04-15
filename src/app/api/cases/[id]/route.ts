@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
-import { cases, caseDeadlines } from "@/lib/db/schema";
+import { cases, caseDeadlines, users } from "@/lib/db/schema";
 import { eq, and, or } from "drizzle-orm";
 import { z } from "zod";
 import { generateDeadlines, getCaseDeadlines } from "@/lib/deadline-monitor";
 import { logger } from "@/lib/logger";
+import { sendEmail, caseStatusUpdateEmail } from "@/lib/email";
 
 /**
  * Helper: fetch a case with ownership check.
@@ -98,6 +99,29 @@ export async function PATCH(
       })
       .where(eq(cases.id, id))
       .returning();
+
+    // Send email if status changed
+    if (parsed.status && parsed.status !== existing.status) {
+      try {
+        const [caseUser] = await db
+          .select({ email: users.email, fullName: users.fullName })
+          .from(users)
+          .where(eq(users.id, existing.userId));
+
+        if (caseUser) {
+          const emailPayload = caseStatusUpdateEmail(
+            caseUser.fullName || "User",
+            existing.caseType || "Case",
+            existing.status || "draft",
+            parsed.status
+          );
+          emailPayload.to = caseUser.email;
+          sendEmail(emailPayload).catch(err => console.error("Case status email failed:", err));
+        }
+      } catch (emailError) {
+        logger.error({ caseId: id, error: emailError }, "Failed to send case status email");
+      }
+    }
 
     // Handle deadline generation on status changes
     if (parsed.status) {

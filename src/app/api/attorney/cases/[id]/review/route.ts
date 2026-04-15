@@ -10,6 +10,7 @@ import {
 import { eq, and } from "drizzle-orm";
 import { safeErrorResponse } from "@/lib/errors";
 import { audit, getClientInfo } from "@/lib/audit";
+import { sendEmail, reviewDecisionEmail } from "@/lib/email";
 
 type ReviewDecision = "approve" | "request_changes" | "reject";
 
@@ -125,6 +126,7 @@ export async function POST(
     }
 
     // Create notification for client (unless rejection)
+    let notificationCreated = false;
     if (decision !== "reject") {
       await db.insert(notifications).values({
         userId: caseRecord.userId,
@@ -137,14 +139,37 @@ export async function POST(
           requestedDocuments: requestedDocuments || [],
         },
       });
+      notificationCreated = true;
     }
 
-    const client = getClientInfo(request.headers);
+    // Send email notification (non-blocking)
+    try {
+      const [client] = await db
+        .select({ email: users.email, fullName: users.fullName, caseType: cases.caseType })
+        .from(users)
+        .innerJoin(cases, eq(users.id, cases.userId))
+        .where(eq(cases.id, caseId));
+
+      if (client) {
+        const emailPayload = reviewDecisionEmail(
+          client.fullName || "User",
+          client.caseType || "Case",
+          decision,
+          notes
+        );
+        emailPayload.to = client.email;
+        sendEmail(emailPayload).catch(err => console.error("Review decision email failed:", err));
+      }
+    } catch (emailError) {
+      console.error("Failed to send review decision email:", emailError);
+    }
+
+    const clientInfo = getClientInfo(request.headers);
     audit({
       action: "case.updated",
       userId,
       targetId: caseId,
-      ip: client.ip,
+      ip: clientInfo.ip,
       metadata: {
         decision,
         newStatus,
@@ -155,7 +180,7 @@ export async function POST(
     return NextResponse.json({
       message: "Review submitted successfully.",
       newStatus,
-      notificationSent: decision !== "reject",
+      notificationSent: notificationCreated,
     });
   } catch (error) {
     return safeErrorResponse(error, "Failed to submit case review.");
