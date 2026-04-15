@@ -27,6 +27,10 @@ const publicPageRoutes = [
   "/rfe-decoder",
   "/forms/i-485",
   "/interview-prep",
+  "/guides",
+  "/public-charge",
+  "/referral",
+  "/reset-password",
 ];
 
 // Public API routes (no auth required)
